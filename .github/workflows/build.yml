@@ -33,13 +33,14 @@ jobs:
       - name: Añadir Plataforma Android
         run: npx cap add android
 
-      # Punto 1: Generación respetando transparencia original
+      # Punto 6: Icono transparente adaptable al sistema
       - name: Generar Iconos de la Aplicación
         run: npx capacitor-assets generate --iconBackgroundColor 'transparent'
 
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
+      # Punto 5: Permisos nativos de acceso al almacenamiento interno completo
       - name: Ajustar Permisos AndroidManifest
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
