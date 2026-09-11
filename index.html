@@ -2,611 +2,502 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Mi Total Player</title>
-
-  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
-  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-
   <style>
+    /* RESET & ESTILOS BASE */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       user-select: none;
-      -webkit-user-select: none;
-      border: none !important;
-      outline: none !important;
     }
 
-    html, body {
-      width: 100%;
-      height: 100dvh;
-      background-color: #3C3C3B;
-      color: #FFFFFF;
-      overflow: hidden;
-    }
-
-    .app-container {
-      width: 100vw;
-      height: 100dvh;
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      background-color: #3C3C3B;
+      overflow-x: hidden;
     }
 
-    .header {
-      background-color: #FF8C00;
-      color: #FFFFFF;
-      padding: 14px;
-      padding-top: calc(14px + env(safe-area-inset-top, 15px));
+    /* 2. HEADER CON ESPACIO SEGURA PARA NOTCH */
+    header {
+      background-color: #1f1f1f;
+      padding-top: max(env(safe-area-inset-top), 24px);
+      padding-bottom: 12px;
       text-align: center;
-      font-weight: bold;
       font-size: 1.2rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      flex-shrink: 0;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+      margin-bottom: 10px;
     }
 
-    .screen {
-      display: none;
-      flex-direction: column;
+    .container {
       flex: 1;
-      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+    }
+
+    .vistas {
+      display: none;
       width: 100%;
       height: 100%;
-      overflow: hidden;
-      background-color: #3C3C3B;
-    }
-
-    .screen.active {
-      display: flex !important;
-    }
-
-    .view-content {
-      flex: 1;
-      padding: 15px;
-      display: flex;
       flex-direction: column;
-      gap: 15px;
-      overflow-y: auto;
-      min-height: 0;
     }
 
-    .btn-nav-back {
-      background-color: #FF8C00;
-      color: #FFFFFF;
-      padding: 16px;
+    .vista-activa {
+      display: flex;
+    }
+
+    /* BOTONES GLOBALES UNIFICADOS (Punto 3.2) */
+    .btn {
+      background-color: #282828;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
       text-align: center;
-      font-weight: bold;
-      font-size: 1.1rem;
-      cursor: pointer;
-      border-radius: 10px;
-      margin-top: auto;
-      text-decoration: none;
-      text-transform: uppercase;
-      flex-shrink: 0;
+      transition: background 0.2s, transform 0.1s;
     }
 
-    .btn-nav-back:active {
-      opacity: 0.8;
+    .btn:active {
+      background-color: #3e3e3e;
+      transform: scale(0.98);
     }
 
-    /* HOME */
-    .btn-main-home {
-      flex: 1;
-      background-color: #9D9D9C;
-      color: #FFFFFF;
-      border-radius: 12px;
-      font-size: 1.8rem;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      text-transform: uppercase;
+    .btn-volver {
+      margin-top: 15px;
+      background-color: #333;
+      border-color: #555;
     }
 
-    .btn-main-home span { font-size: 3.5rem; }
-    .btn-main-home:active { background-color: #FF8C00; }
-
-    /* TV */
-    .tv-container {
-      display: flex;
-      flex-direction: column;
+    /* VISTA HOME */
+    .grid-home {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 15px;
-      flex: 1;
-      min-height: 0;
+      margin-top: 20px;
     }
 
-    .tv-video-box {
+    /* VISTA ÁLBUMES Y LISTAS */
+    .grid-albumes {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 15px;
+    }
+
+    .card-album {
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .card-album img {
       width: 100%;
-      height: 220px;
-      background-color: #000000;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .lista-canciones {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-cancion {
+      background: #242424;
+      padding: 14px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 5. PANTALLA REPRODUCTOR DE MÚSICA */
+    .reproductor-musica {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    /* 5.2 Carátula del álbum más grande */
+    .album-cover-player {
+      width: 260px;
+      height: 260px;
+      max-width: 80vw;
+      max-height: 80vw;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      margin-bottom: 20px;
+    }
+
+    .track-info {
+      margin-bottom: 20px;
+    }
+
+    .track-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .track-album {
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+
+    /* 5.3 Separación de los controles de reproducción */
+    .music-controls {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 35px;
+    }
+
+    .btn-control {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    /* 3. TV-NEWS & REPRODUCTOR DE VIDEO */
+    .video-container {
+      width: 100%;
+      background: #000;
       border-radius: 8px;
-      flex-shrink: 0;
       overflow: hidden;
+      aspect-ratio: 16/9;
     }
 
-    .video-js { width: 100% !important; height: 100% !important; }
-    .vjs-big-play-button { display: none !important; }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
 
-    .grid-buttons {
+    .grid-canales {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 10px;
+      margin-top: 15px;
     }
 
-    .boton-canal {
+    /* 6. PANTALLA RADIO (ESPACIADOS COMPENSADOS) */
+    .radio-container {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #9D9D9C;
-      color: #FFFFFF;
-      padding: 14px 8px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: bold;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: calc(100vh - 120px);
+      padding: 10px 0;
+    }
+
+    .radio-info {
       text-align: center;
-      cursor: pointer;
+      margin-bottom: 15px;
     }
 
-    .boton-canal.active-item { background-color: #FF8C00 !important; }
-
-    /* HORIZONTAL TV */
-    @media (orientation: landscape) {
-      #screen-tv .header, #screen-tv > .view-content > .btn-nav-back { display: none !important; }
-      #screen-tv, #screen-tv .view-content, .tv-container {
-        width: 100vw !important; height: 100dvh !important; max-height: 100dvh !important;
-        padding: 0 !important; margin: 0 !important; background-color: #3C3C3B !important; overflow: hidden !important;
-      }
-      .tv-container { display: flex !important; flex-direction: row !important; align-items: stretch !important; }
-      .tv-video-box {
-        flex: 1 !important; height: 100dvh !important; max-height: 100dvh !important;
-        padding: 6px !important; box-sizing: border-box !important; background-color: #3C3C3B !important;
-        display: flex !important; align-items: center !important; justify-content: center !important;
-      }
-      .tv-video-box .video-js { width: 100% !important; height: 100% !important; border-radius: 8px !important; background: #000 !important; }
-      .tv-controls-box {
-        width: 180px !important; height: 100dvh !important; background-color: #3C3C3B !important;
-        padding: 6px 6px 6px 0 !important; overflow-y: auto !important; flex-shrink: 0 !important;
-      }
-      .tv-controls-box .grid-buttons { display: flex !important; flex-direction: column !important; gap: 8px !important; }
-      .tv-controls-box .boton-canal { height: 44px !important; font-size: 0.85rem !important; border-radius: 8px !important; width: 100% !important; }
-      .tv-controls-box .btn-nav-back-landscape { display: block !important; margin-top: 5px !important; }
-    }
-
-    .btn-nav-back-landscape { display: none; }
-
-    /* MÚSICA ÁLBUMES Y CANCIONES */
-    .albums-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      overflow-y: auto;
-    }
-
-    .album-card-clean {
-      background-color: #9D9D9C;
-      color: #FFFFFF;
-      aspect-ratio: 1;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      cursor: pointer;
+    .radio-bar {
+      width: 100%;
+      margin: 25px 0;
       text-align: center;
-      font-size: 1.1rem;
-      font-weight: bold;
-      line-height: 1.35;
-      white-space: pre-line;
-      word-break: break-word;
-      background-size: cover;
-      background-position: center;
     }
-
-    .song-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-    .song-item { background-color: #9D9D9C; color: #FFFFFF; padding: 14px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
-
-    /* REPRODUCTOR */
-    .player-view-drive { display: flex; flex-direction: column; align-items: center; justify-content: space-between; flex: 1; width: 100%; min-height: 0; padding: 10px 0; }
-    .album-cover-drive { width: 180px; height: 180px; background-color: #9D9D9C; border-radius: 20px; display: flex; justify-content: center; align-items: center; background-size: cover; background-position: center; }
-    .track-details-drive { text-align: center; width: 100%; }
-    .track-details-drive h3 { font-size: 1.3rem; font-weight: bold; color: #FFFFFF; margin-bottom: 6px; }
-    .track-details-drive p { font-size: 1rem; color: #9D9D9C; }
-    .progress-bar-container { width: 100%; display: flex; align-items: center; gap: 12px; }
-    .time-stamp { font-size: 0.9rem; font-weight: bold; color: #FFFFFF; width: 40px; }
-    .progress-bar { flex: 1; -webkit-appearance: none; height: 6px; background: #555555; border-radius: 3px; }
-    .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #FF8C00; cursor: pointer; }
-    .media-controls-square { display: flex; align-items: center; justify-content: center; gap: 18px; width: 100%; }
-    .btn-square { width: 85px; height: 85px; border-radius: 12px; background-color: #9D9D9C; color: #FFFFFF; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .btn-square.btn-square-main { width: 95px; height: 95px; background-color: #FF8C00; font-size: 3rem; }
-
-    /* RADIO */
-    .radio-display { width: 100%; height: 220px; background-color: #000000; border-radius: 10px; display: flex; justify-content: center; align-items: center; }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    
-    <!-- HOME -->
-    <div id="screen-home" class="screen active">
-      <div class="header">MI TOTAL PLAYER</div>
-      <div class="view-content" style="justify-content: space-between;">
-        <button class="btn-main-home" onclick="navigateTo('screen-tv')"><span>📺</span> TV-NEWS</button>
+  <header id="main-header">
+    <span id="header-title">MI TOTAL PLAYER</span>
+  </header>
+
+  <div class="container">
+
+    <!-- VISTA HOME -->
+    <div id="vista-home" class="vistas vista-activa">
+      <div class="grid-home">
+        <button class="btn" onclick="navegarA('vista-albumes')">🎵 ÁLBUMES</button>
+        <button class="btn" onclick="navegarA('vista-radio')">📻 RADIO</button>
+        <button class="btn" onclick="navegarA('vista-tv')">📺 TV NEWS</button>
+      </div>
+    </div>
+
+    <!-- VISTA ÁLBUMES -->
+    <div id="vista-albumes" class="vistas">
+      <div id="contenedor-albumes" class="grid-albumes">
+        <!-- Se rellena dinámicamente -->
+      </div>
+      <button class="btn btn-volver" onclick="navegarA('vista-home')">&lt; VOLVER A HOME</button>
+    </div>
+
+    <!-- VISTA LISTA CANCIONES -->
+    <div id="vista-canciones" class="vistas">
+      <h3 id="nombre-album-actual" style="margin-bottom: 15px;"></h3>
+      <ul id="contenedor-canciones" class="lista-canciones">
+        <!-- Se rellena dinámicamente -->
+      </ul>
+      <button class="btn btn-volver" onclick="navegarA('vista-albumes')">&lt; VOLVER A ÁLBUMES</button>
+    </div>
+
+    <!-- VISTA REPRODUCTOR MÚSICA -->
+    <div id="vista-player" class="vistas">
+      <div class="reproductor-musica">
+        <img id="player-cover-img" class="album-cover-player" src="icon.png" alt="Portada">
         
-        <!-- BOTÓN DE MÚSICA E INPUT DE RESPALDO -->
-        <button class="btn-main-home" onclick="ejecutarAccionMusica()"><span>🎵</span> MÚSICA</button>
-        <input type="file" id="folder-input" webkitdirectory directory multiple onchange="window.cargarBibliotecaLocal(event)" style="display:none;">
+        <div class="track-info">
+          <div id="player-song-title" class="track-title">Canción</div>
+          <div id="player-album-title" class="track-album">Álbum</div>
+        </div>
 
-        <button class="btn-main-home" onclick="navigateTo('screen-radio')"><span>📻</span> RADIO</button>
-        <button class="btn-nav-back" onclick="salirDeAplicacion()">&lt; SALIR DE LA APLICACIÓN</button>
+        <!-- 5.3 Controles de Reproducción -->
+        <div class="music-controls">
+          <button class="btn btn-control" onclick="cancionAnterior()">⏮</button>
+          <button id="btn-play-pause" class="btn btn-control" onclick="togglePlayPause()">▶</button>
+          <button class="btn btn-control" onclick="cancionSiguiente()">⏭</button>
+        </div>
+
+        <!-- 5.3 Separa los botones del botón de volver -->
+        <button class="btn btn-volver" onclick="volverACanciones()">&lt; VOLVER A CANCIONES</button>
       </div>
     </div>
 
-    <!-- TV -->
-    <div id="screen-tv" class="screen">
-      <div class="header">TV-NEWS</div>
-      <div class="view-content">
-        <div class="tv-container">
-          <div class="tv-video-box">
-            <video id="player" class="video-js vjs-default-skin" controls playsinline></video>
-          </div>
-          <div class="tv-controls-box">
-            <div class="grid-buttons">
-              <button class="boton-canal" onclick="loadChannel('https://live.france24.com/hls/live/2037179-b/F24_FR_HI_HLS/master_5000.m3u8', this)">FRANCE 24</button>
-              <button class="boton-canal" onclick="loadChannel('https://ncdn-live-bfm.pfd.sfr.net/shls/LIVE$BFM_TV/index.m3u8', this)">BFM</button>
-              <button class="boton-canal" onclick="loadChannel('https://dash2.antik.sk/live/test_bbc_world/playlist.m3u8', this)">BBC NEWS</button>
-              <button class="boton-canal" onclick="loadChannel('https://ds2c506obo7m8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-7zjq3tdqasbg8/index.m3u8', this)">CNN</button>
-              <button class="boton-canal" onclick="loadChannel('https://euronews-live-spa-es.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6571/bitok/eyJzdGlkIjoiMDA4YjY0NTMtYjY2MC00ZTZkLTlkNzEtMTk3YTM3ZDZhZWIxIiwibWt0IjoiZXMiLCJjaCI6NjU3MSwicHRmIjoxfQ==/26034/euronews-es.m3u8', this)">EURONEWS</button>
-              <button class="boton-canal" onclick="loadChannel('https://ztnr.rtve.es/ztnr/1694255.m3u8', this)">24 HORAS</button>
-              <button class="boton-canal" onclick="loadChannel('https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8', this)">TVE LA 1</button>
-              <button class="boton-canal" onclick="loadChannel('https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8', this)">3CAT INFO</button>
-            </div>
-            <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
-          </div>
+    <!-- VISTA RADIO -->
+    <div id="vista-radio" class="vistas">
+      <!-- 6. Espaciados distribuidos -->
+      <div class="radio-container">
+        <div class="radio-info">
+          <h2 id="radio-estacion-actual">Selecciona Emisora</h2>
         </div>
-        <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
+
+        <div class="grid-canales">
+          <button class="btn" onclick="sintonizarRadio('Radio 1', 'https://rtvestream-radio1.rtve.es/radio1_main.mp3')">Radio 1</button>
+          <button class="btn" onclick="sintonizarRadio('SER', 'https://cadena-ser.stream.flumotion.com/cadena-ser/main.mp3')">SER</button>
+          <button class="btn" onclick="sintonizarRadio('COPE', 'https://cope-cope-ss.flumotion.com/cope/main.mp3')">COPE</button>
+        </div>
+
+        <div class="radio-bar">
+          <button id="btn-radio-play" class="btn btn-control" style="margin: 0 auto;" onclick="toggleRadioPlay()">▶</button>
+        </div>
+
+        <button class="btn btn-volver" onclick="navegarA('vista-home')">&lt; VOLVER A HOME</button>
       </div>
     </div>
 
-    <!-- ÁLBUMES -->
-    <div id="screen-albums" class="screen">
-      <div class="header">ÁLBUMES</div>
-      <div class="view-content">
-        <div id="albums-container" class="albums-grid"></div>
-        <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
+    <!-- VISTA TV NEWS -->
+    <div id="vista-tv" class="vistas">
+      <div class="video-container">
+        <!-- 5. Transición limpia: sin poster ni overlays de play -->
+        <video id="tv-video" controls playsinline autoplay></video>
       </div>
-    </div>
 
-    <!-- CANCIONES -->
-    <div id="screen-songs" class="screen">
-      <div id="album-header" class="header">ÁLBUM</div>
-      <div class="view-content">
-        <div id="songs-container" class="song-list"></div>
-        <button class="btn-nav-back" onclick="navigateTo('screen-albums')">&lt; VOLVER ÁLBUMES</button>
-      </div>
-    </div>
-
-    <!-- REPRODUCTOR -->
-    <div id="screen-player" class="screen">
-      <div class="header">REPRODUCIENDO</div>
-      <div class="view-content">
-        <div class="player-view-drive">
-          <div class="album-cover-drive" id="player-cover">
-            <span id="player-cover-icon" style="font-size: 6rem; color: #FFF;">🎵</span>
-          </div>
-          <div class="track-details-drive">
-            <h3 id="player-song-title">Canción</h3>
-            <p id="player-album-info">Álbum</p>
-          </div>
-          <div class="progress-bar-container">
-            <span id="current-time" class="time-stamp">0:00</span>
-            <input type="range" id="seek-bar" class="progress-bar" value="0" min="0" step="1">
-            <span id="total-time" class="time-stamp" style="text-align: right;">0:00</span>
-          </div>
-          <div class="media-controls-square">
-            <button class="btn-square" onclick="prevSong()">⏮</button>
-            <button class="btn-square btn-square-main" id="btn-play-pause" onclick="togglePlayMusic()">▶</button>
-            <button class="btn-square" onclick="nextSong()">⏭</button>
-          </div>
-          <audio id="audio-element"></audio>
-        </div>
-        <button class="btn-nav-back" onclick="pararYVolverCanciones()">&lt; VOLVER A CANCIONES</button>
-      </div>
-    </div>
-
-    <!-- RADIO -->
-    <div id="screen-radio" class="screen">
-      <div class="header">RADIO</div>
-      <div class="view-content">
-        <div class="radio-display"><span style="font-size: 4.5rem;">📻</span></div>
-        <div class="grid-buttons" id="radio-buttons-container">
-          <button onclick="playRadio(this, 'https://stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8')" class="boton-canal">FRANCE INFO</button>
-          <button onclick="playRadio(this, 'http://live02.rfi.fr/rfimonde-64.mp3')" class="boton-canal">RFI MONDE</button>
-          <button onclick="playRadio(this, 'https://rtvelivestream.rtve.es/rtvesec/rne/rne_r1_main.m3u8')" class="boton-canal">RNE 1</button>
-          <button onclick="playRadio(this, 'https://rtvelivestream.rtve.es/rtvesec/rne/rne_r5_madrid_main.m3u8')" class="boton-canal">RNE 5</button>
-        </div>
-        <div class="progress-bar-container">
-          <span id="radio-current-time" class="time-stamp">0:00</span>
-          <input type="range" id="radio-seek-bar" class="progress-bar" value="0" min="0" step="1">
-          <span id="radio-total-time" class="time-stamp" style="text-align: right;">LIVE</span>
-        </div>
-        <div class="media-controls-square">
-          <button class="btn-square" onclick="prevRadio()">⏮</button>
-          <button class="btn-square btn-square-main" id="btn-radio-play" onclick="togglePlayRadio()">▶</button>
-          <button class="btn-square" onclick="nextRadio()">⏭</button>
-        </div>
-        <audio id="radio-audio-element"></audio>
-        <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
+      <div class="grid-canales">
+        <button class="btn" onclick="cambiarCanalTV('https://rtvestream-24h.rtve.es/24h_main.m3u8')">24h RTVE</button>
+        <button class="btn" onclick="cambiarCanalTV('https://stream.ecn.cl/live/32.m3u8')">Noticias 2</button>
+        <!-- 3.2 Botón volver integrado al final del grid de botones -->
+        <button class="btn btn-volver" onclick="navegarA('vista-home')">&lt; VOLVER HOME</button>
       </div>
     </div>
 
   </div>
 
-  <!-- SCRIPT DE INTERFAZ -->
-  <script src="bridge-music.js"></script>
   <script>
-    let biblioteca = {};
-    let covers = {};
-    let albumActual = '';
-    let listaCancionesActual = [];
+    // ESTADO DE LA APLICACIÓN
+    let bibliotecaNativa = {};
+    let coversNativas = {};
+    let listaCancionesActuales = [];
     let indiceCancionActual = 0;
-    let emisorasRadio = [];
-    let indiceRadioActual = 0;
+    let albumActualNombre = '';
 
-    const audioElement = document.getElementById('audio-element');
-    const radioAudioElement = document.getElementById('radio-audio-element');
-    const seekBar = document.getElementById('seek-bar');
-    const radioSeekBar = document.getElementById('radio-seek-bar');
+    const audioPlayer = new Audio();
+    const radioPlayer = new Audio();
+    const tvVideo = document.getElementById('tv-video');
 
-    function salirDeAplicacion() {
-      if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
-        Capacitor.Plugins.App.exitApp();
-      } else if (navigator.app && navigator.app.exitApp) {
-        navigator.app.exitApp();
-      } else {
-        window.close();
+    // NAVEGACIÓN ENTRE VISTAS
+    function navegarA(vistaId) {
+      document.querySelectorAll('.vistas').forEach(v => v.classList.remove('vista-activa'));
+      document.getElementById(vistaId).classList.add('vista-activa');
+
+      // Si se sale de la TV o de la Radio, pausamos para no solapar audio
+      if (vistaId !== 'vista-tv') {
+        tvVideo.pause();
+        tvVideo.src = '';
+      }
+      if (vistaId !== 'vista-radio') {
+        radioPlayer.pause();
+        radioPlayer.src = '';
       }
     }
 
-    var tvPlayer = videojs('player', { fluid: true, html5: { vhs: { overrideNative: true } } });
-
-    function loadChannel(url, btn) {
-      tvPlayer.pause();
-      tvPlayer.reset();
-      tvPlayer.src({ src: url, type: 'application/x-mpegURL' });
-      tvPlayer.load();
-      tvPlayer.play().catch(function(e){});
-      marcarBotonActivo(btn);
-    }
-
-    function navigateTo(screenId) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById(screenId);
-      if (target) target.classList.add('active');
-
-      if (screenId === 'screen-home') {
-        tvPlayer.pause();
-        detenerMusica();
-        radioAudioElement.pause();
-      }
-    }
-
-    function marcarBotonActivo(elemento) {
-      if (!elemento) return;
-      const contenedor = elemento.closest('.grid-buttons, .albums-grid, .song-list');
-      if (contenedor) {
-        contenedor.querySelectorAll('.boton-canal, .album-card-clean, .song-item').forEach(b => b.classList.remove('active-item'));
-      }
-      elemento.classList.add('active-item');
-    }
-
-    function ejecutarAccionMusica() {
-      if (Object.keys(biblioteca).length > 0) {
-        navigateTo('screen-albums');
-        return;
-      }
-
-      if (typeof window.cargarBibliotecaBridge === 'function') {
-        window.cargarBibliotecaBridge();
-      } else {
-        renderAlbums();
-        navigateTo('screen-albums');
-      }
-    }
-
-    window.recibirBibliotecaNativa = function(bibliotecaRecibida, coversRecibidas) {
-      biblioteca = bibliotecaRecibida || {};
-      covers = coversRecibidas || {};
-      renderAlbums();
-      navigateTo('screen-albums');
+    // NATIVA: RECEPCIÓN DE ARCHIVOS DESDE JAVA
+    window.recibirBibliotecaNativa = function(biblioteca, covers) {
+      bibliotecaNativa = biblioteca || {};
+      coversNativas = covers || {};
+      renderizarAlbumes();
     };
 
-    function renderAlbums() {
-      const container = document.getElementById('albums-container');
-      container.innerHTML = '';
-      const nombresAlbumes = Object.keys(biblioteca).sort();
+    function renderizarAlbumes() {
+      const contenedor = document.getElementById('contenedor-albumes');
+      contenedor.innerHTML = '';
 
-      if (nombresAlbumes.length === 0) {
-        container.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#9D9D9C; padding: 20px;">No se encontraron canciones en el dispositivo.</p>';
+      const albumes = Object.keys(bibliotecaNativa);
+
+      if (albumes.length === 0) {
+        contenedor.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No se encontraron canciones.</p>';
         return;
       }
 
-      nombresAlbumes.forEach(album => {
+      albumes.forEach(albumKey => {
         const card = document.createElement('div');
-        card.className = 'album-card-clean';
-        card.innerText = album.replace(/\s*\((.*?)\)\s*/g, "\n($1)\n");
+        card.className = 'card-album';
+        card.onclick = () => abrirAlbum(albumKey);
 
-        const claveAlbum = album.toLowerCase();
-        if (covers[claveAlbum]) {
-          card.style.backgroundImage = `url('${covers[claveAlbum]}')`;
-          card.style.color = 'transparent';
-        }
-
-        card.onclick = () => {
-          marcarBotonActivo(card);
-          showSongs(album);
-        };
-        container.appendChild(card);
+        const coverSrc = coversNativas[albumKey.toLowerCase()] || 'icon.png';
+        
+        card.innerHTML = `
+          <img src="${coverSrc}" alt="${albumKey}">
+          <div style="font-size:0.9rem; font-weight:600;">${albumKey}</div>
+        `;
+        contenedor.appendChild(card);
       });
     }
 
-    function showSongs(album) {
-      albumActual = album;
-      listaCancionesActual = biblioteca[album] || [];
-      document.getElementById('album-header').innerText = album;
+    function abrirAlbum(albumKey) {
+      albumActualNombre = albumKey;
+      listaCancionesActuales = bibliotecaNativa[albumKey] || [];
       
-      const container = document.getElementById('songs-container');
-      container.innerHTML = '';
+      document.getElementById('nombre-album-actual').innerText = albumKey;
+      const contenedor = document.getElementById('contenedor-canciones');
+      contenedor.innerHTML = '';
 
-      listaCancionesActual.forEach((song, idx) => {
-        const item = document.createElement('div');
-        item.className = 'song-item';
-        item.innerText = song.nombre || song;
-        item.onclick = () => {
-          marcarBotonActivo(item);
-          indiceCancionActual = idx;
-          playSong(song);
-        };
-        container.appendChild(item);
+      listaCancionesActuales.forEach((cancion, index) => {
+        const item = document.createElement('li');
+        item.className = 'item-cancion';
+        item.onclick = () => reproducirCancion(index);
+        item.innerHTML = `
+          <span>${cancion.nombre}</span>
+          <span>▶</span>
+        `;
+        contenedor.appendChild(item);
       });
 
-      navigateTo('screen-songs');
+      navegarA('vista-canciones');
     }
 
-    function playSong(song) {
-      const nombre = song.nombre || song;
-      const url = song.archivo || song.path || song;
+    // 5.1 REPRODUCCIÓN Y AUTO-PLAY
+    function reproducirCancion(index) {
+      indiceCancionActual = index;
+      const cancion = listaCancionesActuales[indiceCancionActual];
 
-      document.getElementById('player-song-title').innerText = nombre;
-      document.getElementById('player-album-info').innerText = albumActual;
+      if (!cancion) return;
 
-      const playerCover = document.getElementById('player-cover');
-      const playerCoverIcon = document.getElementById('player-cover-icon');
-      const claveAlbum = albumActual.toLowerCase();
-
-      if (covers[claveAlbum]) {
-        playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
-        playerCoverIcon.style.display = 'none';
-      } else {
-        playerCover.style.backgroundImage = 'none';
-        playerCoverIcon.style.display = 'block';
-      }
+      audioPlayer.src = cancion.archivo;
       
-      audioElement.src = url;
-      audioElement.play();
-      document.getElementById('btn-play-pause').innerText = '⏸';
+      // Actualizar datos de pantalla
+      document.getElementById('player-song-title').innerText = cancion.nombre;
+      document.getElementById('player-album-title').innerText = albumActualNombre;
+      
+      const coverSrc = coversNativas[albumActualNombre.toLowerCase()] || 'icon.png';
+      document.getElementById('player-cover-img').src = coverSrc;
 
-      navigateTo('screen-player');
+      navegarA('vista-player');
+
+      // 5.1 Auto-reproducir inmediatamente
+      audioPlayer.play().then(() => {
+        actualizarBotonPlayPause(true);
+      }).catch(e => console.log("Error al reproducir audio:", e));
     }
 
-    function togglePlayMusic() {
-      if (audioElement.paused) {
-        audioElement.play();
-        document.getElementById('btn-play-pause').innerText = '⏸';
+    function togglePlayPause() {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        actualizarBotonPlayPause(true);
       } else {
-        audioElement.pause();
-        document.getElementById('btn-play-pause').innerText = '▶';
+        audioPlayer.pause();
+        actualizarBotonPlayPause(false);
       }
     }
 
-    function detenerMusica() {
-      audioElement.pause();
-      audioElement.currentTime = 0;
-      document.getElementById('btn-play-pause').innerText = '▶';
+    function actualizarBotonPlayPause(reproduciendo) {
+      document.getElementById('btn-play-pause').innerText = reproduciendo ? '⏸' : '▶';
     }
 
-    function pararYVolverCanciones() {
-      detenerMusica();
-      navigateTo('screen-songs');
-    }
-
-    function prevSong() {
-      if (listaCancionesActual.length === 0) return;
-      indiceCancionActual = (indiceCancionActual - 1 + listaCancionesActual.length) % listaCancionesActual.length;
-      playSong(listaCancionesActual[indiceCancionActual]);
-    }
-
-    function nextSong() {
-      if (listaCancionesActual.length === 0) return;
-      indiceCancionActual = (indiceCancionActual + 1) % listaCancionesActual.length;
-      playSong(listaCancionesActual[indiceCancionActual]);
-    }
-
-    audioElement.addEventListener('ended', nextSong);
-
-    audioElement.addEventListener('timeupdate', () => {
-      if (!isNaN(audioElement.duration)) {
-        seekBar.max = Math.floor(audioElement.duration);
-        seekBar.value = Math.floor(audioElement.currentTime);
-        document.getElementById('current-time').innerText = formatTime(audioElement.currentTime);
-        document.getElementById('total-time').innerText = formatTime(audioElement.duration);
+    function cancionSiguiente() {
+      if (indiceCancionActual + 1 < listaCancionesActuales.length) {
+        reproducirCancion(indiceCancionActual + 1);
+      } else {
+        reproducirCancion(0); // Vuelve al inicio si acaba el álbum
       }
-    });
-
-    seekBar.addEventListener('input', () => { audioElement.currentTime = seekBar.value; });
-
-    /* RADIO */
-    window.addEventListener('DOMContentLoaded', () => {
-      emisorasRadio = Array.from(document.querySelectorAll('#radio-buttons-container .boton-canal'));
-    });
-
-    function playRadio(elemento, url) {
-      marcarBotonActivo(elemento);
-      if (elemento) indiceRadioActual = emisorasRadio.indexOf(elemento);
-      radioAudioElement.src = url;
-      radioAudioElement.play();
-      document.getElementById('btn-radio-play').innerText = '⏸';
     }
 
-    function togglePlayRadio() {
-      if (radioAudioElement.paused) {
-        radioAudioElement.play();
+    function cancionAnterior() {
+      if (indiceCancionActual - 1 >= 0) {
+        reproducirCancion(indiceCancionActual - 1);
+      }
+    }
+
+    // 5.4 Continuar a la siguiente canción al terminar
+    audioPlayer.addEventListener('ended', () => {
+      cancionSiguiente();
+    });
+
+    // 5.5 Parar canción al pulsar "< VOLVER A CANCIONES"
+    function volverACanciones() {
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+      actualizarBotonPlayPause(false);
+      navegarA('vista-canciones');
+    }
+
+    // 5. LÓGICA TV NEWS (Sin poster / Transición limpia)
+    function cambiarCanalTV(url) {
+      tvVideo.removeAttribute('poster');
+      tvVideo.src = url;
+      tvVideo.play().catch(() => {});
+    }
+
+    // LÓGICA RADIO
+    function sintonizarRadio(nombre, url) {
+      document.getElementById('radio-estacion-actual').innerText = nombre;
+      radioPlayer.src = url;
+      radioPlayer.play().then(() => {
+        document.getElementById('btn-radio-play').innerText = '⏸';
+      }).catch(e => console.log(e));
+    }
+
+    function toggleRadioPlay() {
+      if (radioPlayer.paused) {
+        radioPlayer.play();
         document.getElementById('btn-radio-play').innerText = '⏸';
       } else {
-        radioAudioElement.pause();
+        radioPlayer.pause();
         document.getElementById('btn-radio-play').innerText = '▶';
       }
     }
 
-    function prevRadio() {
-      if (emisorasRadio.length === 0) return;
-      indiceRadioActual = (indiceRadioActual - 1 + emisorasRadio.length) % emisorasRadio.length;
-      emisorasRadio[indiceRadioActual].click();
-    }
-
-    function nextRadio() {
-      if (emisorasRadio.length === 0) return;
-      indiceRadioActual = (indiceRadioActual + 1) % emisorasRadio.length;
-      emisorasRadio[indiceRadioActual].click();
-    }
-
-    radioAudioElement.addEventListener('timeupdate', () => {
-      if (!isNaN(radioAudioElement.duration) && isFinite(radioAudioElement.duration)) {
-        radioSeekBar.max = Math.floor(radioAudioElement.duration);
-        radioSeekBar.value = Math.floor(radioAudioElement.currentTime);
-        document.getElementById('radio-total-time').innerText = formatTime(radioAudioElement.duration);
-      } else {
-        radioSeekBar.max = 100;
-        radioSeekBar.value = 100;
-        document.getElementById('radio-total-time').innerText = 'LIVE';
+    // SOLICITAR CARGA NATIVA AL INICIAR
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.AndroidBridge && window.AndroidBridge.cargarMusica) {
+        window.AndroidBridge.cargarMusica();
       }
-      document.getElementById('radio-current-time').innerText = formatTime(radioAudioElement.currentTime);
     });
-
-    function formatTime(seconds) {
-      if (isNaN(seconds)) return "0:00";
-      let min = Math.floor(seconds / 60);
-      let sec = Math.floor(seconds % 60);
-      return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-    }
   </script>
 </body>
 </html>
