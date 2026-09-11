@@ -99,7 +99,6 @@
       opacity: 0.8;
     }
 
-
     /* ==========================================
        PANTALLA HOME / MENÚ PRINCIPAL
        =========================================== */
@@ -127,7 +126,6 @@
       background-color: #FF8C00;
     }
 
-
     /* ==========================================
        PANTALLA TV-NEWS (MODO VERTICAL)
        =========================================== */
@@ -153,7 +151,6 @@
       height: 100% !important;
     }
 
-    /* OCULTAR BOTÓN DE PLAY SOBREIMPRESO */
     .vjs-big-play-button {
       display: none !important;
     }
@@ -182,7 +179,6 @@
     .boton-canal.active-item {
       background-color: #FF8C00 !important;
     }
-
 
     /* ==========================================
        PANTALLA TV-NEWS MODO HORIZONTAL (LANDSCAPE)
@@ -232,18 +228,6 @@
         background: #000000 !important;
       }
 
-      .tv-video-box .video-js video.vjs-tech {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: contain !important;
-        border-radius: 8px !important;
-      }
-
-      .tv-video-box .vjs-control-bar {
-        bottom: 0 !important;
-        background: rgba(0, 0, 0, 0.7) !important;
-      }
-
       .tv-controls-box {
         width: 180px !important;
         height: 100dvh !important;
@@ -278,7 +262,6 @@
     .btn-nav-back-landscape {
       display: none;
     }
-
 
     /* ==========================================
        PANTALLA MÚSICA - ÁLBUMES Y CANCIONES
@@ -338,7 +321,6 @@
     #folder-input {
       display: none;
     }
-
 
     /* ==========================================
        PANTALLA MÚSICA - REPRODUCTOR
@@ -478,7 +460,6 @@
       margin-top: 15px;
     }
 
-
     /* ==========================================
        PANTALLA RADIO
        =========================================== */
@@ -498,10 +479,7 @@
       margin-bottom: 25px;
     }
 
-
-    /* ==========================================
-       MODO FAKE / FULLSCREEN PARA TV
-       =========================================== */
+    /* MODO FAKE FULLSCREEN PARA TV */
     .tv-video-box.fake-fullscreen {
       position: fixed !important;
       top: 0 !important;
@@ -513,12 +491,6 @@
       z-index: 999999 !important;
       padding: 0 !important;
       margin: 0 !important;
-      border-radius: 0 !important;
-      background-color: #000000 !important;
-    }
-
-    .tv-video-box.fake-fullscreen .video-js,
-    .tv-video-box.fake-fullscreen .vjs-tech {
       border-radius: 0 !important;
       background-color: #000000 !important;
     }
@@ -665,7 +637,7 @@
 
   </div>
 
-  <!-- PUENTE Y CONEXIÓN CON MOTOR DE MÚSICA LOCAL NATIVO DE GEMINI-CODE -->
+  <!-- PUENTE Y CONEXIÓN CON MOTOR DE MÚSICA LOCAL NATIVO -->
   <script src="bridge-music.js"></script>
 
   <script>
@@ -686,14 +658,11 @@
     const seekBar = document.getElementById('seek-bar');
     const radioSeekBar = document.getElementById('radio-seek-bar');
 
-    /* CERRAR APLICACIÓN */
     function salirDeAplicacion() {
       if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
         Capacitor.Plugins.App.exitApp();
       } else if (navigator.app && navigator.app.exitApp) {
         navigator.app.exitApp();
-      } else if (navigator.device && navigator.device.exitApp) {
-        navigator.device.exitApp();
       } else {
         window.close();
       }
@@ -707,19 +676,13 @@
 
     function activarFullscreen() {
       const elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(() => {});
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-      }
+      if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
+      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
     }
 
     function salirFullscreen() {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
+      if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
     }
 
     tvPlayer.ready(function() {
@@ -743,22 +706,9 @@
           e.stopPropagation();
           const videoBox = document.querySelector('.tv-video-box');
           const esFull = videoBox.classList.toggle('fake-fullscreen');
-          if (esFull) {
-            activarFullscreen();
-          } else {
-            salirFullscreen();
-          }
+          if (esFull) activarFullscreen();
+          else salirFullscreen();
         });
-      }
-    });
-
-    window.addEventListener('orientationchange', () => {
-      if (document.getElementById('screen-tv').classList.contains('active')) {
-        if (window.orientation === 90 || window.orientation === -90) {
-          activarFullscreen();
-        } else {
-          salirFullscreen();
-        }
       }
     });
 
@@ -798,19 +748,34 @@
       elemento.classList.add('active-item');
     }
 
-
     /* ==========================================
        GESTIÓN DE MÚSICA Y CARPETAS
        =========================================== */
     function abrirSeleccionMusica() {
-      if (typeof window.cargarMusicaDesdeBridge === 'function') {
-        window.cargarMusicaDesdeBridge();
-      } else if (Object.keys(biblioteca).length > 0) {
+      // 1. Si hay biblioteca en memoria, entramos directamente a los álbumes
+      if (Object.keys(biblioteca).length > 0) {
         navigateTo('screen-albums');
+        return;
+      }
+
+      // 2. Si existe la función del puente nativo bridge-music.js la invocamos
+      if (typeof window.abrirSeleccionMusicaNativa === 'function') {
+        window.abrirSeleccionMusicaNativa();
+      } else if (typeof window.cargarBibliotecaBridge === 'function') {
+        window.cargarBibliotecaBridge();
       } else {
+        // 3. Fallback a selector web de carpetas
         document.getElementById('folder-input').click();
       }
     }
+
+    /* Recibir datos desde bridge-music.js si se procesa nativamente */
+    window.recibirBibliotecaNativa = function(bibliotecaNativa, coversNativas) {
+      biblioteca = bibliotecaNativa || {};
+      covers = coversNativas || {};
+      renderAlbums();
+      navigateTo('screen-albums');
+    };
 
     function cargarBibliotecaLocal(event) {
       const files = event.target.files;
@@ -854,7 +819,6 @@
       return nombreOriginal.replace(/\s*\((.*?)\)\s*/g, "\n($1)\n");
     }
 
-    /* ORDENACIÓN DE A A Z */
     function renderAlbums() {
       const container = document.getElementById('albums-container');
       container.innerHTML = '';
@@ -890,7 +854,7 @@
 
     function showSongs(album) {
       albumActual = album;
-      listaCancionesActual = biblioteca[album];
+      listaCancionesActual = biblioteca[album] || [];
       document.getElementById('album-header').innerText = album;
       
       const container = document.getElementById('songs-container');
@@ -969,7 +933,6 @@
       playSong(listaCancionesActual[indiceCancionActual]);
     }
 
-    /* CADENA DE REPRODUCCIÓN AUTOMÁTICA */
     audioElement.addEventListener('ended', nextSong);
 
     audioElement.addEventListener('timeupdate', () => {
@@ -984,7 +947,6 @@
     seekBar.addEventListener('input', () => {
       audioElement.currentTime = seekBar.value;
     });
-
 
     /* ==========================================
        GESTIÓN DE RADIO
