@@ -25,10 +25,10 @@ var tvPlayer = videojs('player', { fluid: true, html5: { vhs: { overrideNative: 
 
 function loadChannel(url, btn) {
   tvPlayer.pause();
-  tvPlayer.reset();
   tvPlayer.src({ src: url, type: 'application/x-mpegURL' });
-  tvPlayer.load();
-  tvPlayer.play().catch(function(e){});
+  tvPlayer.play().catch(function(e) {
+    console.log("Error al cargar canal TV:", e);
+  });
   marcarBotonActivo(btn);
 }
 
