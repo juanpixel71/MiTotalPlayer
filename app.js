@@ -21,13 +21,18 @@ function salirDeAplicacion() {
   }
 }
 
-var tvPlayer = videojs('player', { fluid: true, html5: { vhs: { overrideNative: true } } });
+var tvPlayer = videojs('player', { 
+  fluid: true, 
+  html5: { vhs: { overrideNative: true } } 
+});
 
+/* Transición limpia de TV sin reseteos bruscos ni iconos */
 function loadChannel(url, btn) {
-  tvPlayer.pause();
   tvPlayer.src({ src: url, type: 'application/x-mpegURL' });
-  tvPlayer.play().catch(function(e) {
-    console.log("Error al cargar canal TV:", e);
+  tvPlayer.ready(function() {
+    tvPlayer.play().catch(function(e) {
+      console.log("Error al cargar canal TV:", e);
+    });
   });
   marcarBotonActivo(btn);
 }
@@ -126,6 +131,7 @@ function showSongs(album) {
   navigateTo('screen-songs');
 }
 
+/* Reproducción de Música con autoplay asegurado */
 function playSong(song) {
   const nombre = song.nombre || song;
   const url = song.archivo || song.path || song;
@@ -137,10 +143,6 @@ function playSong(song) {
   const playerCoverIcon = document.getElementById('player-cover-icon');
   const claveAlbum = albumActual.toLowerCase();
 
-  // Tamaño ampliado de portada (260px)
-  playerCover.style.width = '260px';
-  playerCover.style.height = '260px';
-
   if (covers[claveAlbum]) {
     playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
     playerCoverIcon.style.display = 'none';
@@ -150,11 +152,16 @@ function playSong(song) {
   }
   
   audioElement.src = url;
+  audioElement.load();
   
-  // Auto-play automático al seleccionar canción
-  audioElement.play().then(() => {
-    document.getElementById('btn-play-pause').innerText = '⏸';
-  }).catch(e => console.log("Error al reproducir:", e));
+  let playPromise = audioElement.play();
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      document.getElementById('btn-play-pause').innerText = '⏸';
+    }).catch(error => {
+      console.log("Autoplay bloqueado o error al reproducir:", error);
+    });
+  }
 
   navigateTo('screen-player');
 }
@@ -176,7 +183,7 @@ function detenerMusica() {
 }
 
 function pararYVolverCanciones() {
-  detenerMusica(); // Detiene el audio y resetea el botón
+  detenerMusica();
   navigateTo('screen-songs');
 }
 
