@@ -28,10 +28,14 @@ jobs:
       run: |
         npm install
 
-    - name: Force Clean and Rebuild Android Platform
+    - name: Clean and Rebuild Android Project
       run: |
         rm -rf android
         npx cap add android
+
+    - name: Generate App Icons from icon.png
+      run: |
+        npx capacitor-assets generate --android --icon
 
     - name: Sync Web Assets to Native Project
       run: |
