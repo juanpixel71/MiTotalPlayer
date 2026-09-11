@@ -37,11 +37,9 @@
       flex-direction: column;
       overflow: hidden;
       background-color: #3C3C3B;
-      /* MARGEN SUPERIOR PARA LIBRAR EL NOTCH/CÁMARA EN VERTICAL */
       padding-top: max(env(safe-area-inset-top), 24px);
     }
 
-    /* HEADER BAJADO PARA EVITAR EL NOTCH */
     .header {
       background-color: #FF8C00;
       color: #FFFFFF;
@@ -100,7 +98,6 @@
       opacity: 0.8;
     }
 
-
     /* ==========================================
        PANTALLA HOME
        =========================================== */
@@ -128,14 +125,13 @@
       background-color: #FF8C00;
     }
 
-
     /* ==========================================
-       PANTALLA TV-NEWS (MODO VERTICAL)
+       PANTALLA TV-NEWS (VERTICAL)
        =========================================== */
     .tv-container {
       display: flex;
       flex-direction: column;
-      gap: 18px; /* MAYOR SEPARACIÓN ENTRE REPRODUCTOR Y BOTONES */
+      gap: 18px;
       flex: 1;
       min-height: 0;
     }
@@ -147,6 +143,7 @@
       border-radius: 8px;
       flex-shrink: 0;
       overflow: hidden;
+      position: relative;
     }
 
     .video-js {
@@ -155,7 +152,7 @@
     }
 
     .tv-controls-box {
-      margin-top: 6px; /* MARGEN ADICIONAL PARA NO PEGARSE AL VÍDEO */
+      margin-top: 6px;
       flex: 1;
       overflow-y: auto;
     }
@@ -185,9 +182,8 @@
       background-color: #FF8C00 !important;
     }
 
-
     /* ==========================================
-       PANTALLA TV-NEWS MODO HORIZONTAL (LANDSCAPE)
+       PANTALLA TV-NEWS MODO HORIZONTAL (LANDSCAPE RESTAURADO)
        =========================================== */
     @media (orientation: landscape) {
       .app-container {
@@ -218,45 +214,42 @@
         padding-left: env(safe-area-inset-left) !important;
         padding-right: env(safe-area-inset-right) !important;
         gap: 0 !important;
-        box-sizing: border-box !important;
       }
 
       .tv-video-box {
         flex: 1 !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
-        padding: 4px !important;
-        box-sizing: border-box !important;
-        background-color: #3C3C3B !important;
+        padding: 0 !important;
+        background-color: #000000 !important;
         display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
       }
 
       .tv-video-box .video-js {
         width: 100% !important;
-        height: 100% !important;
-        max-height: 100% !important;
-        border-radius: 8px !important;
-        overflow: hidden !important;
-        background: #000000 !important;
+        height: calc(100% - 40px) !important; /* REVERVA ESPACIO INFERIOR */
       }
 
-      .tv-video-box .video-js video.vjs-tech {
+      /* UBICACIÓN DE CONTROLES DEBAJO DEL VÍDEO */
+      .tv-video-box .vjs-control-bar {
+        position: relative !important;
+        display: flex !important;
+        height: 40px !important;
+        background-color: #000000 !important;
+        bottom: 0 !important;
         width: 100% !important;
-        height: 100% !important;
-        object-fit: contain !important;
-        border-radius: 8px !important;
+        z-index: 10 !important;
       }
 
       .tv-controls-box {
-        width: 180px !important;
+        width: 220px !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
         background-color: #3C3C3B !important;
-        padding: 4px 6px 4px 0 !important;
+        padding: 8px !important;
         margin-top: 0 !important;
-        box-sizing: border-box !important;
         overflow-y: auto !important;
         flex-shrink: 0 !important;
       }
@@ -264,15 +257,14 @@
       .tv-controls-box .grid-buttons {
         display: flex !important;
         flex-direction: column !important;
-        gap: 6px !important;
+        gap: 8px !important;
       }
 
       .tv-controls-box .boton-canal {
-        height: 40px !important;
+        padding: 10px !important;
         font-size: 0.85rem !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         width: 100% !important;
-        flex-shrink: 0 !important;
       }
 
       .btn-nav-back-landscape {
@@ -284,7 +276,6 @@
     .btn-nav-back-landscape {
       display: none;
     }
-
 
     /* ==========================================
        PANTALLA MÚSICA
@@ -316,7 +307,6 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      position: relative;
     }
 
     .album-card-clean.has-cover {
@@ -352,14 +342,12 @@
       display: none;
     }
 
-
     /* ==========================================
        PANTALLA REPRODUCTOR MÚSICA
        =========================================== */
     #screen-player {
       height: 100%;
       width: 100%;
-      box-sizing: border-box;
     }
 
     #screen-player .view-content {
@@ -367,7 +355,6 @@
       flex-direction: column;
       height: 100%;
       padding: 10px !important;
-      box-sizing: border-box;
     }
 
     .player-view-drive {
@@ -472,7 +459,6 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background-color 0.2s;
     }
 
     .btn-square.btn-square-main {
@@ -481,11 +467,6 @@
       background-color: #FF8C00;
       font-size: 2.7rem;
     }
-
-    .btn-square:active {
-      background-color: #FF8C00;
-    }
-
 
     /* ==========================================
        PANTALLA RADIO
@@ -506,10 +487,7 @@
       margin-bottom: 15px;
     }
 
-
-    /* ==========================================
-       MODO FAKE FULLSCREEN PARA TV
-       =========================================== */
+    /* MODO FAKE FULLSCREEN */
     .tv-video-box.fake-fullscreen {
       position: fixed !important;
       top: 0 !important;
@@ -519,15 +497,6 @@
       width: 100vw !important;
       height: 100dvh !important;
       z-index: 999999 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      border-radius: 0 !important;
-      background-color: #000000 !important;
-    }
-
-    .tv-video-box.fake-fullscreen .video-js,
-    .tv-video-box.fake-fullscreen .vjs-tech {
-      border-radius: 0 !important;
       background-color: #000000 !important;
     }
   </style>
@@ -536,6 +505,7 @@
 
   <div class="app-container">
     
+    <!-- PANTALLA HOME -->
     <div id="screen-home" class="screen active">
       <div class="header">MI TOTAL PLAYER</div>
       <div class="view-content" style="justify-content: space-between; gap: 10px;">
@@ -551,9 +521,13 @@
         <button class="btn-main-home" onclick="navigateTo('screen-radio')">
           <span>📻</span> RADIO
         </button>
+
+        <!-- BOTÓN SALIR DEL PLAYER -->
+        <button class="btn-nav-back" onclick="salirAplicacion()">&lt; SALIR DEL PLAYER</button>
       </div>
     </div>
 
+    <!-- PANTALLA TV-NEWS -->
     <div id="screen-tv" class="screen">
       <div class="header">TV-NEWS</div>
       <div class="view-content">
@@ -582,6 +556,7 @@
       </div>
     </div>
 
+    <!-- PANTALLA ÁLBUMES -->
     <div id="screen-albums" class="screen">
       <div class="header">ÁLBUMES</div>
       <div class="view-content">
@@ -590,6 +565,7 @@
       </div>
     </div>
 
+    <!-- PANTALLA CANCIONES -->
     <div id="screen-songs" class="screen">
       <div id="album-header" class="header">NOMBRE DEL ÁLBUM</div>
       <div class="view-content">
@@ -598,11 +574,11 @@
       </div>
     </div>
 
+    <!-- PANTALLA REPRODUCTOR MÚSICA -->
     <div id="screen-player" class="screen">
       <div class="header">REPRODUCIENDO</div>
       <div class="view-content">
         <div class="player-view-drive">
-          
           <div class="album-cover-drive" id="player-cover-box">
             <span id="player-cover-icon" style="font-size: 5rem; color: #FFFFFF;">🎵</span>
           </div>
@@ -631,10 +607,10 @@
       </div>
     </div>
 
+    <!-- PANTALLA RADIO -->
     <div id="screen-radio" class="screen">
       <div class="header">RADIO</div>
       <div class="view-content">
-        
         <div class="radio-display">
           <span style="font-size: 4rem;">📻</span>
         </div>
@@ -691,32 +667,20 @@
       }
     }, false);
 
+    // CERRAR LA APLICACIÓN
+    function salirAplicacion() {
+      if (navigator.app && navigator.app.exitApp) {
+        navigator.app.exitApp();
+      } else if (navigator.device && navigator.device.exitApp) {
+        navigator.device.exitApp();
+      } else {
+        window.close();
+      }
+    }
+
     var tvPlayer = videojs('player', {
       fluid: true,
       html5: { vhs: { overrideNative: true } }
-    });
-
-    tvPlayer.ready(function() {
-      tvPlayer.enterFullWindow = function() {
-        const videoBox = document.querySelector('.tv-video-box');
-        if (videoBox) videoBox.classList.add('fake-fullscreen');
-      };
-
-      tvPlayer.exitFullWindow = function() {
-        const videoBox = document.querySelector('.tv-video-box');
-        if (videoBox) videoBox.classList.remove('fake-fullscreen');
-      };
-
-      const fsBtn = tvPlayer.controlBar.fullscreenToggle;
-      if (fsBtn) {
-        fsBtn.off('click');
-        fsBtn.on('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          const videoBox = document.querySelector('.tv-video-box');
-          videoBox.classList.toggle('fake-fullscreen');
-        });
-      }
     });
 
     function loadChannel(url, btn) {
@@ -749,9 +713,8 @@
       elemento.classList.add('active-item');
     }
 
-
     /* ==========================================
-       ESCANER DE MÚSICA CORREGIDO CON PERMISOS Y MULTI-RUTA
+       GESTIÓN DE MÚSICA Y RUTAS ANDROID
        =========================================== */
     function abrirSeleccionMusica() {
       if (Object.keys(biblioteca).length > 0) {
@@ -760,55 +723,37 @@
       }
 
       if (window.cordova && window.resolveLocalFileSystemURL) {
-        solicitarPermisosYBuscar();
-        return;
+        intentarLeerDirectorioRaiz();
+      } else {
+        document.getElementById('folder-input').click();
       }
-
-      document.getElementById('folder-input').click();
     }
 
-    function solicitarPermisosYBuscar() {
-      var permissions = cordova.plugins.permissions;
-      var listaPermisos = [
-        permissions.READ_EXTERNAL_STORAGE,
-        permissions.READ_MEDIA_AUDIO,
-        permissions.READ_MEDIA_IMAGES
-      ];
-
-      permissions.requestPermissions(listaPermisos, function(status) {
-        probarRutasMusica();
-      }, function() {
-        probarRutasMusica();
-      });
-    }
-
-    function probarRutasMusica() {
-      // Intentar múltiples sintaxis de rutas para Android 10, 12, 13 y 14
-      let posiblesRutas = [
-        "file:///sdcard/MiMusica/",
+    function intentarLeerDirectorioRaiz() {
+      // Rutas de búsqueda estándar en almacenamiento interno
+      let rutas = [
         "file:///storage/emulated/0/MiMusica/",
-        cordova.file.externalRootDirectory + "MiMusica/"
+        "file:///sdcard/MiMusica/"
       ];
 
-      let intento = 0;
+      let idx = 0;
 
-      function intentarSiguiente() {
-        if (intento >= posiblesRutas.length) {
-          alert('No se pudo acceder a la carpeta /MiMusica. Asegúrate de haberla creado en la raíz de la memoria interna.');
+      function probarRuta() {
+        if (idx >= rutas.length) {
+          // Si Android bloquea la ruta estática, abrir explorador de archivos nativo
+          document.getElementById('folder-input').click();
           return;
         }
 
-        let ruta = posiblesRutas[intento];
-        intento++;
-
-        window.resolveLocalFileSystemURL(ruta, function(dirEntry) {
+        window.resolveLocalFileSystemURL(rutas[idx], function(dirEntry) {
           escaneoCompletoCordova(dirEntry);
-        }, function(err) {
-          intentarSiguiente();
+        }, function() {
+          idx++;
+          probarRuta();
         });
       }
 
-      intentarSiguiente();
+      probarRuta();
     }
 
     function escaneoCompletoCordova(dirEntry) {
@@ -836,8 +781,8 @@
           navigateTo('screen-albums');
         });
 
-      }, function(err) {
-        alert('Error al leer el contenido de /MiMusica');
+      }, function() {
+        document.getElementById('folder-input').click();
       });
     }
 
@@ -886,9 +831,9 @@
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.type.startsWith('audio/') || file.name.endsWith('.mp3') || file.name.endsWith('.m4a')) {
-          const pathSegments = file.webkitRelativePath.split('/');
+          const pathSegments = file.webkitRelativePath ? file.webkitRelativePath.split('/') : [file.name];
           let nombreAlbum = 'Varios';
-          if (pathSegments.length > 2) {
+          if (pathSegments.length > 1) {
             nombreAlbum = pathSegments[pathSegments.length - 2];
           }
 
@@ -914,7 +859,7 @@
       const nombresAlbumes = Object.keys(biblioteca);
 
       if (nombresAlbumes.length === 0) {
-        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron canciones dentro de /MiMusica.</p>';
+        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron canciones en la carpeta seleccionada.</p>';
         return;
       }
 
@@ -1029,7 +974,6 @@
     seekBar.addEventListener('input', () => {
       audioElement.currentTime = seekBar.value;
     });
-
 
     /* ==========================================
        GESTIÓN DE RADIO
