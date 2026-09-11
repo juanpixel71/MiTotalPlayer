@@ -123,12 +123,14 @@ html, body {
 
 .video-js { width: 100% !important; height: 100% !important; }
 
-/* Eliminar círculo de Play, spinners y poster al cambiar de canal */
-.video-js .vjs-big-play-button,
+/* Forzar la ocultación de elementos de carga y póster en Video.js */
+.video-js.vjs-paused .vjs-big-play-button,
 .video-js .vjs-modal-dialog,
 .video-js .vjs-loading-spinner,
-.vjs-poster {
+.video-js .vjs-poster {
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .grid-buttons {
