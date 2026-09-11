@@ -1,0 +1,275 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  border: none !important;
+  outline: none !important;
+}
+
+html, body {
+  width: 100%;
+  height: 100dvh;
+  background-color: #3C3C3B;
+  color: #FFFFFF;
+  overflow: hidden;
+}
+
+.app-container {
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #3C3C3B;
+}
+
+.header {
+  background-color: #FF8C00;
+  color: #FFFFFF;
+  padding: 16px;
+  padding-top: calc(20px + env(safe-area-inset-top, 20px));
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #3C3C3B;
+}
+
+.screen.active {
+  display: flex !important;
+}
+
+.view-content {
+  flex: 1;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.btn-nav-back {
+  background-color: #FF8C00;
+  color: #FFFFFF;
+  padding: 16px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-top: auto;
+  text-decoration: none;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.btn-nav-back:active {
+  opacity: 0.8;
+}
+
+/* HOME */
+.btn-main-home {
+  flex: 1;
+  background-color: #9D9D9C;
+  color: #FFFFFF;
+  border-radius: 12px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-transform: uppercase;
+}
+
+.btn-main-home span { font-size: 3.5rem; }
+.btn-main-home:active { background-color: #FF8C00; }
+
+/* TV */
+.tv-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 1;
+  min-height: 0;
+}
+
+.tv-video-box {
+  width: 100%;
+  height: 220px;
+  background-color: #000000;
+  border-radius: 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.video-js { width: 100% !important; height: 100% !important; }
+
+/* Eliminar círculo de Play, espinners y poster al cambiar de canal */
+.video-js .vjs-big-play-button,
+.video-js .vjs-modal-dialog,
+.video-js .vjs-loading-spinner,
+.vjs-poster {
+  display: none !important;
+}
+
+.grid-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.boton-canal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #9D9D9C;
+  color: #FFFFFF;
+  padding: 14px 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+}
+
+.boton-canal.active-item { background-color: #FF8C00 !important; }
+
+/* HORIZONTAL TV */
+@media (orientation: landscape) {
+  #screen-tv .header, #screen-tv > .view-content > .btn-nav-back { display: none !important; }
+  #screen-tv, #screen-tv .view-content, .tv-container {
+    width: 100vw !important; height: 100dvh !important; max-height: 100dvh !important;
+    padding: 0 !important; margin: 0 !important; background-color: #3C3C3B !important; overflow: hidden !important;
+  }
+  .tv-container { display: flex !important; flex-direction: row !important; align-items: stretch !important; }
+  .tv-video-box {
+    flex: 1 !important; height: 100dvh !important; max-height: 100dvh !important;
+    padding: 6px !important; box-sizing: border-box !important; background-color: #3C3C3B !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+  }
+  .tv-video-box .video-js { width: 100% !important; height: 100% !important; border-radius: 8px !important; background: #000 !important; }
+  .tv-controls-box {
+    width: 180px !important; height: 100dvh !important; background-color: #3C3C3B !important;
+    padding: 6px 6px 6px 0 !important; overflow-y: auto !important; flex-shrink: 0 !important;
+  }
+  .tv-controls-box .grid-buttons { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+  .tv-controls-box .boton-canal { height: 44px !important; font-size: 0.85rem !important; border-radius: 8px !important; width: 100% !important; }
+  .tv-controls-box .btn-nav-back-landscape { display: block !important; margin-top: 5px !important; }
+}
+
+.btn-nav-back-landscape { display: none; }
+
+/* MÚSICA ÁLBUMES Y CANCIONES */
+.albums-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.album-card-clean {
+  background-color: #9D9D9C;
+  color: #FFFFFF;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1.35;
+  white-space: pre-line;
+  word-break: break-word;
+  background-size: cover;
+  background-position: center;
+}
+
+.song-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+.song-item { background-color: #9D9D9C; color: #FFFFFF; padding: 14px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
+
+/* REPRODUCTOR DE MÚSICA AJUSTADO */
+.player-view-drive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 5px 0;
+}
+
+.album-cover-drive {
+  width: 220px;
+  height: 220px;
+  background-color: #9D9D9C;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.track-details-drive { text-align: center; width: 100%; }
+.track-details-drive h3 { font-size: 1.3rem; font-weight: bold; color: #FFFFFF; margin-bottom: 4px; }
+.track-details-drive p { font-size: 1rem; color: #9D9D9C; }
+
+.progress-bar-container { width: 100%; display: flex; align-items: center; gap: 12px; }
+.time-stamp { font-size: 0.9rem; font-weight: bold; color: #FFFFFF; width: 40px; }
+.progress-bar { flex: 1; -webkit-appearance: none; height: 6px; background: #555555; border-radius: 3px; }
+.progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #FF8C00; cursor: pointer; }
+
+.media-controls-square { display: flex; align-items: center; justify-content: center; gap: 18px; width: 100%; }
+.btn-square { width: 85px; height: 85px; border-radius: 12px; background-color: #9D9D9C; color: #FFFFFF; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.btn-square.btn-square-main { width: 95px; height: 95px; background-color: #FF8C00; font-size: 3rem; }
+
+/* RADIO ESPACIADA */
+#screen-radio .view-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.radio-display {
+  width: 100%;
+  height: 180px;
+  background-color: #000000;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Ocultar el botón grande de play y el indicador de carga en la TV */
+.video-js .vjs-big-play-button,
+.video-js .vjs-loading-spinner {
+  display: none !important;
+}
+
+
