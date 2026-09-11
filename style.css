@@ -159,6 +159,12 @@ html, body {
   width: 100%;
   overflow-y: auto;
 }
+
+  /* Margen superior para separar los botones del reproductor en la pantalla de TV vertical */
+#screen-tv .view-content .grid-buttons,
+#screen-tv .view-content .tv-controls-section {
+  margin-top: 20px !important;
+}
  
   #screen-tv .header, #screen-tv > .view-content > .btn-nav-back { display: none !important; }
   #screen-tv, #screen-tv .view-content, .tv-container {
@@ -203,15 +209,24 @@ html, body {
 
 .btn-nav-back-landscape { display: none; }
 
-/* Ocultar el botón de play nativo superpuesto del navegador en el vídeo */
-#tv-video::-webkit-media-controls-start-playback-button {
-  display: none !important;
-  -webkit-appearance: none;
+/* Forzar fondo negro absoluto en la caja y en el vídeo para tapar cualquier icono residual */
+.tv-video-box {
+  background-color: #000000 !important;
+  position: relative !important;
 }
 
-#tv-video::-webkit-media-controls-overlay-play-button {
+#tv-video {
+  background-color: #000000 !important;
+}
+
+/* Ocultar cualquier elemento de sombra o capa de controles que cree el sistema */
+#tv-video::-webkit-media-controls-panel {
   display: none !important;
-  -webkit-appearance: none;
+  opacity: 0 !important;
+}
+
+#tv-video::-webkit-media-controls {
+  display: none !important;
 }
 
 /* MÚSICA ÁLBUMES Y CANCIONES */
