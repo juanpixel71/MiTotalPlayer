@@ -27,6 +27,7 @@ const videoElement = document.getElementById('tv-video');
 let hlsInstance = null;
 
 /* Transición limpia de TV utilizando Hls.js */
+/* Transición limpia de TV utilizando Hls.js con control de errores */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
@@ -37,9 +38,31 @@ function loadChannel(url, btn) {
     hlsInstance = new Hls();
     hlsInstance.loadSource(url);
     hlsInstance.attachMedia(videoElement);
+    
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
       videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
     });
+
+    // Capturar errores de reproducción de HLS para depurar si un enlace falla
+    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+      console.error("Error en Hls.js:", data.type, data.details);
+      if (data.fatal) {
+        switch (data.details) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.log("Error de red intentando recuperar...");
+            hlsInstance.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.log("Error de medios intentando recuperar...");
+            hlsInstance.recoverMediaError();
+            break;
+          default:
+            hlsInstance.destroy();
+            break;
+        }
+      }
+    });
+
   } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
     // Soporte nativo para plataformas como iOS / Safari
     videoElement.src = url;
