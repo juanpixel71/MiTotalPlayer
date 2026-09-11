@@ -66,14 +66,14 @@
     <div id="screen-tv" class="hidden">
         <h2 class="screen-title">TV-NEWS</h2>
         <div class="list-container">
-            <div class="item-card" onclick="playStreaming('https://france24.com')">📺 FRANCE 24</div>
-            <div class="item-card" onclick="playStreaming('https://akamaized.net')">📺 BFM</div>
-            <div class="item-card" onclick="playStreaming('https://bbc.com')">📺 BBC NEWS</div>
-            <div class="item-card" onclick="playStreaming('https://wurl.tv')">📺 CNN</div>
-            <div class="item-card" onclick="playStreaming('https://wurl.tv')">📺 EURONEWS</div>
-            <div class="item-card" onclick="playStreaming('https://footprint.net')">📺 24 HORAS TVE</div>
-            <div class="item-card" onclick="playStreaming('https://footprint.net')">📺 LA 1</div>
-            <div class="item-card" onclick="playStreaming('https://ccma.cat')">📺 3CAT INFO</div>
+            <div class="item-card" onclick="playStreaming('https://news.france24.com/fr/live')">📺 FRANCE 24</div>
+            <div class="item-card" onclick="playStreaming('https://live-bfm.akamaized.net/bpk-tv/bfmtv/default/index.m3u8')">📺 BFM</div>
+            <div class="item-card" onclick="playStreaming('https://vs-cctv-bfi.live.bbc.com/live/index.m3u8')">📺 BBC NEWS</div>
+            <div class="item-card" onclick="playStreaming('https://cnn-cnninternational-1-de.samsung.wurl.tv/playlist.m3u8')">📺 CNN</div>
+            <div class="item-card" onclick="playStreaming('https://euronews-euronews-espanol-1-es.samsung.wurl.tv/playlist.m3u8')">📺 EURONEWS</div>
+            <div class="item-card" onclick="playStreaming('https://rtve-live-cdn.secure.footprint.net/rtvesec/24h/24h_main.m3u8')">📺 24 HORAS TVE</div>
+            <div class="item-card" onclick="playStreaming('https://rtve-live-cdn.secure.footprint.net/rtvesec/la1/la1_main.m3u8')">📺 LA 1</div>
+            <div class="item-card" onclick="playStreaming('https://directes-tv-int.ccma.cat/live-origin/3cat-tv-int/master.m3u8')">📺 3CAT INFO</div>
         </div>
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
@@ -121,10 +121,10 @@
     <div id="screen-radio" class="hidden">
         <h2 class="screen-title">RADIO</h2>
         <div class="list-container">
-            <div class="item-card" onclick="playRadio('https://radiofrance.fr', 'FRANCE INFO')">📻 FRANCE INFO</div>
-            <div class="item-card" onclick="playRadio('https://akamaized.net', 'RFI MONDE')">📻 RFI MONDE</div>
-            <div class="item-card" onclick="playRadio('https://cires21.com', 'RNE 1')">📻 RNE 1</div>
-            <div class="item-card" onclick="playRadio('https://cires21.com', 'RNE 5')">📻 RNE 5</div>
+            <div class="item-card" onclick="playRadio('https://stream.radiofrance.fr/franceinfo/franceinfo_hifi.mp3', 'FRANCE INFO')">📻 FRANCE INFO</div>
+            <div class="item-card" onclick="playRadio('https://rfi-monde-audio-en-direct.akamaized.net/rfi_monde_espanol.mp3', 'RFI MONDE')">📻 RFI MONDE</div>
+            <div class="item-card" onclick="playRadio('https://rne.rtveradio.cires21.com/rne_hc.mp3', 'RNE 1')">📻 RNE 1</div>
+            <div class="item-card" onclick="playRadio('https://rne.rtveradio.cires21.com/radiocinco_hc.mp3', 'RNE 5')">📻 RNE 5</div>
         </div>
         
         <div id="radio-player-box" class="player-container hidden">
@@ -138,6 +138,7 @@
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
 
+    <!-- REPRODUCTOR DE AUDIO AUDIO NATIVO OCULTO -->
     <audio id="audio-player"></audio>
 
     <script>
@@ -163,7 +164,219 @@
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        // FUNCIÓN CLAVE: ESCANEO REAL DE TU CARPETA /MiMusica
+        // BUSCADOR REAL AUTOMÁTICO EN TU DISPOSITIVO
         async function buscarMusicaReal() {
             showScreen('screen-albumes');
             const container = document.getElementById('album-list');
+            container.innerHTML = '<p style="color:#888">Buscando álbumes en tu móvil...</p>';
+
+            if (!window.Capacitor || !window.Capacitor.Plugins.Filesystem) {
+                container.innerHTML = '<p style="color:red">Error: Ejecuta esto dentro de la APK en tu móvil.</p>';
+                return;
+            }
+
+            try {
+                const Filesystem = window.Capacitor.Plugins.Filesystem;
+                
+                const resultado = await Filesystem.readdir({
+                    path: RAIZ_MUSICA,
+                    directory: 'EXTERNAL_STORAGE'
+                });
+
+                listaAlbumesDetectados = resultado.files
+                    .map(f => f.name)
+                    .filter(name => name !== "COVERS" && !name.includes('.'));
+
+                if (listaAlbumesDetectados.length === 0) {
+                    container.innerHTML = '<p style="color:#aaa">No se encontraron carpetas de álbumes en /MiMusica</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                
+                listaAlbumesDetectados.forEach((nombreAlbum) => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.onclick = () => abrirAlbumReal(nombreAlbum);
+
+                    const rutaPortadaNativa = `${RAIZ_MUSICA}/COVERS/${nombreAlbum}.png`;
+                    const coverUrl = window.Capacitor.convertFileSrc(rutaPortadaNativa);
+
+                    const imgContainer = document.createElement('div');
+                    
+                    const img = document.createElement('img');
+                    img.className = 'cover-img';
+                    img.src = coverUrl;
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                        fallbackText.style.display = 'flex';
+                    };
+
+                    const fallbackText = document.createElement('div');
+                    fallbackText.className = 'cover-text-fallback';
+                    fallbackText.innerText = nombreAlbum;
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(fallbackText);
+
+                    const infoText = document.createElement('div');
+                    infoText.innerHTML = `<strong>${nombreAlbum}</strong><br><small style="color:#aaa">Carpeta Local</small>`;
+
+                    card.appendChild(imgContainer);
+                    card.appendChild(infoText);
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                container.innerHTML = `<p style="color:red">Dale permisos de almacenamiento a la App en tu móvil.<br><small>${error.message}</small></p>`;
+            }
+        }
+
+        // LISTAR CANCIONES REALES DEL MÓVIL
+        async function abrirAlbumReal(nombreAlbum) {
+            nombreAlbumActual = nombreAlbum;
+            document.getElementById('album-current-title').innerText = nombreAlbum;
+            const container = document.getElementById('songs-list');
+            container.innerHTML = '<p style="color:#888">Cargando canciones...</p>';
+            showScreen('screen-canciones');
+
+            try {
+                const Filesystem = window.Capacitor.Plugins.Filesystem;
+                const resultado = await Filesystem.readdir({
+                    path: `${RAIZ_MUSICA}/${nombreAlbum}`,
+                    directory: 'EXTERNAL_STORAGE'
+                });
+
+                cancionesAlbumActual = resultado.files
+                    .map(f => f.name)
+                    .filter(name => name.toLowerCase().endsWith('.mp3'));
+
+                if (cancionesAlbumActual.length === 0) {
+                    container.innerHTML = '<p style="color:#aaa">No hay archivos .mp3 en esta carpeta.</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                cancionesAlbumActual.forEach((archivoMp3, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.innerHTML = `🎵 <span>${archivoMp3.replace('.mp3', '')}</span>`;
+                    card.onclick = () => reproducirCancionReal(index);
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                container.innerHTML = '<p style="color:red">Error al abrir la carpeta del álbum.</p>';
+            }
+        }
+
+        // ASIGNAR AUDIO CONVERTIDO
+        function reproducirCancionReal(index) {
+            currentSongIndex = index;
+            const cancionNombre = cancionesAlbumActual[currentSongIndex];
+            const rutaNativaAudio = `${RAIZ_MUSICA}/${nombreAlbumActual}/${cancionNombre}`;
+            
+            audio.src = window.Capacitor.convertFileSrc(rutaNativaAudio);
+            
+            document.getElementById('player-song-title').innerText = cancionNombre.replace('.mp3', '');
+            document.getElementById('player-song-meta').innerText = nombreAlbumActual;
+
+            const coverZone = document.getElementById('player-cover-zone');
+            const rutaPortadaNativa = `${RAIZ_MUSICA}/COVERS/${nombreAlbumActual}.png`;
+            const coverUrl = window.Capacitor.convertFileSrc(rutaPortadaNativa);
+            coverZone.innerHTML = `<img src="${coverUrl}" class="cover-img" style="width:120px; height:120px;" onerror="this.parentElement.innerHTML='🎵'">`;
+
+            showScreen('screen-reproductor');
+            playAudio();
+        }
+
+        function playAudio() {
+            audio.play().then(() => {
+                isPlaying = true;
+                btnPlayPause.innerText = '⏸';
+            }).catch(err => console.log("Error de reproducción:", err));
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                btnPlayPause.innerText = '▶';
+            } else {
+                playAudio();
+            }
+        }
+
+        function nextTrack() {
+            if (cancionesAlbumActual.length === 0) return;
+            if (currentSongIndex < cancionesAlbumActual.length - 1) {
+                reproducirCancionReal(currentSongIndex + 1);
+            } else {
+                reproducirCancionReal(0);
+            }
+        }
+
+        function prevTrack() {
+            if (cancionesAlbumActual.length === 0) return;
+            if (currentSongIndex > 0) {
+                reproducirCancionReal(currentSongIndex - 1);
+            } else {
+                reproducirCancionReal(cancionesAlbumActual.length - 1);
+            }
+        }
+
+        function playStreaming(url) {
+            audio.pause();
+            isPlaying = false;
+            window.open(url, '_blank');
+        }
+
+        function playRadio(url, nombre) {
+            audio.src = url;
+            document.getElementById('radio-current-title').innerText = nombre;
+            document.getElementById('radio-player-box').classList.remove('hidden');
+            audio.play();
+            isPlaying = true;
+            document.getElementById('btn-radio-toggle').innerText = '⏸';
+        }
+
+        function toggleRadio() {
+            const btn = document.getElementById('btn-radio-toggle');
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                btn.innerText = '▶';
+            } else {
+                audio.play();
+                isPlaying = true;
+                btn.innerText = '⏸';
+            }
+        }
+
+        function setupAudioListeners() {
+            audio.addEventListener('timeupdate', () => {
+                if (!audio.duration) return;
+                const pct = (audio.currentTime / audio.duration) * 100;
+                progressBar.value = pct;
+                timeCurrent.innerText = formatTime(audio.currentTime);
+                timeTotal.innerText = formatTime(audio.duration);
+            });
+
+            progressBar.addEventListener('input', () => {
+                if (!audio.duration) return;
+                audio.currentTime = (progressBar.value / 100) * audio.duration;
+            });
+
+            audio.addEventListener('ended', () => {
+                nextTrack();
+            });
+        }
+
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+    </script>
+</body>
+</html>
