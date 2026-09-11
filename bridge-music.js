@@ -4,16 +4,13 @@
 
 let wakeLockSentinel = null;
 
-// Control Inmersivo y StatusBar (Puntos 3.2, 4 y 7)
 window.gestionarModoPantalla = async function(screenId) {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
     try {
-      // Punto 7: Mantener siempre el fondo de barra superior en #3C3C3B
       await Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#3C3C3B' });
     } catch(e){}
   }
 
-  // Puntos 3.2 y 4: Pantalla completa en TV-NEWS y PANTALLA AMPLIADA
   if (screenId === 'screen-tv' || screenId === 'screen-player') {
     if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
       try { await Capacitor.Plugins.StatusBar.hide(); } catch(e){}
@@ -52,7 +49,6 @@ async function abrirSeleccionMusica() {
   }
 }
 
-// Punto 5: Lectura directa desde /storage/emulated/0/MiMusica
 async function cargarBibliotecaNativa() {
   const { Filesystem } = Capacitor.Plugins;
   biblioteca = {};
@@ -68,7 +64,6 @@ async function cargarBibliotecaNativa() {
     for (const item of result.files) {
       const isFolder = item.type === 'directory' || !item.name.includes('.');
       
-      // Si no es la carpeta de COVERS genérica, lo tratamos como Álbum
       if (isFolder && item.name.toUpperCase() !== 'COVERS') {
         const nombreAlbum = item.name;
         biblioteca[nombreAlbum] = [];
@@ -106,7 +101,7 @@ async function cargarBibliotecaNativa() {
       }
     }
 
-    // Buscar en la carpeta /MiMusica/COVERS si existe
+    // Escanear carpeta COVERS genérica si existe
     try {
       const coversFolder = await Filesystem.readdir({
         path: `${RUTA_MIMUSICA}/COVERS`
@@ -121,7 +116,6 @@ async function cargarBibliotecaNativa() {
             path: `${RUTA_MIMUSICA}/COVERS/${coverItem.name}`
           });
           
-          // Asigna la portada al álbum si coincide el nombre
           Object.keys(biblioteca).forEach(album => {
             if (album.toLowerCase() === nombreSinExt.toLowerCase()) {
               window.coversAlbumes[album] = Capacitor.convertFileSrc(imgUri.uri);
@@ -129,9 +123,7 @@ async function cargarBibliotecaNativa() {
           });
         }
       }
-    } catch(e) {
-      console.log("No se encontró la subcarpeta COVERS o está vacía.");
-    }
+    } catch(e) {}
 
     renderAlbumsNativos();
     navigateTo('screen-albums');
@@ -144,7 +136,9 @@ async function cargarBibliotecaNativa() {
 function renderAlbumsNativos() {
   const container = document.getElementById('albums-container');
   container.innerHTML = '';
-  const nombresAlbumes = Object.keys(biblioteca);
+  
+  // Punto 2: Orden de A-Z alfabético
+  const nombresAlbumes = Object.keys(biblioteca).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 
   if (nombresAlbumes.length === 0) {
     container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se detectaron carpetas de álbumes en /MiMusica.</p>';
