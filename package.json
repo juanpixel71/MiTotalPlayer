@@ -1,11 +1,14 @@
 {
-  "name": "mi-total-player",
+  "name": "mi-player",
   "version": "1.0.0",
   "description": "Reproductor de TV, Música y Radio",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@capacitor/android": "^5.0.0",
     "@capacitor/cli": "^5.0.0",
