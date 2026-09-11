@@ -167,10 +167,13 @@ function playSong(song) {
     url = String(song);
   }
 
-  // Asegurar formato de ruta compatible con entornos nativos si es necesario
-  if (url && !url.startsWith('http') && !url.startsWith('file://') && !url.startsWith('content://') && !url.startsWith('capacitor://')) {
-    // Si viene como ruta absoluta limpia del sistema
-    url = 'file://' + url;
+  // Convertir ruta local a formato compatible con Capacitor en Android
+  if (url && !url.startsWith('http') && !url.startsWith('blob:')) {
+    if (typeof Capacitor !== 'undefined' && typeof Capacitor.convertFileSrc === 'function') {
+      url = Capacitor.convertFileSrc(url);
+    } else if (!url.startsWith('file://') && !url.startsWith('content://') && !url.startsWith('capacitor://')) {
+      url = 'file://' + url;
+    }
   }
 
   document.getElementById('player-song-title').innerText = nombre;
@@ -201,6 +204,8 @@ function playSong(song) {
 
   navigateTo('screen-player');
 }
+
+
 
 function togglePlayMusic() {
   if (audioElement.paused) {
