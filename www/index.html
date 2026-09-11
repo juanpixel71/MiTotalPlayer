@@ -3,50 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiPlayer</title>
+    <title>Mi Total Player</title>
     <script src="capacitor.js"></script>
     <style>
-        /* ESTILOS GENERALES Y DISEÑO COMPLETO */
+        /* ESTILOS Y COLORES ORIGINALES DE TU INTERFAZ */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
         body { background-color: #121212; color: white; text-align: center; padding: 20px; }
         .hidden { display: none !important; }
-        button { background: #1DB954; color: white; border: none; padding: 12px 24px; margin: 10px; border-radius: 25px; font-size: 16px; cursor: pointer; font-weight: bold; }
-        button:active { background: #1aa34a; }
+        button { color: white; border: none; padding: 12px 24px; margin: 10px; border-radius: 25px; font-size: 16px; cursor: pointer; font-weight: bold; }
         .back-btn { background: #333; margin-top: 20px; }
         
-        /* PANTALLA HOME */
-        .menu-title { font-size: 24px; margin-bottom: 5px; letter-spacing: 2px; }
-        .menu-subtitle { font-size: 14px; color: #888; margin-bottom: 30px; }
+        /* DISEÑO DE LA PANTALLA PRINCIPAL (HOME) */
+        .menu-title { font-size: 24px; margin-bottom: 5px; letter-spacing: 2px; font-weight: bold; }
+        .menu-subtitle { font-size: 14px; color: #888; margin-bottom: 30px; letter-spacing: 1px; }
         .main-menu { display: flex; flex-direction: column; gap: 15px; max-width: 300px; margin: 0 auto; }
-        .menu-item { font-size: 18px; padding: 15px; border-radius: 10px; text-transform: uppercase; }
+        .menu-item { font-size: 18px; padding: 15px; border-radius: 10px; text-transform: uppercase; text-align: center; }
         .btn-tv { background: #e50914; }
         .btn-musica { background: #1ca0f1; }
         .btn-radio { background: #ff9900; }
 
-        /* PANTALLAS INTERNAS */
-        .screen-title { font-size: 22px; margin-bottom: 20px; color: #1DB954; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        /* DISEÑO DE PANTALLAS INTERNAS Y LISTADOS */
+        .screen-title { font-size: 22px; margin-bottom: 20px; color: white; border-bottom: 1px solid #333; padding-bottom: 10px; text-transform: uppercase; }
         .list-container { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto; max-height: 60vh; overflow-y: auto; padding: 10px; }
         
-        /* TARJETAS DE ELEMENTOS */
+        /* TARJETAS DE ELEMENTOS (TV, ÁLBUMES, CANCIONES) */
         .item-card { background: #1e1e1e; padding: 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 15px; text-align: left; border: 1px solid #282828; }
         .item-card:hover { background: #282828; }
         .cover-img { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; background: #333; }
-        .cover-text-fallback { width: 50px; height: 50px; background: #282828; display: flex; align-items: center; justify-content: center; font-size: 10px; border-radius: 4px; color: #888; text-align: center; padding: 2px; }
+        .cover-text-fallback { width: 50px; height: 50px; background: #282828; display: flex; align-items: center; justify-content: center; font-size: 10px; border-radius: 4px; color: #888; text-align: center; padding: 2px; font-weight: bold; border: 1px dashed #444; }
 
-        /* REPRODUCTORES */
+        /* REPRODUCTOR GRANDE DE MÚSICA */
         .player-container { background: #1e1e1e; padding: 30px; border-radius: 15px; max-width: 350px; margin: 20px auto; border: 1px solid #282828; }
-        .player-icon { font-size: 50px; margin-bottom: 15px; }
-        .track-name { font-size: 20px; margin-bottom: 5px; font-weight: bold; }
+        .player-icon { font-size: 50px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
+        .track-name { font-size: 20px; margin-bottom: 5px; font-weight: bold; color: white; }
         .track-meta { font-size: 14px; color: #aaa; margin-bottom: 20px; }
         
-        /* CONTROLES */
+        /* BARRA DE PROGRESO Y CONTROLES TEMPORALES */
         .progress-area { margin-bottom: 20px; }
         .progress-bar { width: 100%; -webkit-appearance: none; background: #444; height: 6px; border-radius: 3px; outline: none; }
-        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; background: #1DB954; width: 14px; height: 14px; border-radius: 50%; cursor: pointer; }
+        .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; background: white; width: 14px; height: 14px; border-radius: 50%; cursor: pointer; }
         .time-info { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-top: 5px; }
-        .controls { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 15px; }
-        .btn-ctrl { background: none; font-size: 24px; padding: 10px; margin: 0; color: white; }
-        .btn-play { font-size: 36px; color: #1DB954; }
+        
+        /* BOTONERA NATIVA DE REPRODUCCIÓN */
+        .controls { display: flex; justify-content: center; align-items: center; gap: 25px; margin-top: 15px; }
+        .btn-ctrl { background: none; font-size: 28px; padding: 5px; margin: 0; color: white; border: none; cursor: pointer; }
+        .btn-play { font-size: 38px; color: white; }
     </style>
 </head>
 <body>
@@ -61,19 +62,18 @@
             <button class="menu-item btn-radio" onclick="showScreen('screen-radio')">📻 RADIO</button>
         </div>
     </div>
-
     <!-- ================= PANTALLA TV-NEWS ================= -->
     <div id="screen-tv" class="hidden">
         <h2 class="screen-title">TV-NEWS</h2>
         <div class="list-container">
-            <div class="item-card" onclick="playStreaming('https://news.france24.com/fr/live')">📺 FRANCE 24</div>
-            <div class="item-card" onclick="playStreaming('https://live-bfm.akamaized.net/bpk-tv/bfmtv/default/index.m3u8')">📺 BFM</div>
-            <div class="item-card" onclick="playStreaming('https://vs-cctv-bfi.live.bbc.com/live/index.m3u8')">📺 BBC NEWS</div>
-            <div class="item-card" onclick="playStreaming('https://cnn-cnninternational-1-de.samsung.wurl.tv/playlist.m3u8')">📺 CNN</div>
-            <div class="item-card" onclick="playStreaming('https://euronews-euronews-espanol-1-es.samsung.wurl.tv/playlist.m3u8')">📺 EURONEWS</div>
-            <div class="item-card" onclick="playStreaming('https://rtve-live-cdn.secure.footprint.net/rtvesec/24h/24h_main.m3u8')">📺 24 HORAS TVE</div>
-            <div class="item-card" onclick="playStreaming('https://rtve-live-cdn.secure.footprint.net/rtvesec/la1/la1_main.m3u8')">📺 LA 1</div>
-            <div class="item-card" onclick="playStreaming('https://directes-tv-int.ccma.cat/live-origin/3cat-tv-int/master.m3u8')">📺 3CAT INFO</div>
+            <div class="item-card" onclick="playStreaming('https://france24.com')">📺 FRANCE 24</div>
+            <div class="item-card" onclick="playStreaming('https://akamaized.net')">📺 BFM</div>
+            <div class="item-card" onclick="playStreaming('https://bbc.com')">📺 BBC NEWS</div>
+            <div class="item-card" onclick="playStreaming('https://wurl.tv')">📺 CNN</div>
+            <div class="item-card" onclick="playStreaming('https://wurl.tv')">📺 EURONEWS</div>
+            <div class="item-card" onclick="playStreaming('https://footprint.net')">📺 24 HORAS TVE</div>
+            <div class="item-card" onclick="playStreaming('https://footprint.net')">📺 LA 1</div>
+            <div class="item-card" onclick="playStreaming('https://ccma.cat')">📺 3CAT INFO</div>
         </div>
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
@@ -121,16 +121,16 @@
     <div id="screen-radio" class="hidden">
         <h2 class="screen-title">RADIO</h2>
         <div class="list-container">
-            <div class="item-card" onclick="playRadio('https://stream.radiofrance.fr/franceinfo/franceinfo_hifi.mp3', 'FRANCE INFO')">📻 FRANCE INFO</div>
-            <div class="item-card" onclick="playRadio('https://rfi-monde-audio-en-direct.akamaized.net/rfi_monde_espanol.mp3', 'RFI MONDE')">📻 RFI MONDE</div>
-            <div class="item-card" onclick="playRadio('https://rne.rtveradio.cires21.com/rne_hc.mp3', 'RNE 1')">📻 RNE 1</div>
-            <div class="item-card" onclick="playRadio('https://rne.rtveradio.cires21.com/radiocinco_hc.mp3', 'RNE 5')">📻 RNE 5</div>
+            <div class="item-card" onclick="playRadio('https://radiofrance.fr', 'FRANCE INFO')">📻 FRANCE INFO</div>
+            <div class="item-card" onclick="playRadio('https://akamaized.net', 'RFI MONDE')">📻 RFI MONDE</div>
+            <div class="item-card" onclick="playRadio('https://cires21.com', 'RNE 1')">📻 RNE 1</div>
+            <div class="item-card" onclick="playRadio('https://cires21.com', 'RNE 5')">📻 RNE 5</div>
         </div>
         
         <div id="radio-player-box" class="player-container hidden">
             <div class="player-icon">📻</div>
             <h3 id="radio-current-title">Ninguna Emisora</h3>
-            <p style="color:#1DB954; font-size:12px; margin:5px 0;">LIVE</p>
+            <p style="color:#ff9900; font-size:12px; margin:5px 0; font-weight:bold;">LIVE</p>
             <div class="controls">
                 <button class="btn-ctrl btn-play" id="btn-radio-toggle" onclick="toggleRadio()">▶</button>
             </div>
@@ -138,9 +138,7 @@
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
 
-    <!-- REPRODUCTOR DE AUDIO AUDIO NATIVO OCULTO -->
     <audio id="audio-player"></audio>
-
     <script>
         const RAIZ_MUSICA = "/storage/emulated/0/MiMusica";
         let listaAlbumesDetectados = [];
@@ -164,20 +162,26 @@
             document.getElementById(screenId).classList.remove('hidden');
         }
 
-        // BUSCADOR REAL AUTOMÁTICO EN TU DISPOSITIVO
         async function buscarMusicaReal() {
             showScreen('screen-albumes');
             const container = document.getElementById('album-list');
-            container.innerHTML = '<p style="color:#888">Buscando álbumes en tu móvil...</p>';
+            container.innerHTML = '<p style="color:#888; padding: 20px;">Buscando álbumes en tu móvil...</p>';
 
             if (!window.Capacitor || !window.Capacitor.Plugins.Filesystem) {
-                container.innerHTML = '<p style="color:red">Error: Ejecuta esto dentro de la APK en tu móvil.</p>';
+                container.innerHTML = '<p style="color:red; padding: 20px;">Error: Ejecuta esto dentro de la APK en tu móvil.</p>';
                 return;
             }
 
             try {
                 const Filesystem = window.Capacitor.Plugins.Filesystem;
                 
+                try {
+                    const statusPermisos = await Filesystem.requestPermissions();
+                    if (statusPermisos.publicStorage !== 'granted') {
+                        console.log("Permiso denegado.");
+                    }
+                } catch(e) { console.log("Ajustando permisos nativos..."); }
+
                 const resultado = await Filesystem.readdir({
                     path: RAIZ_MUSICA,
                     directory: 'EXTERNAL_STORAGE'
@@ -188,7 +192,7 @@
                     .filter(name => name !== "COVERS" && !name.includes('.'));
 
                 if (listaAlbumesDetectados.length === 0) {
-                    container.innerHTML = '<p style="color:#aaa">No se encontraron carpetas de álbumes en /MiMusica</p>';
+                    container.innerHTML = '<p style="color:#aaa; padding: 20px;">No se encontraron carpetas en /MiMusica</p>';
                     return;
                 }
 
@@ -203,6 +207,7 @@
                     const coverUrl = window.Capacitor.convertFileSrc(rutaPortadaNativa);
 
                     const imgContainer = document.createElement('div');
+                    imgContainer.style.position = 'relative';
                     
                     const img = document.createElement('img');
                     img.className = 'cover-img';
@@ -214,7 +219,8 @@
 
                     const fallbackText = document.createElement('div');
                     fallbackText.className = 'cover-text-fallback';
-                    fallbackText.innerText = nombreAlbum;
+                    fallbackText.innerText = nombreAlbum.substring(0, 8);
+                    fallbackText.style.display = 'none';
 
                     imgContainer.appendChild(img);
                     imgContainer.appendChild(fallbackText);
@@ -228,16 +234,15 @@
                 });
 
             } catch (error) {
-                container.innerHTML = `<p style="color:red">Dale permisos de almacenamiento a la App en tu móvil.<br><small>${error.message}</small></p>`;
+                container.innerHTML = `<p style="color:red; padding: 20px;">Dale permisos de almacenamiento a la App desde Ajustes del móvil.<br><br><small>${error.message}</small></p>`;
             }
         }
 
-        // LISTAR CANCIONES REALES DEL MÓVIL
         async function abrirAlbumReal(nombreAlbum) {
             nombreAlbumActual = nombreAlbum;
             document.getElementById('album-current-title').innerText = nombreAlbum;
             const container = document.getElementById('songs-list');
-            container.innerHTML = '<p style="color:#888">Cargando canciones...</p>';
+            container.innerHTML = '<p style="color:#888; padding: 20px;">Cargando canciones...</p>';
             showScreen('screen-canciones');
 
             try {
@@ -252,7 +257,7 @@
                     .filter(name => name.toLowerCase().endsWith('.mp3'));
 
                 if (cancionesAlbumActual.length === 0) {
-                    container.innerHTML = '<p style="color:#aaa">No hay archivos .mp3 en esta carpeta.</p>';
+                    container.innerHTML = '<p style="color:#aaa; padding: 20px;">No hay archivos .mp3</p>';
                     return;
                 }
 
@@ -266,11 +271,10 @@
                 });
 
             } catch (error) {
-                container.innerHTML = '<p style="color:red">Error al abrir la carpeta del álbum.</p>';
+                container.innerHTML = '<p style="color:red; padding: 20px;">Error al abrir la carpeta.</p>';
             }
         }
 
-        // ASIGNAR AUDIO CONVERTIDO
         function reproducirCancionReal(index) {
             currentSongIndex = index;
             const cancionNombre = cancionesAlbumActual[currentSongIndex];
@@ -284,7 +288,7 @@
             const coverZone = document.getElementById('player-cover-zone');
             const rutaPortadaNativa = `${RAIZ_MUSICA}/COVERS/${nombreAlbumActual}.png`;
             const coverUrl = window.Capacitor.convertFileSrc(rutaPortadaNativa);
-            coverZone.innerHTML = `<img src="${coverUrl}" class="cover-img" style="width:120px; height:120px;" onerror="this.parentElement.innerHTML='🎵'">`;
+            coverZone.innerHTML = `<img src="${coverUrl}" class="cover-img" style="width:120px; height:120px; border-radius:8px;" onerror="this.parentElement.innerHTML='🎵'">`;
 
             showScreen('screen-reproductor');
             playAudio();
@@ -294,7 +298,7 @@
             audio.play().then(() => {
                 isPlaying = true;
                 btnPlayPause.innerText = '⏸';
-            }).catch(err => console.log("Error de reproducción:", err));
+            }).catch(err => console.log("Error:", err));
         }
 
         function togglePlay() {
@@ -372,11 +376,8 @@
             });
         }
 
-        function formatTime(secs) {
-            const m = Math.floor(secs / 60);
-            const s = Math.floor(secs % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-    </script>
-</body>
-</html>
+function formatTime(secs) {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
