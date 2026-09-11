@@ -31,12 +31,5 @@
             <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
         </config-file>
-
-        <!-- CORRECCIÓN DE NOTCH (SIN BORDES) -->
-        <edit-config file="app/src/main/res/values/styles.xml" mode="merge" target="/resources/style[@name='MainActivityTheme']">
-            <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-            <item name="android:windowTranslucentStatus">true</item>
-            <item name="android:windowTranslucentNavigation">true</item>
-        </edit-config>
     </platform>
 </widget>
