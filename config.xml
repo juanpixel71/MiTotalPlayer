@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.mitotalplayer.app" version="1.0.0" xmlns="http://www.cordova.io/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Mi Total Player</name>
+    <description>Reproductor Unificado de TV, Música y Radio</description>
+    <author email="dev@mitotalplayer.com">Mi Total Player</author>
+    
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-navigation href="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+
+    <!-- PREFERENCIAS DE PANTALLA COMPLETA Y NOTCH -->
+    <preference name="Fullscreen" value="true" />
+    <preference name="HideKeyboardFormAccessoryBar" value="true" />
+    <preference name="StatusBarOverlaysWebView" value="true" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+    <preference name="KeepRunning" value="true" />
+
+    <!-- PLUGINS NATIVOS CORDOVA -->
+    <plugin name="cordova-plugin-file" spec="~8.0.0" />
+    <plugin name="cordova-plugin-statusbar" spec="~3.0.0" />
+    <plugin name="cordova-plugin-fullscreen" spec="~1.3.0" />
+
+    <platform name="android">
+        <allow-intent href="market:*" />
+        
+        <!-- PERMISOS DE ALMACENAMIENTO PARA /MiMusica -->
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+        </config-file>
+
+        <!-- CORRECCIÓN DE NOTCH (SIN BORDES) -->
+        <edit-config file="app/src/main/res/values/styles.xml" mode="merge" target="/resources/style[@name='MainActivityTheme']">
+            <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+            <item name="android:windowTranslucentStatus">true</item>
+            <item name="android:windowTranslucentNavigation">true</item>
+        </edit-config>
+    </platform>
+</widget>
