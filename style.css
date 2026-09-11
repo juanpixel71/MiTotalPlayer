@@ -104,14 +104,6 @@ html, body {
 .btn-main-home:active { background-color: #FF8C00; }
 
 /* TV */
-.tv-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  flex: 1;
-  min-height: 0;
-}
-
 .tv-video-box {
   width: 100%;
   height: 220px;
@@ -119,19 +111,18 @@ html, body {
   border-radius: 8px;
   flex-shrink: 0;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.video-js { width: 100% !important; height: 100% !important; }
-
-/* Forzar la ocultación de elementos de carga y póster en Video.js */
-.video-js.vjs-paused .vjs-big-play-button,
-.video-js .vjs-modal-dialog,
-.video-js .vjs-loading-spinner,
-.video-js .vjs-poster {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
+#tv-video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  background-color: #000000;
 }
+
 
 .grid-buttons {
   display: grid;
@@ -155,7 +146,7 @@ html, body {
 
 .boton-canal.active-item { background-color: #FF8C00 !important; }
 
-/* HORIZONTAL TV - PUNTO 2 CORREGIDO */
+/* HORIZONTAL TV HLS */
 @media (orientation: landscape) {
   #screen-tv .header, #screen-tv > .view-content > .btn-nav-back { display: none !important; }
   #screen-tv, #screen-tv .view-content, .tv-container {
@@ -166,9 +157,12 @@ html, body {
   .tv-video-box {
     flex: 1 !important; height: 100dvh !important; max-height: 100dvh !important;
     padding: 6px !important; box-sizing: border-box !important; background-color: #3C3C3B !important;
-    display: flex !important; align-items: center !important; justify-content: center !important;
   }
-  .tv-video-box .video-js { width: 100% !important; height: 100% !important; border-radius: 8px !important; background: #000 !important; }
+  #tv-video {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 8px !important;
+  }
   .tv-controls-box {
     width: 180px !important; height: 100dvh !important; background-color: #3C3C3B !important;
     padding: 6px 6px 6px 0 !important; overflow-y: auto !important; flex-shrink: 0 !important;
