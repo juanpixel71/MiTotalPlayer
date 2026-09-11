@@ -30,8 +30,8 @@ jobs:
       - name: Construir Carpeta Web
         run: npm run build
 
-      - name: Añadir Plataforma Android
-        run: npx cap add android
+      - name: Sincronizar Capacitor Android
+        run: npx cap sync android
 
       # Punto 6: Icono transparente adaptable al sistema
       - name: Generar Iconos de la Aplicación
