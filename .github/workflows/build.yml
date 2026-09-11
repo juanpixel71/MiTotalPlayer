@@ -29,14 +29,18 @@ jobs:
       - name: Instalar dependencias npm
         run: npm install
 
-      - name: Asegurar capacitor.config.json correcto
+      - name: Preparar carpeta www y capacitor.config.json
         run: |
+          mkdir -p www
+          # Copiar archivos del proyecto web a la carpeta www
+          cp -r *.html *.js *.css manifest.json icon.png www/ 2>/dev/null || true
+          
+          # Configurar capacitor para usar www
           cat << 'EOF' > capacitor.config.json
           {
             "appId": "com.mimusica.player",
             "appName": "Mi Total Player",
-            "webDir": ".",
-            "bundledWebRuntime": false
+            "webDir": "www"
           }
           EOF
 
