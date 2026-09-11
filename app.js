@@ -137,6 +137,10 @@ function playSong(song) {
   const playerCoverIcon = document.getElementById('player-cover-icon');
   const claveAlbum = albumActual.toLowerCase();
 
+  // Tamaño ampliado de portada (260px)
+  playerCover.style.width = '260px';
+  playerCover.style.height = '260px';
+
   if (covers[claveAlbum]) {
     playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
     playerCoverIcon.style.display = 'none';
@@ -146,8 +150,11 @@ function playSong(song) {
   }
   
   audioElement.src = url;
-  audioElement.play();
-  document.getElementById('btn-play-pause').innerText = '⏸';
+  
+  // Auto-play automático al seleccionar canción
+  audioElement.play().then(() => {
+    document.getElementById('btn-play-pause').innerText = '⏸';
+  }).catch(e => console.log("Error al reproducir:", e));
 
   navigateTo('screen-player');
 }
@@ -169,7 +176,7 @@ function detenerMusica() {
 }
 
 function pararYVolverCanciones() {
-  detenerMusica();
+  detenerMusica(); // Detiene el audio y resetea el botón
   navigateTo('screen-songs');
 }
 
