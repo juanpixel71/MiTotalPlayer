@@ -1,275 +1,363 @@
+/* Reset Básico */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  user-select: none;
-  -webkit-user-select: none;
-  border: none !important;
-  outline: none !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
-  width: 100%;
-  height: 100dvh;
-  background-color: #3C3C3B;
-  color: #FFFFFF;
-  overflow: hidden;
+body {
+    background-color: #0f172a;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
-.app-container {
-  width: 100vw;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background-color: #3C3C3B;
+#app-container {
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    max-height: 900px;
+    background-color: #1e293b;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 }
 
-.header {
-  background-color: #FF8C00;
-  color: #FFFFFF;
-  padding: 16px;
-  padding-top: calc(20px + env(safe-area-inset-top, 20px));
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  flex-shrink: 0;
+/* ----------------------------------------------------
+   1. CORRECCIÓN ICON.PNG EN LA RAÍZ / HEADER
+---------------------------------------------------- */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: #0f172a;
+    border-bottom: 1px solid #334155;
+    z-index: 10;
 }
 
+.brand-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Restricción explícita para evitar que la imagen se desborde */
+.brand-container img.app-icon,
+.icon,
+#icon-img {
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.brand-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+/* Pantallas y Vistas */
 .screen {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #3C3C3B;
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
 }
 
 .screen.active {
-  display: flex !important;
+    display: flex;
 }
 
-.view-content {
-  flex: 1;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  overflow-y: auto;
-  min-height: 0;
+/* ----------------------------------------------------
+   2. BOTÓN VOLVER EN TV-NEWS Y CANALES
+---------------------------------------------------- */
+.tv-news-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
 }
 
-.btn-nav-back {
-  background-color: #FF8C00;
-  color: #FFFFFF;
-  padding: 16px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
-  border-radius: 10px;
-  margin-top: auto;
-  text-decoration: none;
-  text-transform: uppercase;
-  flex-shrink: 0;
+.channel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
 }
 
-.btn-nav-back:active {
-  opacity: 0.8;
+/* Estilo unificado para botones de canal y botón VOLVER */
+.btn-channel, 
+.btn-back,
+#tv-news-screen .btn-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    background-color: #334155;
+    color: #f8fafc;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    width: 100%;
+    box-sizing: border-box;
+    height: 48px; /* Altura estandarizada */
 }
 
-/* HOME */
-.btn-main-home {
-  flex: 1;
-  background-color: #9D9D9C;
-  color: #FFFFFF;
-  border-radius: 12px;
-  font-size: 1.8rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  text-transform: uppercase;
+.btn-channel:hover, 
+.btn-back:hover {
+    background-color: #475569;
 }
 
-.btn-main-home span { font-size: 3.5rem; }
-.btn-main-home:active { background-color: #FF8C00; }
-
-/* TV */
-.tv-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  flex: 1;
-  min-height: 0;
+.btn-channel:active, 
+.btn-back:active {
+    transform: scale(0.98);
 }
 
-.tv-video-box {
-  width: 100%;
-  height: 220px;
-  background-color: #000000;
-  border-radius: 8px;
-  flex-shrink: 0;
-  overflow: hidden;
+/* ----------------------------------------------------
+   3 Y 4. PANTALLA REPRODUCTOR MÚSICA (ESPACIOS)
+---------------------------------------------------- */
+#music-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 16px; /* Balance intermedio */
+    height: 100%;
 }
 
-.video-js { width: 100% !important; height: 100% !important; }
-
-/* Eliminar círculo de Play, espinners y poster al cambiar de canal */
-.video-js .vjs-big-play-button,
-.video-js .vjs-modal-dialog,
-.video-js .vjs-loading-spinner,
-.vjs-poster {
-  display: none !important;
+.music-cover-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
 }
 
-.grid-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 10px;
+.music-cover {
+    width: 220px;
+    height: 220px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
-.boton-canal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #9D9D9C;
-  color: #FFFFFF;
-  padding: 14px 8px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
+.music-info {
+    text-align: center;
+    margin: 8px 0;
 }
 
-.boton-canal.active-item { background-color: #FF8C00 !important; }
-
-/* HORIZONTAL TV */
-@media (orientation: landscape) {
-  #screen-tv .header, #screen-tv > .view-content > .btn-nav-back { display: none !important; }
-  #screen-tv, #screen-tv .view-content, .tv-container {
-    width: 100vw !important; height: 100dvh !important; max-height: 100dvh !important;
-    padding: 0 !important; margin: 0 !important; background-color: #3C3C3B !important; overflow: hidden !important;
-  }
-  .tv-container { display: flex !important; flex-direction: row !important; align-items: stretch !important; }
-  .tv-video-box {
-    flex: 1 !important; height: 100dvh !important; max-height: 100dvh !important;
-    padding: 6px !important; box-sizing: border-box !important; background-color: #3C3C3B !important;
-    display: flex !important; align-items: center !important; justify-content: center !important;
-  }
-  .tv-video-box .video-js { width: 100% !important; height: 100% !important; border-radius: 8px !important; background: #000 !important; }
-  .tv-controls-box {
-    width: 180px !important; height: 100dvh !important; background-color: #3C3C3B !important;
-    padding: 6px 6px 6px 0 !important; overflow-y: auto !important; flex-shrink: 0 !important;
-  }
-  .tv-controls-box .grid-buttons { display: flex !important; flex-direction: column !important; gap: 8px !important; }
-  .tv-controls-box .boton-canal { height: 44px !important; font-size: 0.85rem !important; border-radius: 8px !important; width: 100% !important; }
-  .tv-controls-box .btn-nav-back-landscape { display: block !important; margin-top: 5px !important; }
+.music-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #f8fafc;
 }
 
-.btn-nav-back-landscape { display: none; }
-
-/* MÚSICA ÁLBUMES Y CANCIONES */
-.albums-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  overflow-y: auto;
+.music-artist {
+    font-size: 0.95rem;
+    color: #94a3b8;
 }
 
-.album-card-clean {
-  background-color: #9D9D9C;
-  color: #FFFFFF;
-  aspect-ratio: 1;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  line-height: 1.35;
-  white-space: pre-line;
-  word-break: break-word;
-  background-size: cover;
-  background-position: center;
+/* Control de tiempo y barra de progreso */
+.progress-container {
+    width: 100%;
+    margin: 8px 0;
 }
 
-.song-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-.song-item { background-color: #9D9D9C; color: #FFFFFF; padding: 14px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
-
-/* REPRODUCTOR DE MÚSICA AJUSTADO */
-.player-view-drive {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex: 1;
-  width: 100%;
-  min-height: 0;
-  padding: 5px 0;
+.progress-bar-bg {
+    width: 100%;
+    height: 6px;
+    background-color: #334155;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
 }
 
-.album-cover-drive {
-  width: 220px;
-  height: 220px;
-  background-color: #9D9D9C;
-  border-radius: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-size: cover;
-  background-position: center;
+.progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #38bdf8;
+    border-radius: 3px;
 }
 
-.track-details-drive { text-align: center; width: 100%; }
-.track-details-drive h3 { font-size: 1.3rem; font-weight: bold; color: #FFFFFF; margin-bottom: 4px; }
-.track-details-drive p { font-size: 1rem; color: #9D9D9C; }
+.time-stamps {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 6px;
+}
 
-.progress-bar-container { width: 100%; display: flex; align-items: center; gap: 12px; }
-.time-stamp { font-size: 0.9rem; font-weight: bold; color: #FFFFFF; width: 40px; }
-.progress-bar { flex: 1; -webkit-appearance: none; height: 6px; background: #555555; border-radius: 3px; }
-.progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #FF8C00; cursor: pointer; }
+/* Controles del reproductor de música */
+.music-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 8px;
+}
 
-.media-controls-square { display: flex; align-items: center; justify-content: center; gap: 18px; width: 100%; }
-.btn-square { width: 85px; height: 85px; border-radius: 12px; background-color: #9D9D9C; color: #FFFFFF; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.btn-square.btn-square-main { width: 95px; height: 95px; background-color: #FF8C00; font-size: 3rem; }
+.btn-control {
+    background: none;
+    border: none;
+    color: #f8fafc;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
 
-/* RADIO ESPACIADA */
-#screen-radio .view-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
+.btn-control:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-control.play-main {
+    width: 56px;
+    height: 56px;
+    background-color: #38bdf8;
+    color: #0f172a;
+    font-size: 1.8rem;
+}
+
+.btn-control.play-main:hover {
+    background-color: #7dd3fc;
+}
+
+/* Lista de canciones */
+.song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    border-top: 1px solid #334155;
+    padding-top: 12px;
+}
+
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background-color: #334155;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.song-item:hover {
+    background-color: #475569;
+}
+
+.song-item.active {
+    border-left: 4px solid #38bdf8;
+    background-color: #1e293b;
+}
+
+/* ----------------------------------------------------
+   5. PANTALLA RADIO (SEPARACIÓN DE ELEMENTOS)
+---------------------------------------------------- */
+#radio-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 16px;
+    gap: 20px; /* Separación ordenada */
+    height: 100%;
+}
+
+.radio-box {
+    width: 100%;
+    height: 180px;
+    background-color: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
 .radio-display {
-  width: 100%;
-  height: 180px;
-  background-color: #000000;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 1px;
 }
 
-/* Ocultar el botón grande de play y el indicador de carga en la TV */
-.video-js .vjs-big-play-button,
-.video-js .vjs-loading-spinner {
-  display: none !important;
+.radio-station-name {
+    font-size: 1rem;
+    color: #94a3b8;
 }
 
+.radio-main-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    margin: 8px 0;
+}
 
+.radio-progress-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.radio-secondary-controls {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #334155;
+    margin-top: 10px;
+}
+
+/* Barra de navegación inferior */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #0f172a;
+    border-top: 1px solid #334155;
+    padding: 10px 0;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #94a3b8;
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    color: #38bdf8;
+}
