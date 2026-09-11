@@ -44,11 +44,31 @@ jobs:
       - name: Generar Plataforma Android limpia
         run: npx cap add android
 
+      - name: Inyectar Icono Personalizado (icon.png)
+        run: |
+          if [ -f "icon.png" ]; then
+            cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png 2>/dev/null || true
+          fi
+
       - name: Inyectar Permisos en AndroidManifest.xml
         run: |
-          sed -i '/<application/i \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />' android/app/src/main/AndroidManifest.xml
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />' android/app/src/main/AndroidManifest.xml
 
-      - name: Inyectar MainActivity Nativa (Estructura MiMusica con COVERS en la raíz)
+      - name: Inyectar MainActivity Nativa (Permisos WebView + Escáner)
         run: |
           mkdir -p android/app/src/main/java/com/mimusica/player
           cat << 'EOF' > android/app/src/main/java/com/mimusica/player/MainActivity.java
@@ -57,6 +77,7 @@ jobs:
           import android.os.Bundle;
           import android.os.Environment;
           import android.webkit.JavascriptInterface;
+          import android.webkit.WebSettings;
           import android.webkit.WebView;
           import com.getcapacitor.BridgeActivity;
           import org.json.JSONArray;
@@ -66,9 +87,21 @@ jobs:
           import java.util.Base64;
 
           public class MainActivity extends BridgeActivity {
+
               @Override
               public void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
+                  
+                  // Habilitar acceso a archivos locales para reproducir file://
+                  WebView webView = this.bridge.getWebView();
+                  if (webView != null) {
+                      WebSettings settings = webView.getSettings();
+                      settings.setAllowFileAccess(true);
+                      settings.setAllowContentAccess(true);
+                      settings.setAllowFileAccessFromFileURLs(true);
+                      settings.setAllowUniversalAccessFromFileURLs(true);
+                  }
+
                   this.bridge.getWebView().addJavascriptInterface(new WebAppInterface(), "AndroidBridge");
               }
 
@@ -94,10 +127,9 @@ jobs:
 
                           if (rootFiles != null) {
                               
-                              // PASO 1: Buscar la carpeta raíz COVERS y cargar todas las portadas
+                              // PASO 1: Buscar portadas en /MiMusica/COVERS
                               File coversDir = new File(miMusicaDir, "COVERS");
                               if (!coversDir.exists()) {
-                                  // Intentar buscar la carpeta en minúsculas por si acaso
                                   coversDir = new File(miMusicaDir, "covers");
                               }
 
@@ -116,12 +148,11 @@ jobs:
                                   }
                               }
 
-                              // PASO 2: Escanear el resto de carpetas de Álbumes
+                              // PASO 2: Escanear Álbumes
                               for (File albumDir : rootFiles) {
                                   if (albumDir.isDirectory()) {
                                       String albumName = albumDir.getName();
 
-                                      // Ignorar la carpeta COVERS para no tratarla como álbum
                                       if (albumName.equalsIgnoreCase("covers")) {
                                           continue;
                                       }
