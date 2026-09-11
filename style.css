@@ -229,22 +229,24 @@ html, body {
 .song-item { background-color: #9D9D9C; color: #FFFFFF; padding: 14px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
 
 /* REPRODUCTOR DE MÚSICA AJUSTADO - PUNTO 3 CORREGIDO */
+/* REPRODUCTOR DE MÚSICA - Ajustes de tamaño, alineación superior y botones gigantes */
 .player-view-drive {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 18px;
+  justify-content: flex-start; /* Alineado hacia arriba con espacio controlado */
+  gap: 16px;
   flex: 1;
   width: 100%;
   min-height: 0;
-  padding: 10px 15px;
+  padding: 15px 15px 25px 15px;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .album-cover-drive {
-  width: 200px;
-  height: 200px;
+  width: 260px;          /* Imagen del álbum mucho más grande */
+  height: 260px;
   background-color: #9D9D9C;
   border-radius: 16px;
   display: flex;
@@ -253,20 +255,61 @@ html, body {
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
+  margin-top: 10px;      /* Espacio respecto al header superior */
+  margin-bottom: 5px;
 }
 
-.track-details-drive { text-align: center; width: 100%; }
-.track-details-drive h3 { font-size: 1.2rem; font-weight: bold; color: #FFFFFF; margin-bottom: 4px; }
-.track-details-drive p { font-size: 0.95rem; color: #9D9D9C; }
+.track-details-drive { 
+  text-align: center; 
+  width: 100%; 
+  margin-bottom: 10px; /* Margen inferior de separación */
+}
 
-.progress-bar-container { width: 100%; display: flex; align-items: center; gap: 12px; }
+.track-details-drive h3 { font-size: 1.3rem; font-weight: bold; color: #FFFFFF; margin-bottom: 4px; }
+.track-details-drive p { font-size: 1rem; color: #9D9D9C; }
+
+.progress-bar-container { 
+  width: 100%; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  margin-bottom: 10px; /* Separación con los botones */
+}
+
 .time-stamp { font-size: 0.9rem; font-weight: bold; color: #FFFFFF; width: 40px; }
 .progress-bar { flex: 1; -webkit-appearance: none; height: 6px; background: #555555; border-radius: 3px; }
 .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #FF8C00; cursor: pointer; }
 
-.media-controls-square { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; }
-.btn-square { width: 75px; height: 75px; border-radius: 12px; background-color: #9D9D9C; color: #FFFFFF; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.btn-square.btn-square-main { width: 85px; height: 85px; background-color: #FF8C00; font-size: 2.7rem; }
+/* Botones de reproducción LAST / PLAY-PAUSE / NEXT MUCHO MÁS GRANDES */
+.media-controls-square { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 20px; 
+  width: 100%; 
+  margin-top: auto; /* Empuja los botones de forma equilibrada hacia la zona inferior */
+  margin-bottom: 10px;
+}
+
+.btn-square { 
+  width: 95px;          /* Botones laterales más grandes */
+  height: 95px; 
+  border-radius: 16px; 
+  background-color: #9D9D9C; 
+  color: #FFFFFF; 
+  font-size: 2.8rem; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer; 
+}
+
+.btn-square.btn-square-main { 
+  width: 110px;         /* Botón central Play/Pausa gigante */
+  height: 110px; 
+  background-color: #FF8C00; 
+  font-size: 3.6rem; 
+}
 
 /* RADIO SCREEN - Botón de volver estándar y rejilla preparada para más botones */
 #screen-radio .view-content {
