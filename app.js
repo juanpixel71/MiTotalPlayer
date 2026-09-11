@@ -145,6 +145,12 @@ function playSong(song) {
     url = String(song);
   }
 
+  // Asegurar formato de ruta compatible con entornos nativos si es necesario
+  if (url && !url.startsWith('http') && !url.startsWith('file://') && !url.startsWith('content://') && !url.startsWith('capacitor://')) {
+    // Si viene como ruta absoluta limpia del sistema
+    url = 'file://' + url;
+  }
+
   document.getElementById('player-song-title').innerText = nombre;
   document.getElementById('player-album-info').innerText = albumActual;
 
