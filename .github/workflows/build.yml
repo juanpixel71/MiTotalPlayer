@@ -28,9 +28,19 @@ jobs:
       run: |
         npm install
 
+    - name: Force Clean and Rebuild Android Platform
+      run: |
+        rm -rf android
+        npx cap add android
+
     - name: Sync Web Assets to Native Project
       run: |
         npx cap sync android
+
+    - name: Inject Android Storage Permissions
+      run: |
+        sed -i '/<application/i \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
+        sed -i 's/android:usesCleartextTraffic="false"/android:usesCleartextTraffic="true"/g' android/app/src/main/AndroidManifest.xml || true
 
     - name: Build Android APK (Debug)
       run: |
