@@ -1,11 +1,42 @@
-- name: Añadir Plataforma Android
+name: Compilar APK Android
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configurar Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Instalar dependencias npm
+        run: npm install
+
+      - name: Generar Plataforma Android limpia
         run: npx cap add android
 
-      - name: Inyectar MainActivity Nativa
+      - name: Inyectar MainActivity Nativa (Escáner de MiMusica)
         run: |
           mkdir -p android/app/src/main/java/com/mimusica/player
           cat << 'EOF' > android/app/src/main/java/com/mimusica/player/MainActivity.java
-          package com.mimusica/player;
+          package com.mimusica.player;
 
           import android.os.Bundle;
           import android.os.Environment;
@@ -86,10 +117,10 @@
           }
           EOF
 
-      - name: Sincronizar Capacitor
+      - name: Sincronizar archivos Web en Android
         run: npx cap sync android
 
-      - name: Dar permisos a gradlew
+      - name: Dar permisos de ejecución a Gradle
         run: |
           cd android
           chmod +x gradlew
@@ -98,3 +129,9 @@
         run: |
           cd android
           ./gradlew assembleDebug
+
+      - name: Subir ejecutable APK como Artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
