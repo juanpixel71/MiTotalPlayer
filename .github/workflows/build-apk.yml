@@ -1,0 +1,54 @@
+name: Build Cordova APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configurar Java JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Instalar Cordova CLI
+        run: npm install -g cordova
+
+      - name: Preparar Plataforma Cordova Android
+        run: |
+          cordova platform add android@12.0.0
+          cordova plugin add cordova-plugin-file
+          cordova plugin add cordova-plugin-statusbar
+          cordova plugin add cordova-plugin-fullscreen
+
+      - name: Asignar Iconos Nativos
+        run: |
+          RES_DIR="platforms/android/app/src/main/res"
+          if [ -d "$RES_DIR" ]; then
+            for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+              mkdir -p "$RES_DIR/mipmap-$density"
+              cp icon.png "$RES_DIR/mipmap-$density/ic_launcher.png"
+              cp icon.png "$RES_DIR/mipmap-$density/ic_launcher_round.png"
+              cp icon.png "$RES_DIR/mipmap-$density/ic_launcher_foreground.png"
+            done
+          fi
+
+      - name: Compilar APK Debug
+        run: cordova build android --debug
+
+      - name: Subir APK como Artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: MiTotalPlayer-Cordova-APK
+          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
