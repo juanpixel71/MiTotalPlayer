@@ -37,13 +37,15 @@
       flex-direction: column;
       overflow: hidden;
       background-color: #3C3C3B;
+      /* MARGEN SUPERIOR PARA LIBRAR EL NOTCH/CÁMARA EN VERTICAL */
+      padding-top: max(env(safe-area-inset-top), 24px);
     }
 
-    /* HEADER AJUSTADO MÁS ARRIBA */
+    /* HEADER BAJADO PARA EVITAR EL NOTCH */
     .header {
       background-color: #FF8C00;
       color: #FFFFFF;
-      padding: 8px 10px;
+      padding: 10px 12px;
       text-align: center;
       font-weight: bold;
       font-size: 1.1rem;
@@ -51,6 +53,7 @@
       text-transform: uppercase;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
       flex-shrink: 0;
+      margin-top: 2px;
     }
 
     .screen {
@@ -70,10 +73,10 @@
 
     .view-content {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       overflow-y: auto;
       min-height: 0;
     }
@@ -99,7 +102,7 @@
 
 
     /* ==========================================
-       PANTALLA HOME / MENÚ PRINCIPAL
+       PANTALLA HOME
        =========================================== */
     .btn-main-home {
       flex: 1;
@@ -132,14 +135,14 @@
     .tv-container {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 18px; /* MAYOR SEPARACIÓN ENTRE REPRODUCTOR Y BOTONES */
       flex: 1;
       min-height: 0;
     }
 
     .tv-video-box {
       width: 100%;
-      height: 200px;
+      height: 210px;
       background-color: #000000;
       border-radius: 8px;
       flex-shrink: 0;
@@ -151,10 +154,16 @@
       height: 100% !important;
     }
 
+    .tv-controls-box {
+      margin-top: 6px; /* MARGEN ADICIONAL PARA NO PEGARSE AL VÍDEO */
+      flex: 1;
+      overflow-y: auto;
+    }
+
     .grid-buttons {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
+      gap: 12px;
     }
 
     .boton-canal {
@@ -181,6 +190,10 @@
        PANTALLA TV-NEWS MODO HORIZONTAL (LANDSCAPE)
        =========================================== */
     @media (orientation: landscape) {
+      .app-container {
+        padding-top: 0 !important;
+      }
+
       #screen-tv .header,
       #screen-tv > .view-content > .btn-nav-back {
         display: none !important;
@@ -198,13 +211,13 @@
         overflow: hidden !important;
       }
 
-      /* Margenes de seguridad para el notch en landscape */
       .tv-container {
         display: flex !important;
         flex-direction: row !important;
         align-items: stretch !important;
         padding-left: env(safe-area-inset-left) !important;
         padding-right: env(safe-area-inset-right) !important;
+        gap: 0 !important;
         box-sizing: border-box !important;
       }
 
@@ -242,6 +255,7 @@
         max-height: 100dvh !important;
         background-color: #3C3C3B !important;
         padding: 4px 6px 4px 0 !important;
+        margin-top: 0 !important;
         box-sizing: border-box !important;
         overflow-y: auto !important;
         flex-shrink: 0 !important;
@@ -273,7 +287,7 @@
 
 
     /* ==========================================
-       PANTALLA MÚSICA - ÁLBUMES Y CANCIONES
+       PANTALLA MÚSICA
        =========================================== */
     .albums-grid {
       display: grid;
@@ -340,7 +354,7 @@
 
 
     /* ==========================================
-       PANTALLA MÚSICA - REPRODUCTOR
+       PANTALLA REPRODUCTOR MÚSICA
        =========================================== */
     #screen-player {
       height: 100%;
@@ -472,11 +486,6 @@
       background-color: #FF8C00;
     }
 
-    #screen-player .btn-nav-back {
-      width: 100%;
-      flex-shrink: 0;
-    }
-
 
     /* ==========================================
        PANTALLA RADIO
@@ -564,7 +573,6 @@
               <button class="boton-canal" onclick="loadChannel('https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8', this)">TVE LA 1</button>
               <button class="boton-canal" onclick="loadChannel('https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8', this)">3CAT INFO</button>
               
-              <!-- BOTÓN VOLVER EN LANDSCAPE -->
               <button class="boton-canal btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
             </div>
           </div>
@@ -660,11 +668,8 @@
 
   <script src="cordova.js"></script>
   <script>
-    /* ==========================================
-       GESTIÓN DE NAVEGACIÓN Y VARIABLES GLOBALES
-       =========================================== */
     let biblioteca = {};
-    let portadas = {}; // Guarda la URL de las portadas por álbum
+    let portadas = {};
     let albumActual = '';
     let listaCancionesActual = [];
     let indiceCancionActual = 0;
@@ -677,7 +682,6 @@
     const seekBar = document.getElementById('seek-bar');
     const radioSeekBar = document.getElementById('radio-seek-bar');
 
-    /* INICIALIZACIÓN CORDOVA & MODO INMERSIVO SIN NOTCH */
     document.addEventListener('deviceready', function() {
       if (window.AndroidFullScreen) {
         AndroidFullScreen.immersiveMode(null, null);
@@ -687,7 +691,6 @@
       }
     }, false);
 
-    /* CONFIGURACIÓN DE VIDEO.JS */
     var tvPlayer = videojs('player', {
       fluid: true,
       html5: { vhs: { overrideNative: true } }
@@ -748,7 +751,7 @@
 
 
     /* ==========================================
-       ESCANER DE MÚSICA Y CARPETA /COVERS
+       ESCANER DE MÚSICA CORREGIDO CON PERMISOS Y MULTI-RUTA
        =========================================== */
     function abrirSeleccionMusica() {
       if (Object.keys(biblioteca).length > 0) {
@@ -757,22 +760,55 @@
       }
 
       if (window.cordova && window.resolveLocalFileSystemURL) {
-        var raizMusica = "file:///storage/emulated/0/MiMusica/";
-
-        window.resolveLocalFileSystemURL(raizMusica, function(dirEntry) {
-          escaneoCompletoCordova(dirEntry);
-        }, function(err1) {
-          window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'MiMusica/', function(dirEntry) {
-            escaneoCompletoCordova(dirEntry);
-          }, function(err2) {
-            alert('No se pudo acceder a storage/emulated/0/MiMusica/');
-          });
-        });
+        solicitarPermisosYBuscar();
         return;
       }
 
-      // Fallback para pruebas en navegador Web
       document.getElementById('folder-input').click();
+    }
+
+    function solicitarPermisosYBuscar() {
+      var permissions = cordova.plugins.permissions;
+      var listaPermisos = [
+        permissions.READ_EXTERNAL_STORAGE,
+        permissions.READ_MEDIA_AUDIO,
+        permissions.READ_MEDIA_IMAGES
+      ];
+
+      permissions.requestPermissions(listaPermisos, function(status) {
+        probarRutasMusica();
+      }, function() {
+        probarRutasMusica();
+      });
+    }
+
+    function probarRutasMusica() {
+      // Intentar múltiples sintaxis de rutas para Android 10, 12, 13 y 14
+      let posiblesRutas = [
+        "file:///sdcard/MiMusica/",
+        "file:///storage/emulated/0/MiMusica/",
+        cordova.file.externalRootDirectory + "MiMusica/"
+      ];
+
+      let intento = 0;
+
+      function intentarSiguiente() {
+        if (intento >= posiblesRutas.length) {
+          alert('No se pudo acceder a la carpeta /MiMusica. Asegúrate de haberla creado en la raíz de la memoria interna.');
+          return;
+        }
+
+        let ruta = posiblesRutas[intento];
+        intento++;
+
+        window.resolveLocalFileSystemURL(ruta, function(dirEntry) {
+          escaneoCompletoCordova(dirEntry);
+        }, function(err) {
+          intentarSiguiente();
+        });
+      }
+
+      intentarSiguiente();
     }
 
     function escaneoCompletoCordova(dirEntry) {
@@ -784,13 +820,11 @@
         let subcarpetas = entries.filter(e => e.isDirectory);
         let promesas = [];
 
-        // 1. Escanear carpeta COVERS primero
         let coversDir = subcarpetas.find(e => e.name.toUpperCase() === 'COVERS');
         if (coversDir) {
           promesas.push(escanearCovers(coversDir));
         }
 
-        // 2. Escanear carpetas de Álbumes
         subcarpetas.forEach(function(subDir) {
           if (subDir.name.toUpperCase() !== 'COVERS') {
             promesas.push(escanearAlbum(subDir));
@@ -803,7 +837,7 @@
         });
 
       }, function(err) {
-        alert('Error al leer el directorio /MiMusica');
+        alert('Error al leer el contenido de /MiMusica');
       });
     }
 
@@ -880,7 +914,7 @@
       const nombresAlbumes = Object.keys(biblioteca);
 
       if (nombresAlbumes.length === 0) {
-        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron carpetas con música en /MiMusica.</p>';
+        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron canciones dentro de /MiMusica.</p>';
         return;
       }
 
@@ -888,7 +922,6 @@
         const card = document.createElement('div');
         card.className = 'album-card-clean';
 
-        // Buscar coincidencia de portada en la carpeta /COVERS
         if (portadas[album]) {
           card.style.backgroundImage = `url('${portadas[album]}')`;
           card.classList.add('has-cover');
@@ -931,7 +964,6 @@
       document.getElementById('player-song-title').innerText = song.nombre;
       document.getElementById('player-album-info').innerText = albumActual;
       
-      // Ajustar portada en el reproductor si existe
       const coverBox = document.getElementById('player-cover-box');
       const coverIcon = document.getElementById('player-cover-icon');
 
