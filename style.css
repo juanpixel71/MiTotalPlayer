@@ -123,7 +123,7 @@ html, body {
 
 .video-js { width: 100% !important; height: 100% !important; }
 
-/* Eliminar círculo de Play, espinners y poster al cambiar de canal */
+/* Eliminar círculo de Play, spinners y poster al cambiar de canal */
 .video-js .vjs-big-play-button,
 .video-js .vjs-modal-dialog,
 .video-js .vjs-loading-spinner,
@@ -153,7 +153,7 @@ html, body {
 
 .boton-canal.active-item { background-color: #FF8C00 !important; }
 
-/* HORIZONTAL TV */
+/* HORIZONTAL TV - CORREGIDO PUNTO 2 */
 @media (orientation: landscape) {
   #screen-tv .header, #screen-tv > .view-content > .btn-nav-back { display: none !important; }
   #screen-tv, #screen-tv .view-content, .tv-container {
@@ -173,7 +173,25 @@ html, body {
   }
   .tv-controls-box .grid-buttons { display: flex !important; flex-direction: column !important; gap: 8px !important; }
   .tv-controls-box .boton-canal { height: 44px !important; font-size: 0.85rem !important; border-radius: 8px !important; width: 100% !important; }
-  .tv-controls-box .btn-nav-back-landscape { display: block !important; margin-top: 5px !important; }
+  
+  /* Botón volver landscape igualado en dimensiones al resto de botones de canales */
+  .tv-controls-box .btn-nav-back-landscape { 
+    display: flex !important; 
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #FF8C00 !important; 
+    color: #FFFFFF !important;
+    height: 44px !important; 
+    font-size: 0.85rem !important; 
+    font-weight: bold !important;
+    border-radius: 8px !important; 
+    width: 100% !important; 
+    margin-top: 5px !important; 
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
 }
 
 .btn-nav-back-landscape { display: none; }
@@ -265,79 +283,3 @@ html, body {
   align-items: center;
   flex-shrink: 0;
 }
-
-/* Ocultar el botón grande de play y el indicador de carga en la TV */
-.video-js .vjs-big-play-button,
-.video-js .vjs-loading-spinner {
-  display: none !important;
-}
-
-/* ==========================================================================
-   2. IGUALAR BOTÓN VOLVER EN TV-NEWS LANDSCAPE
-   ========================================================================== */
-.tv-news-container .btn-volver, 
-button:contains("VOLVER"), 
-#btn-back-tv {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    min-width: 120px !important; /* Fuerza el ancho mínimo idéntico a los canales */
-    height: 45px !important;     /* Altura estándar unificada */
-    padding: 0 15px !important;
-    box-sizing: border-box !important;
-    font-size: 14px !important;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-/* ==========================================================================
-   3. OPTIMIZACIÓN DE ESPACIOS EN REPRODUCTOR DE MÚSICA
-   ========================================================================== */
-.music-player-screen {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Distribuye el espacio sobrante equitativamente */
-    align-items: center;
-    padding: 20px calc(10px + 1vw) !important;
-    height: 100vh;
-    box-sizing: border-box;
-}
-
-/* Margen controlado para elementos internos del reproductor */
-.music-player-screen .player-art,
-.music-player-screen .player-info,
-.music-player-screen .player-progress-container,
-.music-player-screen .player-controls {
-    margin-top: 12px !important;
-    margin-bottom: 12px !important;
-    width: 100%;
-    text-align: center;
-}
-
-/* ==========================================================================
-   5. SEPARACIÓN DE COMPONENTES EN PANTALLA RADIO
-   ========================================================================== */
-/* Espacio inferior del Recuadro de la Radio */
-.radio-container, .radio-box, #radio-card {
-    margin-bottom: 24px !important;
-}
-
-/* Espacio en la botonera principal de control de la radio */
-.radio-controls, .radio-buttons-group {
-    margin-top: 15px !important;
-    margin-bottom: 24px !important;
-}
-
-/* Espacio alrededor de la Línea de Reproducción (Seekbar) de la radio */
-.radio-progress-bar, .radio-timeline, #radio-progress {
-    margin-top: 20px !important;
-    margin-bottom: 25px !important;
-    padding: 5px 0;
-}
-
-/* Separación con los botones secundarios inferiores o resto de elementos */
-.radio-footer-elements, .radio-extra-options {
-    margin-top: 15px !important;
-}
-
-
