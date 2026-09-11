@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Mi Total Player</title>
 
   <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
@@ -39,11 +39,12 @@
       background-color: #3C3C3B;
     }
 
-    /* HEADER EN NARANJA #FF8C00 */
+    /* HEADER EN NARANJA #FF8C00 (PUNTO 8: AJUSTADO MARGEN DEL NOTCH) */
     .header {
       background-color: #FF8C00;
       color: #FFFFFF;
       padding: 14px;
+      padding-top: calc(14px + env(safe-area-inset-top, 15px)); /* Bajar un poco por el notch */
       text-align: center;
       font-weight: bold;
       font-size: 1.2rem;
@@ -151,6 +152,11 @@
       height: 100% !important;
     }
 
+    /* PUNTO 2.1: ELIMINAR BOTÓN/IMAGEN DE PLAY REDONDA EN EL REPRODUCTOR */
+    .vjs-big-play-button {
+      display: none !important;
+    }
+
     .grid-buttons {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -182,7 +188,7 @@
        =========================================== */
     @media (orientation: landscape) {
       #screen-tv .header,
-      #screen-tv .btn-nav-back {
+      #screen-tv > .view-content > .btn-nav-back {
         display: none !important;
       }
 
@@ -261,6 +267,16 @@
         width: 100% !important;
         flex-shrink: 0 !important;
       }
+
+      /* PUNTO 3.1: MOSTRAR BOTÓN DE VOLVER DENTRO DEL PANEL LATERAL */
+      .tv-controls-box .btn-nav-back-landscape {
+        display: block !important;
+        margin-top: 5px !important;
+      }
+    }
+
+    .btn-nav-back-landscape {
+      display: none;
     }
 
 
@@ -290,6 +306,8 @@
       line-height: 1.35;
       white-space: pre-line;
       word-break: break-word;
+      background-size: cover;
+      background-position: center;
     }
 
     .album-card-clean.active-item {
@@ -361,6 +379,8 @@
       flex-shrink: 0;
       margin-top: auto;
       margin-bottom: auto;
+      background-size: cover;
+      background-position: center;
     }
 
     .track-details-drive {
@@ -480,7 +500,7 @@
 
 
     /* ==========================================
-       MODO FAKE FULLSCREEN PARA TV
+       MODO FAKE / FULLSCREEN PARA TV (PUNTO 3.2 Y 4)
        =========================================== */
     .tv-video-box.fake-fullscreen {
       position: fixed !important;
@@ -506,8 +526,9 @@
 </head>
 <body>
 
-  <div class="app-container">
+  <div class="app-container" id="app-container">
     
+    <!-- PANTALLA HOME -->
     <div id="screen-home" class="screen active">
       <div class="header">MI TOTAL PLAYER</div>
       <div class="view-content" style="justify-content: space-between; gap: 15px;">
@@ -523,15 +544,19 @@
         <button class="btn-main-home" onclick="navigateTo('screen-radio')">
           <span>📻</span> RADIO
         </button>
+
+        <!-- PUNTO 1: BOTÓN SALIR EN PANTALLA HOME -->
+        <button class="btn-nav-back" onclick="salirDeAplicacion()">&lt; SALIR DE LA APLICACIÓN</button>
       </div>
     </div>
 
+    <!-- PANTALLA TV-NEWS -->
     <div id="screen-tv" class="screen">
       <div class="header">TV-NEWS</div>
       <div class="view-content">
         <div class="tv-container">
-          <div class="tv-video-box">
-            <video id="player" class="video-js vjs-default-skin vjs-big-play-centered" controls playsinline></video>
+          <div class="tv-video-box" id="tv-video-box">
+            <video id="player" class="video-js vjs-default-skin" controls playsinline></video>
           </div>
 
           <div class="tv-controls-box">
@@ -545,6 +570,8 @@
               <button class="boton-canal" onclick="loadChannel('https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8', this)">TVE LA 1</button>
               <button class="boton-canal" onclick="loadChannel('https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8', this)">3CAT INFO</button>
             </div>
+            <!-- PUNTO 3.1: BOTÓN VOLVER EN TV-NEWS LANDSCAPE -->
+            <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
           </div>
         </div>
 
@@ -552,6 +579,7 @@
       </div>
     </div>
 
+    <!-- PANTALLA ÁLBUMES -->
     <div id="screen-albums" class="screen">
       <div class="header">ÁLBUMES</div>
       <div class="view-content">
@@ -560,6 +588,7 @@
       </div>
     </div>
 
+    <!-- PANTALLA CANCIONES -->
     <div id="screen-songs" class="screen">
       <div id="album-header" class="header">NOMBRE DEL ÁLBUM</div>
       <div class="view-content">
@@ -568,13 +597,14 @@
       </div>
     </div>
 
+    <!-- PANTALLA REPRODUCTOR MÚSICA -->
     <div id="screen-player" class="screen">
       <div class="header">REPRODUCIENDO</div>
       <div class="view-content">
         <div class="player-view-drive">
           
-          <div class="album-cover-drive">
-            <span style="font-size: 6rem; color: #FFFFFF;">🎵</span>
+          <div class="album-cover-drive" id="player-cover">
+            <span id="player-cover-icon" style="font-size: 6rem; color: #FFFFFF;">🎵</span>
           </div>
 
           <div class="track-details-drive">
@@ -597,10 +627,12 @@
           <audio id="audio-element"></audio>
         </div>
 
+        <!-- PUNTO 7.2: DETENER MÚSICA AL VOLVER -->
         <button class="btn-nav-back" onclick="pararYVolverCanciones()">&lt; VOLVER A CANCIONES</button>
       </div>
     </div>
 
+    <!-- PANTALLA RADIO -->
     <div id="screen-radio" class="screen">
       <div class="header">RADIO</div>
       <div class="view-content">
@@ -641,6 +673,7 @@
        GESTIÓN DE NAVEGACIÓN Y VARIABLES GLOBALES
        =========================================== */
     let biblioteca = {};
+    let covers = {};
     let albumActual = '';
     let listaCancionesActual = [];
     let indiceCancionActual = 0;
@@ -653,21 +686,52 @@
     const seekBar = document.getElementById('seek-bar');
     const radioSeekBar = document.getElementById('radio-seek-bar');
 
+    /* PUNTO 1: SALIR DE LA APLICACIÓN */
+    function salirDeAplicacion() {
+      if (navigator.app && navigator.app.exitApp) {
+        navigator.app.exitApp();
+      } else if (navigator.device && navigator.device.exitApp) {
+        navigator.device.exitApp();
+      } else {
+        window.close();
+      }
+    }
+
     /* CONFIGURACIÓN DE VIDEO.JS */
     var tvPlayer = videojs('player', {
       fluid: true,
       html5: { vhs: { overrideNative: true } }
     });
 
+    /* PUNTO 3.2 Y 4: PANTALLA COMPLETA NATIVA (OCULTAR NOTCH Y BOTONES ANDROID) */
+    function activarFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+    }
+
+    function salirFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+
     tvPlayer.ready(function() {
       tvPlayer.enterFullWindow = function() {
         const videoBox = document.querySelector('.tv-video-box');
         if (videoBox) videoBox.classList.add('fake-fullscreen');
+        activarFullscreen();
       };
 
       tvPlayer.exitFullWindow = function() {
         const videoBox = document.querySelector('.tv-video-box');
         if (videoBox) videoBox.classList.remove('fake-fullscreen');
+        salirFullscreen();
       };
 
       const fsBtn = tvPlayer.controlBar.fullscreenToggle;
@@ -677,8 +741,24 @@
           e.preventDefault();
           e.stopPropagation();
           const videoBox = document.querySelector('.tv-video-box');
-          videoBox.classList.toggle('fake-fullscreen');
+          const esFull = videoBox.classList.toggle('fake-fullscreen');
+          if (esFull) {
+            activarFullscreen();
+          } else {
+            salirFullscreen();
+          }
         });
+      }
+    });
+
+    /* DETECTAR GIRO DE PANTALLA EN TV PARA MODO HORIZONTAL (PUNTO 3.2) */
+    window.addEventListener('orientationchange', () => {
+      if (document.getElementById('screen-tv').classList.contains('active')) {
+        if (window.orientation === 90 || window.orientation === -90) {
+          activarFullscreen();
+        } else {
+          salirFullscreen();
+        }
       }
     });
 
@@ -695,6 +775,12 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       const target = document.getElementById(screenId);
       if (target) target.classList.add('active');
+
+      if (screenId === 'screen-tv' && (window.orientation === 90 || window.orientation === -90)) {
+        activarFullscreen();
+      } else if (screenId !== 'screen-tv') {
+        salirFullscreen();
+      }
 
       if (screenId === 'screen-home') {
         tvPlayer.pause();
@@ -714,7 +800,7 @@
 
 
     /* ==========================================
-       GESTIÓN DE MÚSICA Y REPRODUCTOR
+       GESTIÓN DE MÚSICA Y CARPETAS (PUNTO 5)
        =========================================== */
     function abrirSeleccionMusica() {
       if (Object.keys(biblioteca).length > 0) {
@@ -727,14 +813,25 @@
     function cargarBibliotecaLocal(event) {
       const files = event.target.files;
       biblioteca = {};
+      covers = {};
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (file.type.startsWith('audio/') || file.name.endsWith('.mp3') || file.name.endsWith('.aac') || file.name.endsWith('.m4a')) {
-          const pathSegments = file.webkitRelativePath.split('/');
+        const relativePath = file.webkitRelativePath || file.name;
+        const pathSegments = relativePath.split('/');
+
+        /* DETECTAR CARPETA COVERS O ARCHIVOS DE MÚSICA */
+        if (relativePath.toLowerCase().includes('/covers/') || (pathSegments.length > 2 && pathSegments[pathSegments.length - 2].toLowerCase() === 'covers')) {
+          if (file.type.startsWith('image/')) {
+            const nombreImagen = file.name.replace(/\.[^/.]+$/, "").toLowerCase();
+            covers[nombreImagen] = URL.createObjectURL(file);
+          }
+        } else if (file.type.startsWith('audio/') || file.name.endsWith('.mp3') || file.name.endsWith('.aac') || file.name.endsWith('.m4a')) {
           let nombreAlbum = 'Varios / Sueltas';
           if (pathSegments.length > 2) {
             nombreAlbum = pathSegments[pathSegments.length - 2];
+          } else if (pathSegments.length === 2) {
+            nombreAlbum = pathSegments[0];
           }
 
           if (!biblioteca[nombreAlbum]) {
@@ -756,11 +853,11 @@
       return nombreOriginal.replace(/\s*\((.*?)\)\s*/g, "\n($1)\n");
     }
 
+    /* PUNTO 6: ORDENAR ÁLBUMES DE A a Z */
     function renderAlbums() {
       const container = document.getElementById('albums-container');
       container.innerHTML = '';
       
-      /* CAMBIO 1: Ordenación de A a Z de los Álbumes */
       const nombresAlbumes = Object.keys(biblioteca).sort((a, b) => 
         a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
       );
@@ -774,6 +871,14 @@
         const card = document.createElement('div');
         card.className = 'album-card-clean';
         card.innerText = formatearNombreAlbum(album);
+
+        // ASIGNAR PORTADA SI EXISTE EN CARPETA COVERS
+        const claveAlbum = album.toLowerCase();
+        if (covers[claveAlbum]) {
+          card.style.backgroundImage = `url('${covers[claveAlbum]}')`;
+          card.style.color = 'transparent';
+        }
+
         card.onclick = () => {
           marcarBotonActivo(card);
           showSongs(album);
@@ -808,6 +913,18 @@
     function playSong(song) {
       document.getElementById('player-song-title').innerText = song.nombre;
       document.getElementById('player-album-info').innerText = albumActual;
+
+      const playerCover = document.getElementById('player-cover');
+      const playerCoverIcon = document.getElementById('player-cover-icon');
+      const claveAlbum = albumActual.toLowerCase();
+
+      if (covers[claveAlbum]) {
+        playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
+        playerCoverIcon.style.display = 'none';
+      } else {
+        playerCover.style.backgroundImage = 'none';
+        playerCoverIcon.style.display = 'block';
+      }
       
       const songURL = URL.createObjectURL(song.archivo);
       audioElement.src = songURL;
@@ -827,7 +944,7 @@
       }
     }
 
-    /* CAMBIO 3.2: Parar la música de forma completa */
+    /* PUNTO 7.2: DETENER Y RESETEAR MÚSICA AL PRESIONAR BOTÓN RETORNO */
     function detenerMusica() {
       audioElement.pause();
       audioElement.currentTime = 0;
@@ -851,7 +968,7 @@
       playSong(listaCancionesActual[indiceCancionActual]);
     }
 
-    /* CAMBIO 3.1: Reproducción continua automática */
+    /* PUNTO 7.1: REPRODUCCIÓN AUTOMÁTICA DE LA SIGUIENTE CANCIÓN */
     audioElement.addEventListener('ended', nextSong);
 
     audioElement.addEventListener('timeupdate', () => {
