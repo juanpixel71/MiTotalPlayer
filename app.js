@@ -10,6 +10,8 @@ const audioElement = document.getElementById('audio-element');
 const radioAudioElement = document.getElementById('radio-audio-element');
 const seekBar = document.getElementById('seek-bar');
 const radioSeekBar = document.getElementById('radio-seek-bar');
+const videoElement = document.getElementById('tv-video');
+let hlsInstance = null;
 
 function salirDeAplicacion() {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
@@ -21,13 +23,36 @@ function salirDeAplicacion() {
   }
 }
 
+/* NAVEGACIÓN Y CONTROL GENERAL */
+function navigateTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
 
-/* VIDEO HLS--------------------------- */
-const videoElement = document.getElementById('tv-video');
-let hlsInstance = null;
+  if (screenId === 'screen-home') {
+    if (videoElement) {
+      videoElement.pause();
+    }
+    if (hlsInstance) {
+      hlsInstance.stop();
+    }
+    detenerMusica();
+    if (radioAudioElement) {
+      radioAudioElement.pause();
+    }
+  }
+}
 
-/* Transición limpia de TV utilizando Hls.js */
-/* Transición limpia de TV utilizando Hls.js con control de errores */
+function marcarBotonActivo(elemento) {
+  if (!elemento) return;
+  const contenedor = elemento.closest('.grid-buttons, .albums-grid, .song-list');
+  if (contenedor) {
+    contenedor.querySelectorAll('.boton-canal, .album-card-clean, .song-item').forEach(b => b.classList.remove('active-item'));
+  }
+  elemento.classList.add('active-item');
+}
+
+/* TV HLS */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
@@ -43,17 +68,13 @@ function loadChannel(url, btn) {
       videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
     });
 
-    // Capturar errores de reproducción de HLS para depurar si un enlace falla
     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-      console.error("Error en Hls.js:", data.type, data.details);
       if (data.fatal) {
         switch (data.details) {
           case Hls.ErrorTypes.NETWORK_ERROR:
-            console.log("Error de red intentando recuperar...");
             hlsInstance.startLoad();
             break;
           case Hls.ErrorTypes.MEDIA_ERROR:
-            console.log("Error de medios intentando recuperar...");
             hlsInstance.recoverMediaError();
             break;
           default:
@@ -62,9 +83,7 @@ function loadChannel(url, btn) {
         }
       }
     });
-
   } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-    // Soporte nativo para plataformas como iOS / Safari
     videoElement.src = url;
     videoElement.addEventListener('loadedmetadata', () => {
       videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
@@ -72,47 +91,13 @@ function loadChannel(url, btn) {
   }
 }
 
-function navigateTo(screenId) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const target = document.getElementById(screenId);
-  if (target) target.classList.add('active');
-
-  if (screenId === 'screen-home') {
-    videoElement.pause();
-    if (hlsInstance) {
-      hlsInstance.stop();
-    }
-    detenerMusica();
-    radioAudioElement.pause();
-  }
-}
-
-/* FIN HLS ----------------------- */
-
-
-function marcarBotonActivo(elemento) {
-  if (!elemento) return;
-  const contenedor = elemento.closest('.grid-buttons, .albums-grid, .song-list');
-  if (contenedor) {
-    contenedor.querySelectorAll('.boton-canal, .album-card-clean, .song-item').forEach(b => b.classList.remove('active-item'));
-  }
-  elemento.classList.add('active-item');
-}
-
+/* MÚSICA */
 function ejecutarAccionMusica() {
   if (typeof window.cargarBibliotecaBridge === 'function' && Object.keys(biblioteca).length === 0) {
     window.cargarBibliotecaBridge();
   }
   renderAlbums();
   navigateTo('screen-albums');
-}
-
-  if (typeof window.cargarBibliotecaBridge === 'function') {
-    window.cargarBibliotecaBridge();
-  } else {
-    renderAlbums();
-    navigateTo('screen-albums');
-  }
 }
 
 window.recibirBibliotecaNativa = function(bibliotecaRecibida, coversRecibidas) {
@@ -124,6 +109,7 @@ window.recibirBibliotecaNativa = function(bibliotecaRecibida, coversRecibidas) {
 
 function renderAlbums() {
   const container = document.getElementById('albums-container');
+  if (!container) return;
   container.innerHTML = '';
   const nombresAlbumes = Object.keys(biblioteca).sort();
 
@@ -154,9 +140,11 @@ function renderAlbums() {
 function showSongs(album) {
   albumActual = album;
   listaCancionesActual = biblioteca[album] || [];
-  document.getElementById('album-header').innerText = album;
+  const headerElem = document.getElementById('album-header');
+  if (headerElem) headerElem.innerText = album;
   
   const container = document.getElementById('songs-container');
+  if (!container) return;
   container.innerHTML = '';
 
   listaCancionesActual.forEach((song, idx) => {
@@ -174,7 +162,6 @@ function showSongs(album) {
   navigateTo('screen-songs');
 }
 
-/* Reproducción de Música con autoplay y mapeo seguro corregido (Punto 4) */
 function playSong(song) {
   let nombre = '';
   let url = '';
@@ -187,7 +174,6 @@ function playSong(song) {
     url = String(song);
   }
 
-  // Convertir ruta local a formato compatible con Capacitor en Android
   if (url && !url.startsWith('http') && !url.startsWith('blob:')) {
     if (typeof Capacitor !== 'undefined' && typeof Capacitor.convertFileSrc === 'function') {
       url = Capacitor.convertFileSrc(url);
@@ -196,52 +182,62 @@ function playSong(song) {
     }
   }
 
-  document.getElementById('player-song-title').innerText = nombre;
-  document.getElementById('player-album-info').innerText = albumActual;
+  const titleElem = document.getElementById('player-song-title');
+  const infoElem = document.getElementById('player-album-info');
+  if (titleElem) titleElem.innerText = nombre;
+  if (infoElem) infoElem.innerText = albumActual;
 
   const playerCover = document.getElementById('player-cover');
   const playerCoverIcon = document.getElementById('player-cover-icon');
   const claveAlbum = albumActual.toLowerCase();
 
-  if (covers[claveAlbum]) {
-    playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
-    playerCoverIcon.style.display = 'none';
-  } else {
-    playerCover.style.backgroundImage = 'none';
-    playerCoverIcon.style.display = 'block';
+  if (playerCover && playerCoverIcon) {
+    if (covers[claveAlbum]) {
+      playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
+      playerCoverIcon.style.display = 'none';
+    } else {
+      playerCover.style.backgroundImage = 'none';
+      playerCoverIcon.style.display = 'block';
+    }
   }
   
-  audioElement.pause();
-  audioElement.src = url;
-  audioElement.load();
-  
-  audioElement.play().then(() => {
-    document.getElementById('btn-play-pause').innerText = '⏸';
-  }).catch(error => {
-    console.log("Error al reproducir audio:", error);
-    document.getElementById('btn-play-pause').innerText = '▶';
-  });
+  if (audioElement) {
+    audioElement.pause();
+    audioElement.src = url;
+    audioElement.load();
+    
+    audioElement.play().then(() => {
+      const btnPlay = document.getElementById('btn-play-pause');
+      if (btnPlay) btnPlay.innerText = '⏸';
+    }).catch(error => {
+      console.log("Error al reproducir audio:", error);
+      const btnPlay = document.getElementById('btn-play-pause');
+      if (btnPlay) btnPlay.innerText = '▶';
+    });
+  }
 
   navigateTo('screen-player');
 }
 
-
-
 function togglePlayMusic() {
+  if (!audioElement) return;
+  const btnPlay = document.getElementById('btn-play-pause');
   if (audioElement.paused) {
     audioElement.play().then(() => {
-      document.getElementById('btn-play-pause').innerText = '⏸';
+      if (btnPlay) btnPlay.innerText = '⏸';
     }).catch(e => console.log("Error al reanudar:", e));
   } else {
     audioElement.pause();
-    document.getElementById('btn-play-pause').innerText = '▶';
+    if (btnPlay) btnPlay.innerText = '▶';
   }
 }
 
 function detenerMusica() {
+  if (!audioElement) return;
   audioElement.pause();
   audioElement.currentTime = 0;
-  document.getElementById('btn-play-pause').innerText = '▶';
+  const btnPlay = document.getElementById('btn-play-pause');
+  if (btnPlay) btnPlay.innerText = '▶';
 }
 
 function pararYVolverCanciones() {
@@ -261,18 +257,25 @@ function nextSong() {
   playSong(listaCancionesActual[indiceCancionActual]);
 }
 
-audioElement.addEventListener('ended', nextSong);
+if (audioElement) {
+  audioElement.addEventListener('ended', nextSong);
+  audioElement.addEventListener('timeupdate', () => {
+    if (!isNaN(audioElement.duration) && seekBar) {
+      seekBar.max = Math.floor(audioElement.duration);
+      seekBar.value = Math.floor(audioElement.currentTime);
+      const currTime = document.getElementById('current-time');
+      const totTime = document.getElementById('total-time');
+      if (currTime) currTime.innerText = formatTime(audioElement.currentTime);
+      if (totTime) totTime.innerText = formatTime(audioElement.duration);
+    }
+  });
+}
 
-audioElement.addEventListener('timeupdate', () => {
-  if (!isNaN(audioElement.duration)) {
-    seekBar.max = Math.floor(audioElement.duration);
-    seekBar.value = Math.floor(audioElement.currentTime);
-    document.getElementById('current-time').innerText = formatTime(audioElement.currentTime);
-    document.getElementById('total-time').innerText = formatTime(audioElement.duration);
-  }
-});
-
-seekBar.addEventListener('input', () => { audioElement.currentTime = seekBar.value; });
+if (seekBar) {
+  seekBar.addEventListener('input', () => { 
+    if (audioElement) audioElement.currentTime = seekBar.value; 
+  });
+}
 
 /* RADIO */
 window.addEventListener('DOMContentLoaded', () => {
@@ -282,45 +285,57 @@ window.addEventListener('DOMContentLoaded', () => {
 function playRadio(elemento, url) {
   marcarBotonActivo(elemento);
   if (elemento) indiceRadioActual = emisorasRadio.indexOf(elemento);
-  radioAudioElement.src = url;
-  radioAudioElement.play();
-  document.getElementById('btn-radio-play').innerText = '⏸';
+  if (radioAudioElement) {
+    radioAudioElement.src = url;
+    radioAudioElement.play();
+    const btnRadioPlay = document.getElementById('btn-radio-play');
+    if (btnRadioPlay) btnRadioPlay.innerText = '⏸';
+  }
 }
 
 function togglePlayRadio() {
+  if (!radioAudioElement) return;
+  const btnRadioPlay = document.getElementById('btn-radio-play');
   if (radioAudioElement.paused) {
     radioAudioElement.play();
-    document.getElementById('btn-radio-play').innerText = '⏸';
+    if (btnRadioPlay) btnRadioPlay.innerText = '⏸';
   } else {
     radioAudioElement.pause();
-    document.getElementById('btn-radio-play').innerText = '▶';
+    if (btnRadioPlay) btnRadioPlay.innerText = '▶';
   }
 }
 
 function prevRadio() {
   if (emisorasRadio.length === 0) return;
   indiceRadioActual = (indiceRadioActual - 1 + emisorasRadio.length) % emisorasRadio.length;
-  emisorasRadio[indiceRadioActual].click();
+  if (emisorasRadio[indiceRadioActual]) emisorasRadio[indiceRadioActual].click();
 }
 
 function nextRadio() {
   if (emisorasRadio.length === 0) return;
   indiceRadioActual = (indiceRadioActual + 1) % emisorasRadio.length;
-  emisorasRadio[indiceRadioActual].click();
+  if (emisorasRadio[indiceRadioActual]) emisorasRadio[indiceRadioActual].click();
 }
 
-radioAudioElement.addEventListener('timeupdate', () => {
-  if (!isNaN(radioAudioElement.duration) && isFinite(radioAudioElement.duration)) {
-    radioSeekBar.max = Math.floor(radioAudioElement.duration);
-    radioSeekBar.value = Math.floor(radioAudioElement.currentTime);
-    document.getElementById('radio-total-time').innerText = formatTime(radioAudioElement.duration);
-  } else {
-    radioSeekBar.max = 100;
-    radioSeekBar.value = 100;
-    document.getElementById('radio-total-time').innerText = 'LIVE';
-  }
-  document.getElementById('radio-current-time').innerText = formatTime(radioAudioElement.currentTime);
-});
+if (radioAudioElement) {
+  radioAudioElement.addEventListener('timeupdate', () => {
+    if (!isNaN(radioAudioElement.duration) && isFinite(radioAudioElement.duration)) {
+      if (radioSeekBar) radioSeekBar.max = Math.floor(radioAudioElement.duration);
+      if (radioSeekBar) radioSeekBar.value = Math.floor(radioAudioElement.currentTime);
+      const totTime = document.getElementById('radio-total-time');
+      if (totTime) totTime.innerText = formatTime(radioAudioElement.duration);
+    } else {
+      if (radioSeekBar) {
+        radioSeekBar.max = 100;
+        radioSeekBar.value = 100;
+      }
+      const totTime = document.getElementById('radio-total-time');
+      if (totTime) totTime.innerText = 'LIVE';
+    }
+    const currTime = document.getElementById('radio-current-time');
+    if (currTime) currTime.innerText = formatTime(radioAudioElement.currentTime);
+  });
+}
 
 function formatTime(seconds) {
   if (isNaN(seconds)) return "0:00";
