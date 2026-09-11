@@ -265,3 +265,11 @@ html, body {
   align-items: center;
   flex-shrink: 0;
 }
+
+/* Ocultar el botón grande de play y el indicador de carga en la TV */
+.video-js .vjs-big-play-button,
+.video-js .vjs-loading-spinner {
+  display: none !important;
+}
+
+
