@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
 
       - name: Instalar Dependencias
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Construir Carpeta Web
         run: npm run build
