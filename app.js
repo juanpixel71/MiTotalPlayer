@@ -23,6 +23,7 @@ function salirDeAplicacion() {
 
 var tvPlayer = videojs('player', { 
   fluid: true, 
+  bigPlayButton: false, // Desactiva y evita que se renderice el botón grande de play
   html5: { vhs: { overrideNative: true } } 
 });
 
