@@ -119,7 +119,7 @@ function showSongs(album) {
   listaCancionesActual.forEach((song, idx) => {
     const item = document.createElement('div');
     item.className = 'song-item';
-    item.innerText = song.nombre || song;
+    item.innerText = (typeof song === 'object' ? (song.nombre || song.file) : song) || 'Canción sin nombre';
     item.onclick = () => {
       marcarBotonActivo(item);
       indiceCancionActual = idx;
@@ -131,10 +131,18 @@ function showSongs(album) {
   navigateTo('screen-songs');
 }
 
-/* Reproducción de Música con autoplay asegurado */
+/* Reproducción de Música con autoplay y mapeo seguro corregido (Punto 4) */
 function playSong(song) {
-  const nombre = song.nombre || song;
-  const url = song.archivo || song.path || song;
+  let nombre = '';
+  let url = '';
+
+  if (typeof song === 'object' && song !== null) {
+    nombre = song.nombre || song.title || 'Pista desconocida';
+    url = song.archivo || song.path || song.url || '';
+  } else {
+    nombre = String(song);
+    url = String(song);
+  }
 
   document.getElementById('player-song-title').innerText = nombre;
   document.getElementById('player-album-info').innerText = albumActual;
@@ -151,25 +159,25 @@ function playSong(song) {
     playerCoverIcon.style.display = 'block';
   }
   
+  audioElement.pause();
   audioElement.src = url;
   audioElement.load();
   
-  let playPromise = audioElement.play();
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      document.getElementById('btn-play-pause').innerText = '⏸';
-    }).catch(error => {
-      console.log("Autoplay bloqueado o error al reproducir:", error);
-    });
-  }
+  audioElement.play().then(() => {
+    document.getElementById('btn-play-pause').innerText = '⏸';
+  }).catch(error => {
+    console.log("Error al reproducir audio:", error);
+    document.getElementById('btn-play-pause').innerText = '▶';
+  });
 
   navigateTo('screen-player');
 }
 
 function togglePlayMusic() {
   if (audioElement.paused) {
-    audioElement.play();
-    document.getElementById('btn-play-pause').innerText = '⏸';
+    audioElement.play().then(() => {
+      document.getElementById('btn-play-pause').innerText = '⏸';
+    }).catch(e => console.log("Error al reanudar:", e));
   } else {
     audioElement.pause();
     document.getElementById('btn-play-pause').innerText = '▶';
