@@ -16,7 +16,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: '20'
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -33,7 +33,7 @@ jobs:
       run: |
         mkdir -p resources
         cp icon.png resources/icon.png
-        cordova-res android --skip-splash
+        cordova-res android --skip-splash || echo "No se pudo generar iconos nativos, usando por defecto"
 
     - name: Initialize Capacitor Android Project
       run: |
@@ -41,7 +41,9 @@ jobs:
 
     - name: Copy Generated Icons to Android Folder
       run: |
-        cp -R resources/android/icon/* android/app/src/main/res/
+        if [ -d "resources/android/icon" ]; then
+          cp -R resources/android/icon/* android/app/src/main/res/
+        fi
 
     - name: Sync Web Assets to Native Project
       run: npx cap sync android
