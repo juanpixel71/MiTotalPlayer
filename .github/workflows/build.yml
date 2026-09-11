@@ -21,13 +21,24 @@ jobs:
           node-version: 20
 
       - name: Configurar Java JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Instalar dependencias npm
         run: npm install
+
+      - name: Asegurar capacitor.config.json correcto
+        run: |
+          cat << 'EOF' > capacitor.config.json
+          {
+            "appId": "com.mimusica.player",
+            "appName": "Mi Total Player",
+            "webDir": ".",
+            "bundledWebRuntime": false
+          }
+          EOF
 
       - name: Generar Plataforma Android limpia
         run: npx cap add android
