@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MiPlayer</title>
-    <!-- Cargamos Capacitor de forma nativa para los permisos y conversión de archivos -->
     <script src="capacitor.js"></script>
     <style>
         /* ESTILOS GENERALES Y DISEÑO COMPLETO */
@@ -28,7 +27,7 @@
         .screen-title { font-size: 22px; margin-bottom: 20px; color: #1DB954; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .list-container { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto; max-height: 60vh; overflow-y: auto; padding: 10px; }
         
-        /* TARJETAS DE ELEMENTOS (TV, ÁLBUMES, CANCIONES) */
+        /* TARJETAS DE ELEMENTOS */
         .item-card { background: #1e1e1e; padding: 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 15px; text-align: left; border: 1px solid #282828; }
         .item-card:hover { background: #282828; }
         .cover-img { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; background: #333; }
@@ -40,7 +39,7 @@
         .track-name { font-size: 20px; margin-bottom: 5px; font-weight: bold; }
         .track-meta { font-size: 14px; color: #aaa; margin-bottom: 20px; }
         
-        /* CONTROLES DEL REPRODUCTOR */
+        /* CONTROLES */
         .progress-area { margin-bottom: 20px; }
         .progress-bar { width: 100%; -webkit-appearance: none; background: #444; height: 6px; border-radius: 3px; outline: none; }
         .progress-bar::-webkit-slider-thumb { -webkit-appearance: none; background: #1DB954; width: 14px; height: 14px; border-radius: 50%; cursor: pointer; }
@@ -58,7 +57,7 @@
         <p class="menu-subtitle">📺 TV-NEWS &nbsp; 🎵 MÚSICA &nbsp; 📻 RADIO</p>
         <div class="main-menu">
             <button class="menu-item btn-tv" onclick="showScreen('screen-tv')">📺 TV-NEWS</button>
-            <button class="menu-item btn-musica" onclick="showScreen('screen-albumes')">🎵 MÚSICA</button>
+            <button class="menu-item btn-musica" onclick="buscarMusicaReal()">🎵 MÚSICA</button>
             <button class="menu-item btn-radio" onclick="showScreen('screen-radio')">📻 RADIO</button>
         </div>
     </div>
@@ -67,14 +66,14 @@
     <div id="screen-tv" class="hidden">
         <h2 class="screen-title">TV-NEWS</h2>
         <div class="list-container">
-            <div class="item-card" onclick="playStreaming('https://france24.com', 'FRANCE 24')">📺 FRANCE 24</div>
-            <div class="item-card" onclick="playStreaming('https://akamaized.net', 'BFM')">📺 BFM</div>
-            <div class="item-card" onclick="playStreaming('https://bbc.com', 'BBC NEWS')">📺 BBC NEWS</div>
-            <div class="item-card" onclick="playStreaming('https://wurl.tv', 'CNN')">📺 CNN</div>
-            <div class="item-card" onclick="playStreaming('https://wurl.tv', 'EURONEWS')">📺 EURONEWS</div>
-            <div class="item-card" onclick="playStreaming('https://footprint.net', '24 HORAS TVE')">📺 24 HORAS TVE</div>
-            <div class="item-card" onclick="playStreaming('https://footprint.net', 'LA 1')">📺 LA 1</div>
-            <div class="item-card" onclick="playStreaming('https://ccma.cat', '3CAT INFO')">📺 3CAT INFO</div>
+            <div class="item-card" onclick="playStreaming('https://france24.com')">📺 FRANCE 24</div>
+            <div class="item-card" onclick="playStreaming('https://akamaized.net')">📺 BFM</div>
+            <div class="item-card" onclick="playStreaming('https://bbc.com')">📺 BBC NEWS</div>
+            <div class="item-card" onclick="playStreaming('https://wurl.tv')">📺 CNN</div>
+            <div class="item-card" onclick="playStreaming('https://wurl.tv')">📺 EURONEWS</div>
+            <div class="item-card" onclick="playStreaming('https://footprint.net')">📺 24 HORAS TVE</div>
+            <div class="item-card" onclick="playStreaming('https://footprint.net')">📺 LA 1</div>
+            <div class="item-card" onclick="playStreaming('https://ccma.cat')">📺 3CAT INFO</div>
         </div>
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
@@ -82,18 +81,14 @@
     <!-- ================= PANTALLA ÁLBUMES ================= -->
     <div id="screen-albumes" class="hidden">
         <h2 class="screen-title">ÁLBUMES</h2>
-        <div id="album-list" class="list-container">
-            <!-- Los álbumes locales del móvil se cargarán aquí automáticamente -->
-        </div>
+        <div id="album-list" class="list-container"></div>
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
 
     <!-- ================= PANTALLA CANCIONES DEL ÁLBUM ================= -->
     <div id="screen-canciones" class="hidden">
         <h2 id="album-current-title" class="screen-title">NOMBRE DEL ÁLBUM</h2>
-        <div id="songs-list" class="list-container">
-            <!-- Las canciones del álbum seleccionado se cargarán aquí -->
-        </div>
+        <div id="songs-list" class="list-container"></div>
         <button class="back-btn" onclick="showScreen('screen-albumes')">&lt; VOLVER ÁLBUMES</button>
     </div>
 
@@ -103,7 +98,7 @@
         <div class="player-container">
             <div id="player-cover-zone" class="player-icon">🎵</div>
             <h3 id="player-song-title" class="track-name">Nombre Canción</h3>
-            <p id="player-song-meta" class="track-meta">GRUPO (AÑO) ÁLBUM</p>
+            <p id="player-song-meta" class="track-meta">ÁLBUM LOCAL</p>
             
             <div class="progress-area">
                 <input type="range" id="progress-bar" class="progress-bar" value="0" min="0" max="100">
@@ -132,7 +127,6 @@
             <div class="item-card" onclick="playRadio('https://cires21.com', 'RNE 5')">📻 RNE 5</div>
         </div>
         
-        <!-- Minireproductor de Radio Activa -->
         <div id="radio-player-box" class="player-container hidden">
             <div class="player-icon">📻</div>
             <h3 id="radio-current-title">Ninguna Emisora</h3>
@@ -141,23 +135,35 @@
                 <button class="btn-ctrl btn-play" id="btn-radio-toggle" onclick="toggleRadio()">▶</button>
             </div>
         </div>
-
         <button class="back-btn" onclick="showScreen('screen-home')">&lt; VOLVER HOME</button>
     </div>
 
-    <!-- Elemento de Audio Oculto Global -->
     <audio id="audio-player"></audio>
 
-    <!-- LOGICA SCRIPT INTEGRADA -->
     <script>
-        // Configuración de la ruta raíz en tu dispositivo móvil
         const RAIZ_MUSICA = "/storage/emulated/0/MiMusica";
-        
-        // Simulación de Base de Datos de lo que tienes guardado en tu móvil carpeta por carpeta
-        // Como la Webview de Android no puede listar carpetas automáticamente por código clásico, 
-        // aquí declaras los nombres exactos de tus carpetas de álbumes y sus canciones correspondientes.
-        const BIBLIOTECA = [
-            {
-                album: "Abbey Road",
-                grupo: "The Beatles",
-                ano: "1969",
+        let listaAlbumesDetectados = [];
+        let cancionesAlbumActual = [];
+        let nombreAlbumActual = "";
+        let currentSongIndex = 0;
+        let isPlaying = false;
+
+        const audio = document.getElementById('audio-player');
+        const progressBar = document.getElementById('progress-bar');
+        const timeCurrent = document.getElementById('time-current');
+        const timeTotal = document.getElementById('time-total');
+        const btnPlayPause = document.getElementById('btn-play-pause');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setupAudioListeners();
+        });
+
+        function showScreen(screenId) {
+            document.querySelectorAll('body > div:not(#audio-player)').forEach(div => div.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        // FUNCIÓN CLAVE: ESCANEO REAL DE TU CARPETA /MiMusica
+        async function buscarMusicaReal() {
+            showScreen('screen-albumes');
+            const container = document.getElementById('album-list');
