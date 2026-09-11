@@ -35,7 +35,7 @@ jobs:
 
     - name: Generate App Icons from icon.png
       run: |
-        npx capacitor-assets generate --android --icon
+        npx capacitor-assets generate --android
 
     - name: Sync Web Assets to Native Project
       run: |
