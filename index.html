@@ -18,6 +18,7 @@
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       user-select: none;
+      -webkit-user-select: none;
       border: none !important;
       outline: none !important;
     }
@@ -39,12 +40,12 @@
       background-color: #3C3C3B;
     }
 
-    /* HEADER EN NARANJA #FF8C00 (PUNTO 8: AJUSTADO MARGEN DEL NOTCH) */
+    /* HEADER EN NARANJA #FF8C00 Y AJUSTE DE NOTCH */
     .header {
       background-color: #FF8C00;
       color: #FFFFFF;
       padding: 14px;
-      padding-top: calc(14px + env(safe-area-inset-top, 15px)); /* Bajar un poco por el notch */
+      padding-top: calc(14px + env(safe-area-inset-top, 15px));
       text-align: center;
       font-weight: bold;
       font-size: 1.2rem;
@@ -152,7 +153,7 @@
       height: 100% !important;
     }
 
-    /* PUNTO 2.1: ELIMINAR BOTÓN/IMAGEN DE PLAY REDONDA EN EL REPRODUCTOR */
+    /* OCULTAR BOTÓN DE PLAY SOBREIMPRESO */
     .vjs-big-play-button {
       display: none !important;
     }
@@ -268,7 +269,6 @@
         flex-shrink: 0 !important;
       }
 
-      /* PUNTO 3.1: MOSTRAR BOTÓN DE VOLVER DENTRO DEL PANEL LATERAL */
       .tv-controls-box .btn-nav-back-landscape {
         display: block !important;
         margin-top: 5px !important;
@@ -500,7 +500,7 @@
 
 
     /* ==========================================
-       MODO FAKE / FULLSCREEN PARA TV (PUNTO 3.2 Y 4)
+       MODO FAKE / FULLSCREEN PARA TV
        =========================================== */
     .tv-video-box.fake-fullscreen {
       position: fixed !important;
@@ -545,7 +545,6 @@
           <span>📻</span> RADIO
         </button>
 
-        <!-- PUNTO 1: BOTÓN SALIR EN PANTALLA HOME -->
         <button class="btn-nav-back" onclick="salirDeAplicacion()">&lt; SALIR DE LA APLICACIÓN</button>
       </div>
     </div>
@@ -570,7 +569,6 @@
               <button class="boton-canal" onclick="loadChannel('https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8', this)">TVE LA 1</button>
               <button class="boton-canal" onclick="loadChannel('https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8', this)">3CAT INFO</button>
             </div>
-            <!-- PUNTO 3.1: BOTÓN VOLVER EN TV-NEWS LANDSCAPE -->
             <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
           </div>
         </div>
@@ -627,7 +625,6 @@
           <audio id="audio-element"></audio>
         </div>
 
-        <!-- PUNTO 7.2: DETENER MÚSICA AL VOLVER -->
         <button class="btn-nav-back" onclick="pararYVolverCanciones()">&lt; VOLVER A CANCIONES</button>
       </div>
     </div>
@@ -668,6 +665,9 @@
 
   </div>
 
+  <!-- PUENTE Y CONEXIÓN CON MOTOR DE MÚSICA LOCAL NATIVO DE GEMINI-CODE -->
+  <script src="bridge-music.js"></script>
+
   <script>
     /* ==========================================
        GESTIÓN DE NAVEGACIÓN Y VARIABLES GLOBALES
@@ -686,9 +686,11 @@
     const seekBar = document.getElementById('seek-bar');
     const radioSeekBar = document.getElementById('radio-seek-bar');
 
-    /* PUNTO 1: SALIR DE LA APLICACIÓN */
+    /* CERRAR APLICACIÓN */
     function salirDeAplicacion() {
-      if (navigator.app && navigator.app.exitApp) {
+      if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
+        Capacitor.Plugins.App.exitApp();
+      } else if (navigator.app && navigator.app.exitApp) {
         navigator.app.exitApp();
       } else if (navigator.device && navigator.device.exitApp) {
         navigator.device.exitApp();
@@ -703,7 +705,6 @@
       html5: { vhs: { overrideNative: true } }
     });
 
-    /* PUNTO 3.2 Y 4: PANTALLA COMPLETA NATIVA (OCULTAR NOTCH Y BOTONES ANDROID) */
     function activarFullscreen() {
       const elem = document.documentElement;
       if (elem.requestFullscreen) {
@@ -751,7 +752,6 @@
       }
     });
 
-    /* DETECTAR GIRO DE PANTALLA EN TV PARA MODO HORIZONTAL (PUNTO 3.2) */
     window.addEventListener('orientationchange', () => {
       if (document.getElementById('screen-tv').classList.contains('active')) {
         if (window.orientation === 90 || window.orientation === -90) {
@@ -800,10 +800,12 @@
 
 
     /* ==========================================
-       GESTIÓN DE MÚSICA Y CARPETAS (PUNTO 5)
+       GESTIÓN DE MÚSICA Y CARPETAS
        =========================================== */
     function abrirSeleccionMusica() {
-      if (Object.keys(biblioteca).length > 0) {
+      if (typeof window.cargarMusicaDesdeBridge === 'function') {
+        window.cargarMusicaDesdeBridge();
+      } else if (Object.keys(biblioteca).length > 0) {
         navigateTo('screen-albums');
       } else {
         document.getElementById('folder-input').click();
@@ -820,7 +822,6 @@
         const relativePath = file.webkitRelativePath || file.name;
         const pathSegments = relativePath.split('/');
 
-        /* DETECTAR CARPETA COVERS O ARCHIVOS DE MÚSICA */
         if (relativePath.toLowerCase().includes('/covers/') || (pathSegments.length > 2 && pathSegments[pathSegments.length - 2].toLowerCase() === 'covers')) {
           if (file.type.startsWith('image/')) {
             const nombreImagen = file.name.replace(/\.[^/.]+$/, "").toLowerCase();
@@ -853,7 +854,7 @@
       return nombreOriginal.replace(/\s*\((.*?)\)\s*/g, "\n($1)\n");
     }
 
-    /* PUNTO 6: ORDENAR ÁLBUMES DE A a Z */
+    /* ORDENACIÓN DE A A Z */
     function renderAlbums() {
       const container = document.getElementById('albums-container');
       container.innerHTML = '';
@@ -872,10 +873,10 @@
         card.className = 'album-card-clean';
         card.innerText = formatearNombreAlbum(album);
 
-        // ASIGNAR PORTADA SI EXISTE EN CARPETA COVERS
         const claveAlbum = album.toLowerCase();
-        if (covers[claveAlbum]) {
-          card.style.backgroundImage = `url('${covers[claveAlbum]}')`;
+        if (covers[claveAlbum] || (window.coversAlbumes && window.coversAlbumes[album])) {
+          const coverURL = covers[claveAlbum] || window.coversAlbumes[album];
+          card.style.backgroundImage = `url('${coverURL}')`;
           card.style.color = 'transparent';
         }
 
@@ -918,15 +919,16 @@
       const playerCoverIcon = document.getElementById('player-cover-icon');
       const claveAlbum = albumActual.toLowerCase();
 
-      if (covers[claveAlbum]) {
-        playerCover.style.backgroundImage = `url('${covers[claveAlbum]}')`;
+      if (covers[claveAlbum] || (window.coversAlbumes && window.coversAlbumes[albumActual])) {
+        const coverURL = covers[claveAlbum] || window.coversAlbumes[albumActual];
+        playerCover.style.backgroundImage = `url('${coverURL}')`;
         playerCoverIcon.style.display = 'none';
       } else {
         playerCover.style.backgroundImage = 'none';
         playerCoverIcon.style.display = 'block';
       }
       
-      const songURL = URL.createObjectURL(song.archivo);
+      const songURL = typeof song.archivo === 'string' ? song.archivo : URL.createObjectURL(song.archivo);
       audioElement.src = songURL;
       audioElement.play();
       document.getElementById('btn-play-pause').innerText = '⏸';
@@ -944,7 +946,6 @@
       }
     }
 
-    /* PUNTO 7.2: DETENER Y RESETEAR MÚSICA AL PRESIONAR BOTÓN RETORNO */
     function detenerMusica() {
       audioElement.pause();
       audioElement.currentTime = 0;
@@ -968,7 +969,7 @@
       playSong(listaCancionesActual[indiceCancionActual]);
     }
 
-    /* PUNTO 7.1: REPRODUCCIÓN AUTOMÁTICA DE LA SIGUIENTE CANCIÓN */
+    /* CADENA DE REPRODUCCIÓN AUTOMÁTICA */
     audioElement.addEventListener('ended', nextSong);
 
     audioElement.addEventListener('timeupdate', () => {
