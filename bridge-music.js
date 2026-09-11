@@ -12,10 +12,8 @@ window.gestionarModoPantalla = async function(screenId) {
       try { await Capacitor.Plugins.StatusBar.hide(); } catch(e){}
     }
 
-    // 2. Mantener la pantalla activa
-    if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.KeepAwake) {
-      try { await Capacitor.Plugins.KeepAwake.keepAwake(); } catch(e){}
-    } else if ('wakeLock' in navigator) {
+    // 2. Mantener la pantalla activa sin apagar
+    if ('wakeLock' in navigator) {
       try { wakeLockSentinel = await navigator.wakeLock.request('screen'); } catch(e){}
     }
   } else {
@@ -24,9 +22,6 @@ window.gestionarModoPantalla = async function(screenId) {
       try { await Capacitor.Plugins.StatusBar.show(); } catch(e){}
     }
 
-    if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.KeepAwake) {
-      try { await Capacitor.Plugins.KeepAwake.allowSleep(); } catch(e){}
-    }
     if (wakeLockSentinel !== null) {
       try { await wakeLockSentinel.release(); wakeLockSentinel = null; } catch(e){}
     }
