@@ -98,6 +98,7 @@
       opacity: 0.8;
     }
 
+
     /* ==========================================
        PANTALLA HOME
        =========================================== */
@@ -125,34 +126,47 @@
       background-color: #FF8C00;
     }
 
+
     /* ==========================================
-       PANTALLA TV-NEWS (VERTICAL)
+       PANTALLA TV-NEWS (MODO VERTICAL)
        =========================================== */
     .tv-container {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 12px;
       flex: 1;
       min-height: 0;
     }
 
     .tv-video-box {
       width: 100%;
-      height: 210px;
+      height: 250px;
       background-color: #000000;
       border-radius: 8px;
       flex-shrink: 0;
       overflow: hidden;
-      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
-    .video-js {
+    /* POSICIONAMIENTO DE LA BARRA DE CONTROL DEBAJO DEL VÍDEO EN VERTICAL */
+    .tv-video-box .video-js {
       width: 100% !important;
-      height: 100% !important;
+      height: calc(100% - 36px) !important;
+    }
+
+    .tv-video-box .vjs-control-bar {
+      position: relative !important;
+      display: flex !important;
+      height: 36px !important;
+      background-color: #000000 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      z-index: 10 !important;
     }
 
     .tv-controls-box {
-      margin-top: 6px;
+      margin-top: 4px;
       flex: 1;
       overflow-y: auto;
     }
@@ -181,6 +195,7 @@
     .boton-canal.active-item {
       background-color: #FF8C00 !important;
     }
+
 
     /* ==========================================
        PANTALLA TV-NEWS MODO HORIZONTAL (LANDSCAPE RESTAURADO)
@@ -220,36 +235,36 @@
         flex: 1 !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
-        padding: 0 !important;
-        background-color: #000000 !important;
+        padding: 4px !important;
+        box-sizing: border-box !important;
+        background-color: #3C3C3B !important;
         display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
 
       .tv-video-box .video-js {
         width: 100% !important;
-        height: calc(100% - 40px) !important; /* REVERVA ESPACIO INFERIOR */
+        height: 100% !important;
+        max-height: 100% !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        background: #000000 !important;
       }
 
-      /* UBICACIÓN DE CONTROLES DEBAJO DEL VÍDEO */
       .tv-video-box .vjs-control-bar {
-        position: relative !important;
-        display: flex !important;
-        height: 40px !important;
-        background-color: #000000 !important;
-        bottom: 0 !important;
-        width: 100% !important;
-        z-index: 10 !important;
+        position: absolute !important;
+        bottom: 4px !important;
       }
 
       .tv-controls-box {
-        width: 220px !important;
+        width: 180px !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
         background-color: #3C3C3B !important;
-        padding: 8px !important;
+        padding: 4px 6px 4px 0 !important;
         margin-top: 0 !important;
+        box-sizing: border-box !important;
         overflow-y: auto !important;
         flex-shrink: 0 !important;
       }
@@ -257,14 +272,15 @@
       .tv-controls-box .grid-buttons {
         display: flex !important;
         flex-direction: column !important;
-        gap: 8px !important;
+        gap: 6px !important;
       }
 
       .tv-controls-box .boton-canal {
-        padding: 10px !important;
+        height: 40px !important;
         font-size: 0.85rem !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         width: 100% !important;
+        flex-shrink: 0 !important;
       }
 
       .btn-nav-back-landscape {
@@ -276,6 +292,7 @@
     .btn-nav-back-landscape {
       display: none;
     }
+
 
     /* ==========================================
        PANTALLA MÚSICA
@@ -341,6 +358,7 @@
     #folder-input {
       display: none;
     }
+
 
     /* ==========================================
        PANTALLA REPRODUCTOR MÚSICA
@@ -468,6 +486,7 @@
       font-size: 2.7rem;
     }
 
+
     /* ==========================================
        PANTALLA RADIO
        =========================================== */
@@ -486,6 +505,7 @@
       margin-top: auto;
       margin-bottom: 15px;
     }
+
 
     /* MODO FAKE FULLSCREEN */
     .tv-video-box.fake-fullscreen {
@@ -522,7 +542,6 @@
           <span>📻</span> RADIO
         </button>
 
-        <!-- BOTÓN SALIR DEL PLAYER -->
         <button class="btn-nav-back" onclick="salirAplicacion()">&lt; SALIR DEL PLAYER</button>
       </div>
     </div>
@@ -667,7 +686,6 @@
       }
     }, false);
 
-    // CERRAR LA APLICACIÓN
     function salirAplicacion() {
       if (navigator.app && navigator.app.exitApp) {
         navigator.app.exitApp();
@@ -714,7 +732,7 @@
     }
 
     /* ==========================================
-       GESTIÓN DE MÚSICA Y RUTAS ANDROID
+       GESTIÓN DE MÚSICA ( RÉPLICA CAPACITOR EN CORDOVA )
        =========================================== */
     function abrirSeleccionMusica() {
       if (Object.keys(biblioteca).length > 0) {
@@ -722,38 +740,44 @@
         return;
       }
 
-      if (window.cordova && window.resolveLocalFileSystemURL) {
-        intentarLeerDirectorioRaiz();
+      if (window.cordova && window.cordova.plugins && window.cordova.plugins.permissions) {
+        solicitarPermisosYLeer();
+      } else if (window.resolveLocalFileSystemURL) {
+        escaneoDirectoRuta();
       } else {
         document.getElementById('folder-input').click();
       }
     }
 
-    function intentarLeerDirectorioRaiz() {
-      // Rutas de búsqueda estándar en almacenamiento interno
-      let rutas = [
-        "file:///storage/emulated/0/MiMusica/",
-        "file:///sdcard/MiMusica/"
+    function solicitarPermisosYLeer() {
+      var permissions = cordova.plugins.permissions;
+      var listaPermisos = [
+        permissions.READ_EXTERNAL_STORAGE,
+        permissions.READ_MEDIA_AUDIO,
+        permissions.READ_MEDIA_IMAGES
       ];
 
-      let idx = 0;
+      permissions.requestPermissions(listaPermisos, function(status) {
+        escaneoDirectoRuta();
+      }, function() {
+        escaneoDirectoRuta();
+      });
+    }
 
-      function probarRuta() {
-        if (idx >= rutas.length) {
-          // Si Android bloquea la ruta estática, abrir explorador de archivos nativo
-          document.getElementById('folder-input').click();
-          return;
-        }
+    function escaneoDirectoRuta() {
+      // Réplica exacta de la ruta de Capacitor (Directory.ExternalStorage -> MiMusica)
+      let rutaBase = cordova.file.externalRootDirectory ? (cordova.file.externalRootDirectory + 'MiMusica/') : 'file:///storage/emulated/0/MiMusica/';
 
-        window.resolveLocalFileSystemURL(rutas[idx], function(dirEntry) {
+      window.resolveLocalFileSystemURL(rutaBase, function(dirEntry) {
+        escaneoCompletoCordova(dirEntry);
+      }, function(err) {
+        // Fallback secundario a sdcard directa
+        window.resolveLocalFileSystemURL('file:///sdcard/MiMusica/', function(dirEntry) {
           escaneoCompletoCordova(dirEntry);
-        }, function() {
-          idx++;
-          probarRuta();
+        }, function(err2) {
+          alert('No se pudo acceder automáticamente a la carpeta /MiMusica. Asegúrate de que existe en la memoria del teléfono.');
         });
-      }
-
-      probarRuta();
+      });
     }
 
     function escaneoCompletoCordova(dirEntry) {
@@ -781,8 +805,8 @@
           navigateTo('screen-albums');
         });
 
-      }, function() {
-        document.getElementById('folder-input').click();
+      }, function(err) {
+        alert('Error al leer el directorio /MiMusica');
       });
     }
 
@@ -859,7 +883,7 @@
       const nombresAlbumes = Object.keys(biblioteca);
 
       if (nombresAlbumes.length === 0) {
-        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron canciones en la carpeta seleccionada.</p>';
+        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron canciones en /MiMusica.</p>';
         return;
       }
 
