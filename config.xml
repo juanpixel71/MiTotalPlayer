@@ -10,6 +10,9 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
+    <!-- ICONO PRINCIPAL DE LA APP -->
+    <icon src="icon.png" />
+
     <!-- PREFERENCIAS DE PANTALLA COMPLETA Y NOTCH -->
     <preference name="Fullscreen" value="true" />
     <preference name="HideKeyboardFormAccessoryBar" value="true" />
@@ -25,10 +28,19 @@
     <platform name="android">
         <allow-intent href="market:*" />
         
+        <!-- ICONOS DE ANDROID POR DENSIDAD -->
+        <icon src="icon.png" density="ldpi" />
+        <icon src="icon.png" density="mdpi" />
+        <icon src="icon.png" density="hdpi" />
+        <icon src="icon.png" density="xhdpi" />
+        <icon src="icon.png" density="xxhdpi" />
+        <icon src="icon.png" density="xxxhdpi" />
+        
         <!-- PERMISOS DE ALMACENAMIENTO PARA /MiMusica -->
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+            <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
         </config-file>
     </platform>
