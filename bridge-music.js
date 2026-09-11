@@ -1,3 +1,44 @@
+// ==========================================================================
+// 4. FUNCIÓN PARA SELECCIONAR Y REPRODUCIR CANCIÓN AUTOMÁTICAMENTE
+// ==========================================================================
+function seleccionarCancion(urlCancion, titulo, artista) {
+    // 1. Obtener la referencia única al elemento Audio de HTML5
+    let audioPlayer = document.getElementById('audio-player');
+    if (!audioPlayer) {
+        audioPlayer = document.createElement('audio');
+        audioPlayer.id = 'audio-player';
+        document.body.appendChild(audioPlayer);
+    }
+
+    // 2. Asignar nueva ruta e información a la interfaz
+    audioPlayer.src = urlCancion;
+    
+    // Actualizar textos de interfaz si existen
+    const txtTitulo = document.getElementById('player-title');
+    const txtArtista = document.getElementById('player-artist');
+    if(txtTitulo) txtTitulo.innerText = titulo;
+    if(txtArtista) txtArtista.innerText = artista;
+
+    // 3. Forzar la carga física del nuevo archivo multimedia
+    audioPlayer.load();
+
+    // 4. Cambiar visualmente a la pantalla del reproductor de música
+    mostrarPantalla('music-player-screen'); 
+
+    // 5. Promesa de reproducción asíncrona segura para evitar bloqueos del navegador/Capacitor
+    audioPlayer.play()
+        .then(() => {
+            console.log("Reproduciendo con éxito: " + titulo);
+            actualizarBotonPlayPause(true); // Cambia el icono a "Pausa"
+        })
+        .catch(error => {
+            console.error("Error al iniciar reproducción automática: ", error);
+            // Intento alternativo tras interacción limpia
+            setTimeout(() => { audioPlayer.play(); }, 150);
+        });
+}
+
+
 // bridge-music.js
 
 window.cargarBibliotecaBridge = function() {
