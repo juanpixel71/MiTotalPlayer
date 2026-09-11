@@ -32,10 +32,7 @@ jobs:
       - name: Preparar carpeta www y capacitor.config.json
         run: |
           mkdir -p www
-          # Copiar archivos del proyecto web a la carpeta www
           cp -r *.html *.js *.css manifest.json icon.png www/ 2>/dev/null || true
-          
-          # Configurar capacitor para usar www
           cat << 'EOF' > capacitor.config.json
           {
             "appId": "com.mimusica.player",
@@ -47,7 +44,11 @@ jobs:
       - name: Generar Plataforma Android limpia
         run: npx cap add android
 
-      - name: Inyectar MainActivity Nativa (Escáner de MiMusica)
+      - name: Inyectar Permisos en AndroidManifest.xml
+        run: |
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />' android/app/src/main/AndroidManifest.xml
+
+      - name: Inyectar MainActivity Nativa (Escáner de MiMusica + Soporte COVERS)
         run: |
           mkdir -p android/app/src/main/java/com/mimusica/player
           cat << 'EOF' > android/app/src/main/java/com/mimusica/player/MainActivity.java
@@ -89,33 +90,49 @@ jobs:
                   try {
                       File miMusicaDir = new File(Environment.getExternalStorageDirectory(), "MiMusica");
                       if (miMusicaDir.exists() && miMusicaDir.isDirectory()) {
-                          File[] albumDirs = miMusicaDir.listFiles();
-                          if (albumDirs != null) {
-                              for (File albumDir : albumDirs) {
+                          File[] rootFiles = miMusicaDir.listFiles();
+
+                          if (rootFiles != null) {
+                              for (File albumDir : rootFiles) {
                                   if (albumDir.isDirectory()) {
                                       String albumName = albumDir.getName();
                                       JSONArray cancionesArray = new JSONArray();
                                       File[] files = albumDir.listFiles();
+
                                       if (files != null) {
                                           for (File file : files) {
                                               String fileName = file.getName().toLowerCase();
-                                              if (fileName.endsWith(".mp3") || fileName.endsWith(".wav") || fileName.endsWith(".m4a") || fileName.endsWith(".aac")) {
+
+                                              // 1. Si es un archivo de audio dentro del álbum
+                                              if (file.isFile() && esAudio(fileName)) {
                                                   JSONObject cancion = new JSONObject();
                                                   cancion.put("nombre", file.getName().replaceAll("\\.[^/.]+$", ""));
                                                   cancion.put("archivo", "file://" + file.getAbsolutePath());
                                                   cancionesArray.put(cancion);
-                                              } else if (fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".jpeg")) {
-                                                  try {
-                                                      FileInputStream fis = new FileInputStream(file);
-                                                      byte[] bytes = new byte[(int) file.length()];
-                                                      fis.read(bytes);
-                                                      fis.close();
-                                                      String base64Image = Base64.getEncoder().encodeToString(bytes);
-                                                      covers.put(albumName.toLowerCase(), "data:image/jpeg;base64," + base64Image);
-                                                  } catch (Exception e) {}
+                                              } 
+                                              // 2. Si es la carpeta COVERS o una imagen suelta
+                                              else if (file.isDirectory() && fileName.equalsIgnoreCase("covers")) {
+                                                  File[] coverFiles = file.listFiles();
+                                                  if (coverFiles != null) {
+                                                      for (File coverFile : coverFiles) {
+                                                          if (esImagen(coverFile.getName().toLowerCase())) {
+                                                              String b64 = convertirImagenABase64(coverFile);
+                                                              if (b64 != null) {
+                                                                  covers.put(albumName.toLowerCase(), b64);
+                                                                  break; // Toma la primera imagen válida de COVERS
+                                                              }
+                                                          }
+                                                      }
+                                                  }
+                                              } else if (file.isFile() && esImagen(fileName)) {
+                                                  String b64 = convertirImagenABase64(file);
+                                                  if (b64 != null) {
+                                                      covers.put(albumName.toLowerCase(), b64);
+                                                  }
                                               }
                                           }
                                       }
+
                                       if (cancionesArray.length() > 0) {
                                           biblioteca.put(albumName, cancionesArray);
                                       }
@@ -128,6 +145,28 @@ jobs:
                   WebView webView = this.bridge.getWebView();
                   String jsCall = String.format("window.recibirBibliotecaNativa(%s, %s);", biblioteca.toString(), covers.toString());
                   webView.evaluateJavascript(jsCall, null);
+              }
+
+              private boolean esAudio(String fileName) {
+                  return fileName.endsWith(".mp3") || fileName.endsWith(".wav") || fileName.endsWith(".m4a") || 
+                         fileName.endsWith(".aac") || fileName.endsWith(".ogg") || fileName.endsWith(".flac") || 
+                         fileName.endsWith(".opus") || fileName.endsWith(".wma");
+              }
+
+              private boolean esImagen(String fileName) {
+                  return fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".jpeg") || fileName.endsWith(".webp");
+              }
+
+              private String convertirImagenABase64(File file) {
+                  try {
+                      FileInputStream fis = new FileInputStream(file);
+                      byte[] bytes = new byte[(int) file.length()];
+                      fis.read(bytes);
+                      fis.close();
+                      return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(bytes);
+                  } catch (Exception e) {
+                      return null;
+                  }
               }
           }
           EOF
