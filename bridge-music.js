@@ -2,28 +2,33 @@
    PUENTE NATIVO CON CAPACITOR
    =========================================== */
 
+let wakeLockSentinel = null;
+
 // Control Inmersivo y KeepAwake para TV-NEWS
 window.gestionarModoPantalla = async function(screenId) {
-  if (typeof Capacitor !== 'undefined') {
-    const { StatusBar } = Capacitor.Plugins;
-    const { KeepAwake } = Capacitor.Plugins;
+  if (screenId === 'screen-tv') {
+    // 1. Ocultar barra de estado / notch en Android
+    if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
+      try { await Capacitor.Plugins.StatusBar.hide(); } catch(e){}
+    }
 
-    if (screenId === 'screen-tv') {
-      // Ocultar barra superior / notch y mantener pantalla encendida
-      if (StatusBar) {
-        try { await StatusBar.hide(); } catch(e){}
-      }
-      if (KeepAwake) {
-        try { await KeepAwake.keepAwake(); } catch(e){}
-      }
-    } else {
-      // Restaurar comportamiento estándar en otras pantallas
-      if (StatusBar) {
-        try { await StatusBar.show(); } catch(e){}
-      }
-      if (KeepAwake) {
-        try { await KeepAwake.allowSleep(); } catch(e){}
-      }
+    // 2. Mantener la pantalla activa
+    if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.KeepAwake) {
+      try { await Capacitor.Plugins.KeepAwake.keepAwake(); } catch(e){}
+    } else if ('wakeLock' in navigator) {
+      try { wakeLockSentinel = await navigator.wakeLock.request('screen'); } catch(e){}
+    }
+  } else {
+    // Restaurar modo normal
+    if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
+      try { await Capacitor.Plugins.StatusBar.show(); } catch(e){}
+    }
+
+    if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.KeepAwake) {
+      try { await Capacitor.Plugins.KeepAwake.allowSleep(); } catch(e){}
+    }
+    if (wakeLockSentinel !== null) {
+      try { await wakeLockSentinel.release(); wakeLockSentinel = null; } catch(e){}
     }
   }
 };
@@ -37,7 +42,7 @@ async function abrirSeleccionMusica() {
       if (status.publicStorage === 'granted' || status.publicStorage === 'prompt-with-rationale') {
         await cargarBibliotecaNativa();
       } else {
-        await cargarBibliotecaNativa(); // Intento directo de lectura
+        await cargarBibliotecaNativa();
       }
     } catch (e) {
       console.warn("Usando fallback de lectura nativa direct path", e);
