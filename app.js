@@ -27,15 +27,31 @@ var tvPlayer = videojs('player', {
   html5: { vhs: { overrideNative: true } } 
 });
 
-/* Transición limpia de TV sin reseteos bruscos ni iconos */
+/* VIDEO HLS--------------------------- */
+const videoElement = document.getElementById('tv-video');
+let hlsInstance = null;
+
+/* Transición limpia de TV utilizando Hls.js */
 function loadChannel(url, btn) {
-  tvPlayer.src({ src: url, type: 'application/x-mpegURL' });
-  tvPlayer.ready(function() {
-    tvPlayer.play().catch(function(e) {
-      console.log("Error al cargar canal TV:", e);
-    });
-  });
   marcarBotonActivo(btn);
+
+  if (Hls.isSupported()) {
+    if (hlsInstance) {
+      hlsInstance.destroy();
+    }
+    hlsInstance = new Hls();
+    hlsInstance.loadSource(url);
+    hlsInstance.attachMedia(videoElement);
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+      videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
+    });
+  } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+    // Soporte nativo para plataformas como iOS / Safari
+    videoElement.src = url;
+    videoElement.addEventListener('loadedmetadata', () => {
+      videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
+    });
+  }
 }
 
 function navigateTo(screenId) {
@@ -44,11 +60,17 @@ function navigateTo(screenId) {
   if (target) target.classList.add('active');
 
   if (screenId === 'screen-home') {
-    tvPlayer.pause();
+    videoElement.pause();
+    if (hlsInstance) {
+      hlsInstance.stop();
+    }
     detenerMusica();
     radioAudioElement.pause();
   }
 }
+
+/* FIN HLS ----------------------- */
+
 
 function marcarBotonActivo(elemento) {
   if (!elemento) return;
