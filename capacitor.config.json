@@ -1,0 +1,9 @@
+{
+  "appId": "com.mimusica.player",
+  "appName": "MiPlayer",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "http",
+    "allowNavigation": ["*"]
+  }
+}
