@@ -4,20 +4,27 @@
 
 let wakeLockSentinel = null;
 
-// Control Inmersivo y KeepAwake para TV-NEWS
+// Control Inmersivo y StatusBar (Puntos 3.2, 4 y 7)
 window.gestionarModoPantalla = async function(screenId) {
-  if (screenId === 'screen-tv') {
-    // 1. Ocultar barra de estado / notch en Android
+  if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
+    try {
+      // Punto 7: Mantener siempre el fondo de barra superior en #3C3C3B
+      await Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#3C3C3B' });
+    } catch(e){}
+  }
+
+  // Puntos 3.2 y 4: Pantalla completa en TV-NEWS y PANTALLA AMPLIADA
+  if (screenId === 'screen-tv' || screenId === 'screen-player') {
     if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
       try { await Capacitor.Plugins.StatusBar.hide(); } catch(e){}
     }
 
-    // 2. Mantener la pantalla activa sin apagar
-    if ('wakeLock' in navigator) {
-      try { wakeLockSentinel = await navigator.wakeLock.request('screen'); } catch(e){}
+    if (screenId === 'screen-tv') {
+      if ('wakeLock' in navigator) {
+        try { wakeLockSentinel = await navigator.wakeLock.request('screen'); } catch(e){}
+      }
     }
   } else {
-    // Restaurar modo normal
     if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.StatusBar) {
       try { await Capacitor.Plugins.StatusBar.show(); } catch(e){}
     }
@@ -31,16 +38,9 @@ window.gestionarModoPantalla = async function(screenId) {
 async function abrirSeleccionMusica() {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.Filesystem) {
     try {
-      const { Filesystem } = Capacitor.Plugins;
-      const status = await Filesystem.requestPermissions();
-      
-      if (status.publicStorage === 'granted' || status.publicStorage === 'prompt-with-rationale') {
-        await cargarBibliotecaNativa();
-      } else {
-        await cargarBibliotecaNativa();
-      }
+      await cargarBibliotecaNativa();
     } catch (e) {
-      console.warn("Usando fallback de lectura nativa direct path", e);
+      console.warn("Error leyendo la ruta nativa:", e);
       await cargarBibliotecaNativa();
     }
   } else {
@@ -52,28 +52,30 @@ async function abrirSeleccionMusica() {
   }
 }
 
+// Punto 5: Lectura directa desde /storage/emulated/0/MiMusica
 async function cargarBibliotecaNativa() {
-  const { Filesystem, Directory } = Capacitor.Plugins;
+  const { Filesystem } = Capacitor.Plugins;
   biblioteca = {};
   window.coversAlbumes = {};
 
+  const RUTA_MIMUSICA = '/storage/emulated/0/MiMusica';
+
   try {
     const result = await Filesystem.readdir({
-      path: '',
-      directory: Directory.Music
+      path: RUTA_MIMUSICA
     });
 
     for (const item of result.files) {
       const isFolder = item.type === 'directory' || !item.name.includes('.');
       
-      if (isFolder) {
+      // Si no es la carpeta de COVERS genérica, lo tratamos como Álbum
+      if (isFolder && item.name.toUpperCase() !== 'COVERS') {
         const nombreAlbum = item.name;
         biblioteca[nombreAlbum] = [];
 
         try {
           const subFolder = await Filesystem.readdir({
-            path: item.name,
-            directory: Directory.Music
+            path: `${RUTA_MIMUSICA}/${item.name}`
           });
 
           for (const subItem of subFolder.files) {
@@ -82,8 +84,7 @@ async function cargarBibliotecaNativa() {
 
             if (['mp3', 'aac', 'm4a', 'wav', 'ogg', 'flac'].includes(extension)) {
               const fileUri = await Filesystem.getUri({
-                path: `${item.name}/${subItem.name}`,
-                directory: Directory.Music
+                path: `${RUTA_MIMUSICA}/${item.name}/${subItem.name}`
               });
 
               biblioteca[nombreAlbum].push({
@@ -93,13 +94,10 @@ async function cargarBibliotecaNativa() {
             }
 
             if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
-              if (nombreSinExt.toLowerCase() === nombreAlbum.toLowerCase() || nombreSinExt.toLowerCase() === 'cover' || nombreSinExt.toLowerCase() === 'folder') {
-                const imgUri = await Filesystem.getUri({
-                  path: `${item.name}/${subItem.name}`,
-                  directory: Directory.Music
-                });
-                window.coversAlbumes[nombreAlbum] = Capacitor.convertFileSrc(imgUri.uri);
-              }
+              const imgUri = await Filesystem.getUri({
+                path: `${RUTA_MIMUSICA}/${item.name}/${subItem.name}`
+              });
+              window.coversAlbumes[nombreAlbum] = Capacitor.convertFileSrc(imgUri.uri);
             }
           }
         } catch(e) {
@@ -108,11 +106,38 @@ async function cargarBibliotecaNativa() {
       }
     }
 
+    // Buscar en la carpeta /MiMusica/COVERS si existe
+    try {
+      const coversFolder = await Filesystem.readdir({
+        path: `${RUTA_MIMUSICA}/COVERS`
+      });
+
+      for (const coverItem of coversFolder.files) {
+        const extension = coverItem.name.split('.').pop().toLowerCase();
+        const nombreSinExt = coverItem.name.replace(/\.[^/.]+$/, "");
+
+        if (['jpg', 'jpeg', 'png', 'webp'].includes(extension)) {
+          const imgUri = await Filesystem.getUri({
+            path: `${RUTA_MIMUSICA}/COVERS/${coverItem.name}`
+          });
+          
+          // Asigna la portada al álbum si coincide el nombre
+          Object.keys(biblioteca).forEach(album => {
+            if (album.toLowerCase() === nombreSinExt.toLowerCase()) {
+              window.coversAlbumes[album] = Capacitor.convertFileSrc(imgUri.uri);
+            }
+          });
+        }
+      }
+    } catch(e) {
+      console.log("No se encontró la subcarpeta COVERS o está vacía.");
+    }
+
     renderAlbumsNativos();
     navigateTo('screen-albums');
   } catch (error) {
-    console.error("Error al leer la carpeta de música:", error);
-    alert("Por favor, asegúrate de colocar tus carpetas de música dentro de la carpeta 'Música' (Music) de tu móvil.");
+    console.error("Error al leer la carpeta MiMusica:", error);
+    alert("Por favor, asegúrate de tener creada la carpeta 'MiMusica' en el almacenamiento interno con tus álbumes dentro.");
   }
 }
 
@@ -122,7 +147,7 @@ function renderAlbumsNativos() {
   const nombresAlbumes = Object.keys(biblioteca);
 
   if (nombresAlbumes.length === 0) {
-    container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se detectaron carpetas de álbumes en la carpeta Música.</p>';
+    container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se detectaron carpetas de álbumes en /MiMusica.</p>';
     return;
   }
 
@@ -137,7 +162,8 @@ function renderAlbumsNativos() {
     }
 
     card.onclick = () => {
-      marcarBotonActivo(card);
+      document.querySelectorAll('.album-card-clean').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
       showSongs(album);
     };
     container.appendChild(card);
