@@ -4,7 +4,7 @@
   "description": "Mi Total Player APK",
   "main": "index.html",
   "scripts": {
-    "build": "echo 'Build web'",
+    "build": "mkdir -p www && cp index.html bridge-music.js icon.png www/ 2>/dev/null || true",
     "cap:sync": "cap sync"
   },
   "dependencies": {
