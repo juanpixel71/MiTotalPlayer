@@ -151,6 +151,12 @@
       height: 100% !important;
     }
 
+    /* ELIMINAR BOTÓN PLAY DEL MEDIO DEL REPRODUCTOR */
+    .vjs-big-play-button,
+    .vjs-big-play-centered .vjs-big-play-button {
+      display: none !important;
+    }
+
     .grid-buttons {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -523,6 +529,10 @@
         <button class="btn-main-home" onclick="navigateTo('screen-radio')">
           <span>📻</span> RADIO
         </button>
+
+        <button class="btn-main-home" onclick="salirDeLaAplicacion()">
+          <span>🚪</span> &lt; SALIR DE LA APLICACIÓN
+        </button>
       </div>
     </div>
 
@@ -531,11 +541,12 @@
       <div class="view-content">
         <div class="tv-container">
           <div class="tv-video-box">
-            <video id="player" class="video-js vjs-default-skin vjs-big-play-centered" controls playsinline></video>
+            <video id="player" class="video-js vjs-default-skin" controls playsinline></video>
           </div>
 
           <div class="tv-controls-box">
             <div class="grid-buttons">
+              <button class="boton-canal" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
               <button class="boton-canal" onclick="loadChannel('https://live.france24.com/hls/live/2037179-b/F24_FR_HI_HLS/master_5000.m3u8', this)">FRANCE 24</button>
               <button class="boton-canal" onclick="loadChannel('https://ncdn-live-bfm.pfd.sfr.net/shls/LIVE$BFM_TV/index.m3u8', this)">BFM</button>
               <button class="boton-canal" onclick="loadChannel('https://dash2.antik.sk/live/test_bbc_world/playlist.m3u8', this)">BBC NEWS</button>
@@ -624,7 +635,7 @@
 
         <div class="media-controls-square">
           <button class="btn-square" onclick="prevRadio()">⏮</button>
-          <button class="btn-square btn-square-main" id="btn-radio-play" onclick="togglePlayRadio()">▶</button>
+          <button class="btn-square btn-radio-play" id="btn-radio-play" onclick="togglePlayRadio()">▶</button>
           <button class="btn-square" onclick="nextRadio()">⏭</button>
         </div>
 
@@ -701,6 +712,11 @@
         detenerMusica();
         radioAudioElement.pause();
       }
+
+      // Gestión de pantalla completa e inmersiva según la pantalla actual
+      if (typeof window.gestionarModoPantalla === 'function') {
+        window.gestionarModoPantalla(screenId);
+      }
     }
 
     function marcarBotonActivo(elemento) {
@@ -712,18 +728,18 @@
       elemento.classList.add('active-item');
     }
 
+    function salirDeLaAplicacion() {
+      if (typeof Capacitor !== 'undefined' && Capacitor.Plugins.App) {
+        Capacitor.Plugins.App.exitApp();
+      } else {
+        window.close();
+      }
+    }
+
 
     /* ==========================================
        GESTIÓN DE MÚSICA Y REPRODUCTOR
        =========================================== */
-    function abrirSeleccionMusica() {
-      if (Object.keys(biblioteca).length > 0) {
-        navigateTo('screen-albums');
-      } else {
-        document.getElementById('folder-input').click();
-      }
-    }
-
     function cargarBibliotecaLocal(event) {
       const files = event.target.files;
       biblioteca = {};
@@ -805,7 +821,7 @@
       document.getElementById('player-song-title').innerText = song.nombre;
       document.getElementById('player-album-info').innerText = albumActual;
       
-      const songURL = URL.createObjectURL(song.archivo);
+      const songURL = typeof song.archivo === 'string' ? song.archivo : URL.createObjectURL(song.archivo);
       audioElement.src = songURL;
       audioElement.play();
       document.getElementById('btn-play-pause').innerText = '⏸';
@@ -846,7 +862,6 @@
       playSong(listaCancionesActual[indiceCancionActual]);
     }
 
-    /* Cambio automático a la siguiente canción al finalizar */
     audioElement.addEventListener('ended', nextSong);
 
     audioElement.addEventListener('timeupdate', () => {
@@ -923,11 +938,7 @@
       return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
   </script>
-
-  <!-- Incluir Capacitor Core y la lógica del puente -->
-  <script src="capacitor.js"></script>
+  
   <script src="bridge-music.js"></script>
-</body>
-</html>
 </body>
 </html>
