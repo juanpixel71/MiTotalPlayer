@@ -33,17 +33,21 @@ jobs:
       - name: Añadir Plataforma Android
         run: npx cap add android
 
+      # Punto 6: Icono transparente adaptable al sistema
       - name: Generar Iconos de la Aplicación
-        run: npx capacitor-assets generate --iconBackgroundColor '#3C3C3B'
+        run: npx capacitor-assets generate --iconBackgroundColor 'transparent'
 
       - name: Sincronizar Capacitor
         run: npx cap sync android
 
+      # Punto 5: Permisos nativos de acceso al almacenamiento interno completo
       - name: Ajustar Permisos AndroidManifest
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-          PERMS='<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />\n<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />\n<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />\n<uses-permission android:name="android.permission.WAKE_LOCK" />\n<uses-permission android:name="android.permission.INTERNET" />'
+          PERMS='<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />\n<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />\n<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />\n<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />\n<uses-permission android:name="android.permission.WAKE_LOCK" />\n<uses-permission android:name="android.permission.INTERNET" />'
+          sed -i 's/<manifest /<manifest xmlns:tools="http:\/\/schemas.android.com\/tools" /' $MANIFEST
           sed -i "/<application/i $PERMS" $MANIFEST
+          sed -i 's/<application /<application android:requestLegacyExternalStorage="true" /' $MANIFEST
 
       - name: Compilar APK con Gradle
         run: |
