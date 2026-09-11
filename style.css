@@ -314,3 +314,30 @@ button:contains("VOLVER"),
     text-align: center;
 }
 
+/* ==========================================================================
+   5. SEPARACIÓN DE COMPONENTES EN PANTALLA RADIO
+   ========================================================================== */
+/* Espacio inferior del Recuadro de la Radio */
+.radio-container, .radio-box, #radio-card {
+    margin-bottom: 24px !important;
+}
+
+/* Espacio en la botonera principal de control de la radio */
+.radio-controls, .radio-buttons-group {
+    margin-top: 15px !important;
+    margin-bottom: 24px !important;
+}
+
+/* Espacio alrededor de la Línea de Reproducción (Seekbar) de la radio */
+.radio-progress-bar, .radio-timeline, #radio-progress {
+    margin-top: 20px !important;
+    margin-bottom: 25px !important;
+    padding: 5px 0;
+}
+
+/* Separación con los botones secundarios inferiores o resto de elementos */
+.radio-footer-elements, .radio-extra-options {
+    margin-top: 15px !important;
+}
+
+
