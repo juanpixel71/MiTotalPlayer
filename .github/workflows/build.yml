@@ -44,14 +44,30 @@ jobs:
       - name: Generar Plataforma Android limpia
         run: npx cap add android
 
-      - name: Inyectar Icono Personalizado (Respetando Proporciones)
+      - name: Inyectar Icono Personalizado desde la Raíz
         run: |
           if [ -f "icon.png" ]; then
+            echo "Inyectando icono personalizado..."
+            # Reemplazar iconos estándar
             cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png 2>/dev/null || true
             cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png 2>/dev/null || true
             cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png 2>/dev/null || true
             cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png 2>/dev/null || true
             cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png 2>/dev/null || true
+            
+            # Reemplazar iconos redondos (Round)
+            cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png 2>/dev/null || true
+
+            # Reemplazar primer plano de icono adaptativo (Android 8+)
+            cp icon.png android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png 2>/dev/null || true
+            cp icon.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png 2>/dev/null || true
           fi
 
       - name: Inyectar Permisos en AndroidManifest.xml
