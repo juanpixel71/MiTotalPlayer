@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Mi Total Player</title>
 
-  <!-- VideoJS CDN -->
   <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
   <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
-  <!-- Hoja de Estilos Propia -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,8 +19,6 @@
       <div class="header">MI TOTAL PLAYER</div>
       <div class="view-content" style="justify-content: space-between;">
         <button class="btn-main-home" onclick="navigateTo('screen-tv')"><span>📺</span> TV-NEWS</button>
-        
-        <!-- BOTÓN DE MÚSICA E INPUT DE RESPALDO -->
         <button class="btn-main-home" onclick="ejecutarAccionMusica()"><span>🎵</span> MÚSICA</button>
         <input type="file" id="folder-input" webkitdirectory directory multiple onchange="window.cargarBibliotecaLocal(event)" style="display:none;">
 
@@ -81,7 +77,7 @@
       <div class="view-content">
         <div class="player-view-drive">
           <div class="album-cover-drive" id="player-cover">
-            <span id="player-cover-icon" style="font-size: 6rem; color: #FFF;">🎵</span>
+            <span id="player-cover-icon" style="font-size: 5rem; color: #FFF;">🎵</span>
           </div>
           <div class="track-details-drive">
             <h3 id="player-song-title">Canción</h3>
@@ -131,7 +127,6 @@
 
   </div>
 
-  <!-- Scripts de la aplicación -->
   <script src="bridge-music.js"></script>
   <script src="app.js"></script>
 </body>
