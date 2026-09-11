@@ -28,10 +28,6 @@
       background-color: #3C3C3B;
       color: #FFFFFF;
       overflow: hidden;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
     }
 
     .app-container {
@@ -43,14 +39,14 @@
       background-color: #3C3C3B;
     }
 
-    /* HEADER EN NARANJA #FF8C00 */
+    /* HEADER AJUSTADO MÁS ARRIBA */
     .header {
       background-color: #FF8C00;
       color: #FFFFFF;
-      padding: 14px;
+      padding: 8px 10px;
       text-align: center;
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       letter-spacing: 1px;
       text-transform: uppercase;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
@@ -74,10 +70,10 @@
 
     .view-content {
       flex: 1;
-      padding: 15px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 10px;
       overflow-y: auto;
       min-height: 0;
     }
@@ -85,10 +81,10 @@
     .btn-nav-back {
       background-color: #FF8C00;
       color: #FFFFFF;
-      padding: 16px;
+      padding: 12px;
       text-align: center;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
       border-radius: 10px;
       margin-top: auto;
@@ -136,14 +132,14 @@
     .tv-container {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 10px;
       flex: 1;
       min-height: 0;
     }
 
     .tv-video-box {
       width: 100%;
-      height: 220px;
+      height: 200px;
       background-color: #000000;
       border-radius: 8px;
       flex-shrink: 0;
@@ -167,7 +163,7 @@
       justify-content: center;
       background-color: #9D9D9C;
       color: #FFFFFF;
-      padding: 14px 8px;
+      padding: 12px 8px;
       border-radius: 8px;
       font-size: 0.9rem;
       font-weight: bold;
@@ -186,7 +182,7 @@
        =========================================== */
     @media (orientation: landscape) {
       #screen-tv .header,
-      #screen-tv .btn-nav-back {
+      #screen-tv > .view-content > .btn-nav-back {
         display: none !important;
       }
 
@@ -202,17 +198,21 @@
         overflow: hidden !important;
       }
 
+      /* Margenes de seguridad para el notch en landscape */
       .tv-container {
         display: flex !important;
         flex-direction: row !important;
         align-items: stretch !important;
+        padding-left: env(safe-area-inset-left) !important;
+        padding-right: env(safe-area-inset-right) !important;
+        box-sizing: border-box !important;
       }
 
       .tv-video-box {
         flex: 1 !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
-        padding: 6px !important;
+        padding: 4px !important;
         box-sizing: border-box !important;
         background-color: #3C3C3B !important;
         display: flex !important;
@@ -236,17 +236,12 @@
         border-radius: 8px !important;
       }
 
-      .tv-video-box .vjs-control-bar {
-        bottom: 0 !important;
-        background: rgba(0, 0, 0, 0.7) !important;
-      }
-
       .tv-controls-box {
         width: 180px !important;
         height: 100dvh !important;
         max-height: 100dvh !important;
         background-color: #3C3C3B !important;
-        padding: 6px 6px 6px 0 !important;
+        padding: 4px 6px 4px 0 !important;
         box-sizing: border-box !important;
         overflow-y: auto !important;
         flex-shrink: 0 !important;
@@ -255,16 +250,25 @@
       .tv-controls-box .grid-buttons {
         display: flex !important;
         flex-direction: column !important;
-        gap: 8px !important;
+        gap: 6px !important;
       }
 
       .tv-controls-box .boton-canal {
-        height: 44px !important;
+        height: 40px !important;
         font-size: 0.85rem !important;
         border-radius: 8px !important;
         width: 100% !important;
         flex-shrink: 0 !important;
       }
+
+      .btn-nav-back-landscape {
+        display: flex !important;
+        background-color: #FF8C00 !important;
+      }
+    }
+
+    .btn-nav-back-landscape {
+      display: none;
     }
 
 
@@ -274,7 +278,7 @@
     .albums-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
       overflow-y: auto;
     }
 
@@ -286,31 +290,40 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 8px;
       cursor: pointer;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: bold;
-      line-height: 1.35;
+      line-height: 1.3;
       white-space: pre-line;
       word-break: break-word;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    .album-card-clean.has-cover {
+      color: transparent !important;
     }
 
     .album-card-clean.active-item {
-      background-color: #FF8C00;
+      border: 3px solid #FF8C00 !important;
     }
 
     .song-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       overflow-y: auto;
     }
 
     .song-item {
       background-color: #9D9D9C;
       color: #FFFFFF;
-      padding: 14px;
+      padding: 12px;
       border-radius: 8px;
       font-size: 0.95rem;
       font-weight: bold;
@@ -339,7 +352,7 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      padding: 15px !important;
+      padding: 10px !important;
       box-sizing: border-box;
     }
 
@@ -351,12 +364,12 @@
       flex: 1;
       width: 100%;
       min-height: 0;
-      padding: 10px 0;
+      padding: 5px 0;
     }
 
     .album-cover-drive {
-      width: 180px;
-      height: 180px;
+      width: 170px;
+      height: 170px;
       background-color: #9D9D9C;
       border-radius: 20px;
       display: flex;
@@ -365,6 +378,9 @@
       flex-shrink: 0;
       margin-top: auto;
       margin-bottom: auto;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
     }
 
     .track-details-drive {
@@ -375,14 +391,14 @@
     }
 
     .track-details-drive h3 {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: bold;
       color: #FFFFFF;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .track-details-drive p {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: #9D9D9C;
     }
 
@@ -390,14 +406,14 @@
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 0 5px;
       margin-top: auto;
       margin-bottom: auto;
     }
 
     .time-stamp {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: bold;
       color: #FFFFFF;
       width: 40px;
@@ -425,19 +441,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+      gap: 16px;
       width: 100%;
       margin-top: auto;
       margin-bottom: auto;
     }
 
     .btn-square {
-      width: 85px;
-      height: 85px;
+      width: 75px;
+      height: 75px;
       border-radius: 12px;
       background-color: #9D9D9C;
       color: #FFFFFF;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -446,10 +462,10 @@
     }
 
     .btn-square.btn-square-main {
-      width: 95px;
-      height: 95px;
+      width: 85px;
+      height: 85px;
       background-color: #FF8C00;
-      font-size: 3rem;
+      font-size: 2.7rem;
     }
 
     .btn-square:active {
@@ -459,7 +475,6 @@
     #screen-player .btn-nav-back {
       width: 100%;
       flex-shrink: 0;
-      margin-top: 15px;
     }
 
 
@@ -468,7 +483,7 @@
        =========================================== */
     .radio-display {
       width: 100%;
-      height: 220px;
+      height: 180px;
       background-color: #000000;
       border-radius: 10px;
       display: flex;
@@ -479,7 +494,7 @@
 
     .radio-progress-spacer {
       margin-top: auto;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
     }
 
 
@@ -514,7 +529,7 @@
     
     <div id="screen-home" class="screen active">
       <div class="header">MI TOTAL PLAYER</div>
-      <div class="view-content" style="justify-content: space-between; gap: 15px;">
+      <div class="view-content" style="justify-content: space-between; gap: 10px;">
         <button class="btn-main-home" onclick="navigateTo('screen-tv')">
           <span>📺</span> TV-NEWS
         </button>
@@ -548,6 +563,9 @@
               <button class="boton-canal" onclick="loadChannel('https://ztnr.rtve.es/ztnr/1694255.m3u8', this)">24 HORAS</button>
               <button class="boton-canal" onclick="loadChannel('https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8', this)">TVE LA 1</button>
               <button class="boton-canal" onclick="loadChannel('https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8', this)">3CAT INFO</button>
+              
+              <!-- BOTÓN VOLVER EN LANDSCAPE -->
+              <button class="boton-canal btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
             </div>
           </div>
         </div>
@@ -577,8 +595,8 @@
       <div class="view-content">
         <div class="player-view-drive">
           
-          <div class="album-cover-drive">
-            <span style="font-size: 6rem; color: #FFFFFF;">🎵</span>
+          <div class="album-cover-drive" id="player-cover-box">
+            <span id="player-cover-icon" style="font-size: 5rem; color: #FFFFFF;">🎵</span>
           </div>
 
           <div class="track-details-drive">
@@ -610,7 +628,7 @@
       <div class="view-content">
         
         <div class="radio-display">
-          <span style="font-size: 4.5rem;">📻</span>
+          <span style="font-size: 4rem;">📻</span>
         </div>
 
         <div class="grid-buttons" id="radio-buttons-container">
@@ -646,6 +664,7 @@
        GESTIÓN DE NAVEGACIÓN Y VARIABLES GLOBALES
        =========================================== */
     let biblioteca = {};
+    let portadas = {}; // Guarda la URL de las portadas por álbum
     let albumActual = '';
     let listaCancionesActual = [];
     let indiceCancionActual = 0;
@@ -729,7 +748,7 @@
 
 
     /* ==========================================
-       GESTIÓN DE MÚSICA Y REPRODUCTOR CORDOVA
+       ESCANER DE MÚSICA Y CARPETA /COVERS
        =========================================== */
     function abrirSeleccionMusica() {
       if (Object.keys(biblioteca).length > 0) {
@@ -737,59 +756,109 @@
         return;
       }
 
-      // Si se ejecuta en APK Android mediante Cordova
       if (window.cordova && window.resolveLocalFileSystemURL) {
-        var rutaMusica = cordova.file.externalRootDirectory + 'MiMusica/';
-        
-        window.resolveLocalFileSystemURL(rutaMusica, function(dirEntry) {
-          var dirReader = dirEntry.createReader();
-          dirReader.readEntries(function(entries) {
-            biblioteca = {};
-            
-            entries.forEach(function(entry) {
-              if (entry.isFile && entry.name.match(/\.(mp3|aac|m4a|wav|ogg)$/i)) {
-                let nombreAlbum = 'MiMusica';
-                if (!biblioteca[nombreAlbum]) biblioteca[nombreAlbum] = [];
+        var raizMusica = "file:///storage/emulated/0/MiMusica/";
 
-                biblioteca[nombreAlbum].push({
-                  nombre: entry.name.replace(/\.[^/.]+$/, ""),
-                  src: entry.toInternalURL() // cdvfile:// nativo
-                });
-              }
-            });
-
-            renderAlbums();
-            navigateTo('screen-albums');
-          }, function(err) {
-            alert('Error leyendo los archivos de /MiMusica');
+        window.resolveLocalFileSystemURL(raizMusica, function(dirEntry) {
+          escaneoCompletoCordova(dirEntry);
+        }, function(err1) {
+          window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + 'MiMusica/', function(dirEntry) {
+            escaneoCompletoCordova(dirEntry);
+          }, function(err2) {
+            alert('No se pudo acceder a storage/emulated/0/MiMusica/');
           });
-        }, function(err) {
-          alert('No se encontró la carpeta /MiMusica en el almacenamiento interno');
         });
         return;
       }
 
-      // Selector local Web/PC (Navegador)
+      // Fallback para pruebas en navegador Web
       document.getElementById('folder-input').click();
+    }
+
+    function escaneoCompletoCordova(dirEntry) {
+      biblioteca = {};
+      portadas = {};
+
+      var dirReader = dirEntry.createReader();
+      dirReader.readEntries(function(entries) {
+        let subcarpetas = entries.filter(e => e.isDirectory);
+        let promesas = [];
+
+        // 1. Escanear carpeta COVERS primero
+        let coversDir = subcarpetas.find(e => e.name.toUpperCase() === 'COVERS');
+        if (coversDir) {
+          promesas.push(escanearCovers(coversDir));
+        }
+
+        // 2. Escanear carpetas de Álbumes
+        subcarpetas.forEach(function(subDir) {
+          if (subDir.name.toUpperCase() !== 'COVERS') {
+            promesas.push(escanearAlbum(subDir));
+          }
+        });
+
+        Promise.all(promesas).then(() => {
+          renderAlbums();
+          navigateTo('screen-albums');
+        });
+
+      }, function(err) {
+        alert('Error al leer el directorio /MiMusica');
+      });
+    }
+
+    function escanearCovers(coversEntry) {
+      return new Promise((resolve) => {
+        let reader = coversEntry.createReader();
+        reader.readEntries(function(entries) {
+          entries.forEach(function(fileEntry) {
+            if (fileEntry.isFile && fileEntry.name.match(/\.(jpg|jpeg|png|webp)$/i)) {
+              let nombreSinExt = fileEntry.name.replace(/\.[^/.]+$/, "").trim();
+              portadas[nombreSinExt] = fileEntry.toInternalURL();
+            }
+          });
+          resolve();
+        }, () => resolve());
+      });
+    }
+
+    function escanearAlbum(albumEntry) {
+      return new Promise((resolve) => {
+        let reader = albumEntry.createReader();
+        reader.readEntries(function(entries) {
+          let canciones = [];
+          entries.forEach(function(fileEntry) {
+            if (fileEntry.isFile && fileEntry.name.match(/\.(mp3|aac|m4a|wav|ogg)$/i)) {
+              canciones.push({
+                nombre: fileEntry.name.replace(/\.[^/.]+$/, ""),
+                src: fileEntry.toInternalURL()
+              });
+            }
+          });
+
+          if (canciones.length > 0) {
+            biblioteca[albumEntry.name] = canciones;
+          }
+          resolve();
+        }, () => resolve());
+      });
     }
 
     function cargarBibliotecaLocal(event) {
       const files = event.target.files;
       biblioteca = {};
+      portadas = {};
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (file.type.startsWith('audio/') || file.name.endsWith('.mp3') || file.name.endsWith('.aac') || file.name.endsWith('.m4a')) {
+        if (file.type.startsWith('audio/') || file.name.endsWith('.mp3') || file.name.endsWith('.m4a')) {
           const pathSegments = file.webkitRelativePath.split('/');
-          let nombreAlbum = 'Varios / Sueltas';
+          let nombreAlbum = 'Varios';
           if (pathSegments.length > 2) {
             nombreAlbum = pathSegments[pathSegments.length - 2];
           }
 
-          if (!biblioteca[nombreAlbum]) {
-            biblioteca[nombreAlbum] = [];
-          }
-
+          if (!biblioteca[nombreAlbum]) biblioteca[nombreAlbum] = [];
           biblioteca[nombreAlbum].push({
             nombre: file.name.replace(/\.[^/.]+$/, ""),
             src: URL.createObjectURL(file)
@@ -811,14 +880,22 @@
       const nombresAlbumes = Object.keys(biblioteca);
 
       if (nombresAlbumes.length === 0) {
-        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron canciones en /MiMusica.</p>';
+        container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:#9D9D9C;">No se encontraron carpetas con música en /MiMusica.</p>';
         return;
       }
 
       nombresAlbumes.forEach(album => {
         const card = document.createElement('div');
         card.className = 'album-card-clean';
-        card.innerText = formatearNombreAlbum(album);
+
+        // Buscar coincidencia de portada en la carpeta /COVERS
+        if (portadas[album]) {
+          card.style.backgroundImage = `url('${portadas[album]}')`;
+          card.classList.add('has-cover');
+        } else {
+          card.innerText = formatearNombreAlbum(album);
+        }
+
         card.onclick = () => {
           marcarBotonActivo(card);
           showSongs(album);
@@ -854,6 +931,18 @@
       document.getElementById('player-song-title').innerText = song.nombre;
       document.getElementById('player-album-info').innerText = albumActual;
       
+      // Ajustar portada en el reproductor si existe
+      const coverBox = document.getElementById('player-cover-box');
+      const coverIcon = document.getElementById('player-cover-icon');
+
+      if (portadas[albumActual]) {
+        coverBox.style.backgroundImage = `url('${portadas[albumActual]}')`;
+        coverIcon.style.display = 'none';
+      } else {
+        coverBox.style.backgroundImage = 'none';
+        coverIcon.style.display = 'block';
+      }
+
       audioElement.src = song.src;
       audioElement.play();
       document.getElementById('btn-play-pause').innerText = '⏸';
