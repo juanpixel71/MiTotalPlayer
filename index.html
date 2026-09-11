@@ -240,7 +240,11 @@
       <div class="header">MI TOTAL PLAYER</div>
       <div class="view-content" style="justify-content: space-between;">
         <button class="btn-main-home" onclick="navigateTo('screen-tv')"><span>📺</span> TV-NEWS</button>
+        
+        <!-- BOTÓN DE MÚSICA E INPUT DE RESPALDO -->
         <button class="btn-main-home" onclick="ejecutarAccionMusica()"><span>🎵</span> MÚSICA</button>
+        <input type="file" id="folder-input" webkitdirectory directory multiple onchange="window.cargarBibliotecaLocal(event)" style="display:none;">
+
         <button class="btn-main-home" onclick="navigateTo('screen-radio')"><span>📻</span> RADIO</button>
         <button class="btn-nav-back" onclick="salirDeAplicacion()">&lt; SALIR DE LA APLICACIÓN</button>
       </div>
@@ -346,7 +350,8 @@
 
   </div>
 
-  <!-- SCRIPT CON LA LÓGICA DE LECTURA NATIVA RECUPERADA -->
+  <!-- SCRIPT DE INTERFAZ -->
+  <script src="bridge-music.js"></script>
   <script>
     let biblioteca = {};
     let covers = {};
@@ -403,26 +408,20 @@
       elemento.classList.add('active-item');
     }
 
-    /* LÓGICA EXACTA QUE RECOGE LA MÚSICA DIRECTAMENTE */
     function ejecutarAccionMusica() {
       if (Object.keys(biblioteca).length > 0) {
         navigateTo('screen-albums');
+        return;
+      }
+
+      if (typeof window.cargarBibliotecaBridge === 'function') {
+        window.cargarBibliotecaBridge();
       } else {
-        // Ejecutar el gancho de la aplicación nativa para escanear /storage/emulated/0/MiMusica
-        if (window.AndroidBridge && window.AndroidBridge.cargarMusica) {
-          window.AndroidBridge.cargarMusica();
-        } else if (typeof window.cargarMusicaNativa === 'function') {
-          window.cargarMusicaNativa();
-        } else {
-          // Si la llamada externa existe en tu entorno
-          if (typeof window.abrirSeleccionMusicaNativa === 'function') {
-            window.abrirSeleccionMusicaNativa();
-          }
-        }
+        renderAlbums();
+        navigateTo('screen-albums');
       }
     }
 
-    // Función callback receptora desde el sistema nativo
     window.recibirBibliotecaNativa = function(bibliotecaRecibida, coversRecibidas) {
       biblioteca = bibliotecaRecibida || {};
       covers = coversRecibidas || {};
@@ -436,7 +435,7 @@
       const nombresAlbumes = Object.keys(biblioteca).sort();
 
       if (nombresAlbumes.length === 0) {
-        container.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#9D9D9C;">No se encontraron canciones.</p>';
+        container.innerHTML = '<p style="grid-column: span 2; text-align:center; color:#9D9D9C; padding: 20px;">No se encontraron canciones en el dispositivo.</p>';
         return;
       }
 
