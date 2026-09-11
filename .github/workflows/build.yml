@@ -27,21 +27,10 @@ jobs:
     - name: Install Dependencies
       run: |
         npm install
-        npm install -g cordova-res
-
-    - name: Generate App Icons from icon.png
-      run: |
-        mkdir -p resources
-        cp icon.png resources/icon.png
-        cordova-res android --skip-splash
 
     - name: Sync Web Assets to Native Project
       run: |
         npx cap sync android
-
-    - name: Copy Generated Icons to Android Folder
-      run: |
-        cp -R resources/android/icon/* android/app/src/main/res/
 
     - name: Build Android APK (Debug)
       run: |
