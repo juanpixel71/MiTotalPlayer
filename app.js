@@ -21,11 +21,6 @@ function salirDeAplicacion() {
   }
 }
 
-var tvPlayer = videojs('player', { 
-  fluid: true, 
-  bigPlayButton: false, // Desactiva y evita que se renderice el botón grande de play
-  html5: { vhs: { overrideNative: true } } 
-});
 
 /* VIDEO HLS--------------------------- */
 const videoElement = document.getElementById('tv-video');
@@ -82,10 +77,12 @@ function marcarBotonActivo(elemento) {
 }
 
 function ejecutarAccionMusica() {
-  if (Object.keys(biblioteca).length > 0) {
-    navigateTo('screen-albums');
-    return;
+  if (typeof window.cargarBibliotecaBridge === 'function' && Object.keys(biblioteca).length === 0) {
+    window.cargarBibliotecaBridge();
   }
+  renderAlbums();
+  navigateTo('screen-albums');
+}
 
   if (typeof window.cargarBibliotecaBridge === 'function') {
     window.cargarBibliotecaBridge();
