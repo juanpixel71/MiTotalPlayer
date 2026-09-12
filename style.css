@@ -492,3 +492,14 @@ html, body {
 .btn-nav-back-landscape { 
   display: none; 
 }
+
+
+/* ==========================================
+   9. ELIMINAR BOTÓN PLAY DE CARGA (HLS TV)
+   ========================================== */
+#tv-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+}
+
