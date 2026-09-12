@@ -52,42 +52,44 @@ function marcarBotonActivo(elemento) {
   elemento.classList.add('active-item');
 }
 
-/* TV HLS - ADAPTADO SEGURO */
+/* TV HLS ORIGINAL RESTAURADO */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
-  if (!url) {
-    alert('Este canal no tiene una URL válida.');
-    return;
-  }
-
-  if (hlsInstance) {
-    hlsInstance.destroy();
-  }
-
-  if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-    hlsInstance = new Hls({
-      enableWorker: true,
-      lowLatencyMode: true
-    });
+  if (Hls.isSupported()) {
+    if (hlsInstance) {
+      hlsInstance.destroy();
+    }
+    hlsInstance = new Hls();
     hlsInstance.loadSource(url);
     hlsInstance.attachMedia(videoElement);
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function () {
-      if (videoElement) {
-        videoElement.play().catch(e => console.warn('Autoplay prevenido:', e));
+    
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+      videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
+    });
+
+    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        switch (data.details) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            hlsInstance.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hlsInstance.recoverMediaError();
+            break;
+          default:
+            hlsInstance.destroy();
+            break;
+        }
       }
     });
-  } else if (videoElement && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+  } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
     videoElement.src = url;
-    videoElement.play().catch(e => console.warn('Autoplay prevenido:', e));
+    videoElement.addEventListener('loadedmetadata', () => {
+      videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
+    });
   }
 }
-
-
-
-
-
-
 
 
     });
