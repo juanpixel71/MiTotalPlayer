@@ -495,11 +495,10 @@ html, body {
 
 
 /* ==========================================
-   9. ELIMINAR BOTÓN PLAY DE CARGA (HLS TV)
+   9. ELIMINAR CÍRCULO PLAY NATIVO DE ANDROID
    ========================================== */
 #tv-video::-webkit-media-controls-start-playback-button {
-  display: none !important;
-  -webkit-appearance: none !important;
   opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
-
