@@ -52,7 +52,7 @@ function marcarBotonActivo(elemento) {
   elemento.classList.add('active-item');
 }
 
-/* TV HLS ORIGINAL RESTAURADO */
+/* TV HLS ORIGINAL RESTAURADO Y CORREGIDO */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
@@ -83,17 +83,7 @@ function loadChannel(url, btn) {
         }
       }
     });
-  } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-    videoElement.src = url;
-    videoElement.addEventListener('loadedmetadata', () => {
-      videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
-    });
-  }
-}
-
-
-    });
-  } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+  } else if (videoElement && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
     videoElement.src = url;
     videoElement.addEventListener('loadedmetadata', () => {
       videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
