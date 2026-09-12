@@ -52,7 +52,7 @@ function marcarBotonActivo(elemento) {
   elemento.classList.add('active-item');
 }
 
-/* TV HLS - ADAPTADO DE LA VERSIÓN ANTIGUA */
+/* TV HLS - ADAPTADO SEGURO */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
@@ -63,10 +63,9 @@ function loadChannel(url, btn) {
 
   if (hlsInstance) {
     hlsInstance.destroy();
-    hlsInstance = null;
   }
 
-  if (url.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
+  if (typeof Hls !== 'undefined' && Hls.isSupported()) {
     hlsInstance = new Hls({
       enableWorker: true,
       lowLatencyMode: true
@@ -74,13 +73,17 @@ function loadChannel(url, btn) {
     hlsInstance.loadSource(url);
     hlsInstance.attachMedia(videoElement);
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, function () {
-      videoElement.play().catch(e => console.warn('Autoplay prevenido:', e));
+      if (videoElement) {
+        videoElement.play().catch(e => console.warn('Autoplay prevenido:', e));
+      }
     });
-  } else {
+  } else if (videoElement && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
     videoElement.src = url;
     videoElement.play().catch(e => console.warn('Autoplay prevenido:', e));
   }
 }
+
+
 
 
 
