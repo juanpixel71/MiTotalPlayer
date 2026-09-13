@@ -119,11 +119,10 @@ html, body {
 /* ==========================================
    4. PANTALLA DE TV Y REPRODUCTOR HLS
    ========================================== */
-/* Caja contenedora del vídeo (Fondo negro adaptado a 16:9 sin franjas) */
+/* Caja contenedora del vídeo (Fondo negro para ocultar cualquier rastro visual) */
 .tv-video-box {
   width: 100% !important;
-  height: auto !important; /* Quitamos los 240px fijos */
-  aspect-ratio: 16 / 9 !important; /* Mide exactamente lo mismo que la señal de TV */
+  height: 240px !important;
   background-color: #000000 !important;
   border-radius: 8px !important;
   flex-shrink: 0 !important;
@@ -131,10 +130,9 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 25px !important; /* Separa drásticamente los botones de abajo */
   position: relative !important;
 }
-
 
 /* Elemento de vídeo estándar */
 #tv-video {
@@ -144,12 +142,11 @@ html, body {
   background-color: #000000 !important;
 }
 
-/* Rejilla de botones de canales de TV (Ajustada para levantar los controles) */
+/* Rejilla de botones de canales de TV */
 .grid-buttons {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
-  gap: 10px !important;
-  margin-bottom: 5px !important; /* Reduce drásticamente el espacio inferior */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
 }
 
 .boton-canal {
@@ -273,7 +270,6 @@ html, body {
   align-items: center; 
   gap: 12px; 
   margin-bottom: 10px;
-   margin-top: 20px;
 }
 
 .time-stamp { 
@@ -312,28 +308,23 @@ html, body {
 }
 
 .btn-square { 
-  width: 95px !important; 
-  height: 95px !important; 
-  border-radius: 16px !important; 
-  background-color: #9D9D9C !important; 
-  color: #FFFFFF !important; 
-  font-size: 2.8rem !important; /* Devuelve el tamaño grande a los emojis laterales */
-  display: flex !important; 
-  align-items: center !important; 
-  justify-content: center !important; 
-  cursor: pointer !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+  width: 95px; 
+  height: 95px; 
+  border-radius: 16px; 
+  background-color: #9D9D9C; 
+  color: #FFFFFF; 
+  font-size: 2.8rem; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer; 
 }
 
 .btn-square.btn-square-main { 
-  width: 110px !important; 
-  height: 110px !important; 
-  background-color: #FF8C00 !important; 
-  font-size: 3.6rem !important; /* Devuelve el tamaño gigante al emoji central */
-  border: none !important;
-  outline: none !important;
+  width: 110px; 
+  height: 110px; 
+  background-color: #FF8C00; 
+  font-size: 3.6rem; 
 }
 
 /* ==========================================
@@ -368,12 +359,11 @@ html, body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
-  /* Eliminamos el max-height para expandir la botonera y que quepan los 10 botones */
-  flex: 1; 
+  max-height: 170px;
   overflow-y: auto;
+  flex-shrink: 0;
   padding-right: 4px;
 }
-
 
 .radio-progress-container {
   width: 100%;
@@ -402,63 +392,30 @@ html, body {
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
 @media (orientation: landscape) {
-  /* Forzamos el contenedor para mantener la simetría exacta entre el Header y la base */
-  #screen-home .view-content {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important; /* 3 columnas perfectas e iguales */
-    grid-template-rows: 1fr auto !important;          /* Fila superior elástica, fila inferior ajustada */
-    gap: 15px !important;                             /* Separación uniforme por todos los lados */
-    height: calc(100dvh - 90px) !important;           /* Ajuste armónico para que no desborde la pantalla */
-    box-sizing: border-box !important;
-    padding-bottom: 10px !important;
-  }
-
-  /* Los 3 botones se estiran verticalmente ocupando todo el alto libre en su columna */
-  #screen-home .btn-main-home {
-    grid-row: 1 !important;            /* Se posicionan obligatoriamente en la fila superior */
-    flex-direction: column !important; /* ICONO ARRIBA, TEXTO ABAJO */
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 12px !important;
-    height: 100% !important;           /* Estiramiento vertical simétrico absoluto */
-    width: 100% !important;
-    padding: 15px !important;
-  }
-
-  /* El botón de salir recupera su diseño original: abajo del todo de lado a lado */
-  #screen-home .btn-nav-back {
-    grid-column: span 3 !important;    /* Se extiende a lo largo de las 3 columnas en la base */
-    grid-row: 2 !important;            /* Se posiciona obligatoriamente en la fila inferior */
-    width: 100% !important;
-    margin-top: 10px !important;
-  }
-
-
-  /* Ocultamos los botones de reproducción (⏮ ▶ ⏭) en la TV horizontal */
-  #screen-tv .media-controls-square {
-    display: none !important;
-  }
-
-  /* --- ESTRUCTURA DE LA TV EN HORIZONTAL --- */
   #screen-tv .view-content {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: stretch !important;
-    gap: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    flex: 1 !important;
-    width: 100% !important;
-    height: 100% !important;
-    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
   }
 
+  #screen-tv .view-content .grid-buttons,
+  #screen-tv .view-content .tv-controls-section {
+    margin-top: 20px !important;
+  }
+ 
   #screen-tv .header, 
   #screen-tv > .view-content > .btn-nav-back { 
     display: none !important; 
   }
 
   #screen-tv, 
+  #screen-tv .view-content, 
   .tv-container {
     width: 100vw !important; 
     height: 100dvh !important; 
@@ -473,7 +430,6 @@ html, body {
     display: flex !important; 
     flex-direction: row !important; 
     align-items: stretch !important; 
-    flex: 1 !important;
   }
 
   .tv-video-box {
@@ -536,11 +492,3 @@ html, body {
 .btn-nav-back-landscape { 
   display: none; 
 }
-
-/* Conservamos el parche del póster transparente para evitar el círculo de la TV */
-#tv-video::-webkit-media-controls-start-playback-button {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
