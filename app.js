@@ -56,6 +56,12 @@ function marcarBotonActivo(elemento) {
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
+  // Guardamos el índice del canal que se acaba de pulsar para que los botones ⏮ y ⏭ sepan dónde están
+  if (typeof emisorasTV !== 'undefined' && emisorasTV.length > 0) {
+    const idx = emisorasTV.indexOf(btn);
+    if (idx !== -1) indiceTVActual = idx;
+  }
+
   if (Hls.isSupported()) {
     if (hlsInstance) {
       hlsInstance.destroy();
@@ -66,6 +72,9 @@ function loadChannel(url, btn) {
     
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
       videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
+      // Cambia el botón de abajo a Pausa inmediatamente al cargar con éxito
+      const btnTVPlay = document.getElementById('btn-tv-play');
+      if (btnTVPlay) btnTVPlay.innerText = '⏸';
     });
 
     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
@@ -87,9 +96,13 @@ function loadChannel(url, btn) {
     videoElement.src = url;
     videoElement.addEventListener('loadedmetadata', () => {
       videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
+      // Sincroniza también en el modo nativo
+      const btnTVPlay = document.getElementById('btn-tv-play');
+      if (btnTVPlay) btnTVPlay.innerText = '⏸';
     });
   }
 }
+
 
 /* MÚSICA */
 function ejecutarAccionMusica() {
