@@ -425,31 +425,31 @@ html, body {
     margin-top: auto !important;
   }
 
-  /* --- MANTENEMOS TU ESTRUCTURA DE LA TV INTACTA --- */
-  #screen-tv .view-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    box-sizing: border-box;
-    flex: 1;
-    width: 100%;
-    overflow-y: auto;
+  /* Ocultamos los botones de reproducción (⏮ ▶ ⏭) en la TV horizontal porque ahí no hacen falta */
+  #screen-tv .media-controls-square {
+    display: none !important;
   }
 
-  #screen-tv .view-content .grid-buttons,
-  #screen-tv .view-content .tv-controls-section {
-    margin-top: 20px !important;
+  /* --- ESTRUCTURA DE LA TV EN HORIZONTAL RECUPERADA --- */
+  #screen-tv .view-content {
+    display: flex !important;
+    flex-direction: row !important; /* Vídeo a un lado, canales al otro */
+    align-items: stretch !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    flex: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
   }
- 
+
   #screen-tv .header, 
   #screen-tv > .view-content > .btn-nav-back { 
     display: none !important; 
   }
 
   #screen-tv, 
-  #screen-tv .view-content, 
   .tv-container {
     width: 100vw !important; 
     height: 100dvh !important; 
@@ -464,6 +464,7 @@ html, body {
     display: flex !important; 
     flex-direction: row !important; 
     align-items: stretch !important; 
+    flex: 1 !important;
   }
 
   .tv-video-box {
@@ -527,7 +528,7 @@ html, body {
   display: none; 
 }
 
-/* Conservamos el parche del póster transparente que te solucionó el círculo de la TV */
+/* Conservamos el parche del póster transparente para evitar el círculo de la TV */
 #tv-video::-webkit-media-controls-start-playback-button {
   opacity: 0 !important;
   visibility: hidden !important;
