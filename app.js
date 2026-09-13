@@ -6,12 +6,19 @@ let indiceCancionActual = 0;
 let emisorasRadio = [];
 let indiceRadioActual = 0;
 
+// URL de tu Gist de GitHub para la carga dinámica de canales y emisoras
+const GIST_CANALES_URL = "https://gist.githubusercontent.com/juanpixel71/4dea433e849fcfda4869b1463f55e1f9/raw/canales.json";
+
 const audioElement = document.getElementById('audio-element');
 const radioAudioElement = document.getElementById('radio-audio-element');
 const seekBar = document.getElementById('seek-bar');
 const radioSeekBar = document.getElementById('radio-seek-bar');
 const videoElement = document.getElementById('tv-video');
 let hlsInstance = null;
+
+/* CONTROLES DE REPRODUCCIÓN PARA LA TV */
+let emisorasTV = [];
+let indiceTVActual = 0;
 
 function salirDeAplicacion() {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
@@ -51,13 +58,77 @@ function marcarBotonActivo(elemento) {
   }
   elemento.classList.add('active-item');
 }
+/* ARRANCAR LA CARGA DINÁMICA DESDE EL GIST */
+window.addEventListener('DOMContentLoaded', () => {
+  cargarCanalesDesdeGist();
+});
+
+function cargarCanalesDesdeGist() {
+  fetch(GIST_CANALES_URL + "?t=" + new Date().getTime())
+    .then(res => res.json())
+    .then(data => {
+      
+      // 1. CARGAR Y PINTAR BOTONES DE LA TELEVISIÓN
+      const tvContainer = document.querySelector('#screen-tv .grid-buttons');
+      if (tvContainer && data.tv) {
+        tvContainer.innerHTML = "";
+        data.tv.forEach(canal => {
+          const btn = document.createElement('button');
+          btn.className = 'boton-canal';
+          btn.innerText = canal.nombre;
+          btn.onclick = () => loadChannel(canal.url, btn);
+          tvContainer.appendChild(btn);
+        });
+        
+        // Rellena la rejilla de la TV hasta tener 10 botones simétricos
+        while (tvContainer.children.length < 10) {
+          const btnVacio = document.createElement('button');
+          btnVacio.className = 'boton-canal';
+          btnVacio.style.opacity = "0.4";
+          btnVacio.style.cursor = "default";
+          btnVacio.innerText = "VACÍO";
+          tvContainer.appendChild(btnVacio);
+        }
+        
+        // Mapea internamente los botones creados para que funcionen ⏮ y ⏭
+        emisorasTV = Array.from(tvContainer.querySelectorAll('.boton-canal'));
+      }
+
+      // 2. CARGAR Y PINTAR BOTONES DE LA RADIO
+      const radioContainer = document.getElementById('radio-buttons-container');
+      if (radioContainer && data.radio) {
+        radioContainer.innerHTML = "";
+        data.radio.forEach(emisora => {
+          const btn = document.createElement('button');
+          btn.className = 'boton-canal';
+          btn.innerText = emisora.nombre;
+          btn.onclick = () => playRadio(btn, emisora.url);
+          radioContainer.appendChild(btn);
+        });
+        
+        // Rellena la rejilla de la Radio hasta tener 10 botones simétricos
+        while (radioContainer.children.length < 10) {
+          const btnVacio = document.createElement('button');
+          btnVacio.className = 'boton-canal';
+          btnVacio.style.opacity = "0.4";
+          btnVacio.style.cursor = "default";
+          btnVacio.innerText = "VACÍO";
+          radioContainer.appendChild(btnVacio);
+        }
+        
+        // Mapea internamente los botones creados para la radio
+        emisorasRadio = Array.from(radioContainer.querySelectorAll('.boton-canal'));
+      }
+    })
+    .catch(err => console.error("Error al descargar los canales del Gist:", err));
+}
 
 /* TV HLS */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
   // Sincroniza el índice ignorando los clics en los botones vacíos estéticos
-  if (typeof emisorasTV !== 'undefined' && emisorasTV.length > 0) {
+  if (emisorasTV && emisorasTV.length > 0) {
     const idx = emisorasTV.indexOf(btn);
     if (idx !== -1 && btn.innerText !== 'VACÍO') indiceTVActual = idx;
   }
@@ -72,7 +143,7 @@ function loadChannel(url, btn) {
     
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
       videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
-      // Cambia el botón de abajo a Pausa inmediatamente al cargar con éxito
+      // Cambia el botón inferior a Pausa inmediatamente al cargar con éxito
       const btnTVPlay = document.getElementById('btn-tv-play');
       if (btnTVPlay) btnTVPlay.innerText = '⏸';
     });
@@ -96,14 +167,53 @@ function loadChannel(url, btn) {
     videoElement.src = url;
     videoElement.addEventListener('loadedmetadata', () => {
       videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
-      // Sincroniza también en el modo nativo
       const btnTVPlay = document.getElementById('btn-tv-play');
       if (btnTVPlay) btnTVPlay.innerText = '⏸';
     });
   }
 }
 
+/* CONTROLES DE REPRODUCCIÓN ADICIONALES PARA LA TV */
+function togglePlayTV() {
+  if (!videoElement) return;
+  const btnTVPlay = document.getElementById('btn-tv-play');
+  if (videoElement.paused) {
+    videoElement.play().then(() => {
+      if (btnTVPlay) btnTVPlay.innerText = '⏸';
+    }).catch(e => console.log("Error al reanudar TV:", e));
+  } else {
+    videoElement.pause();
+    if (btnTVPlay) btnTVPlay.innerText = '▶';
+  }
+}
 
+function prevChannel() {
+  if (emisorasTV.length === 0) return;
+  // Bucle seguro para saltar los botones de "VACÍO"
+  let intentos = emisorasTV.length;
+  do {
+    indiceTVActual = (indiceTVActual - 1 + emisorasTV.length) % emisorasTV.length;
+    intentos--;
+  } while (emisorasTV[indiceTVActual] && emisorasTV[indiceTVActual].innerText === 'VACÍO' && intentos > 0);
+
+  if (emisorasTV[indiceTVActual] && emisorasTV[indiceTVActual].innerText !== 'VACÍO') {
+    emisorasTV[indiceTVActual].click();
+  }
+}
+
+function nextChannel() {
+  if (emisorasTV.length === 0) return;
+  // Bucle seguro para saltar los botones de "VACÍO"
+  let intentos = emisorasTV.length;
+  do {
+    indiceTVActual = (indiceTVActual + 1) % emisorasTV.length;
+    intentos--;
+  } while (emisorasTV[indiceTVActual] && emisorasTV[indiceTVActual].innerText === 'VACÍO' && intentos > 0);
+
+  if (emisorasTV[indiceTVActual] && emisorasTV[indiceTVActual].innerText !== 'VACÍO') {
+    emisorasTV[indiceTVActual].click();
+  }
+}
 /* MÚSICA */
 function ejecutarAccionMusica() {
   if (typeof window.cargarBibliotecaBridge === 'function' && Object.keys(biblioteca).length === 0) {
@@ -291,14 +401,16 @@ if (seekBar) {
 }
 
 /* RADIO */
-window.addEventListener('DOMContentLoaded', () => {
-  emisorasRadio = Array.from(document.querySelectorAll('#radio-buttons-container .boton-canal'));
-});
-
 function playRadio(elemento, url) {
   marcarBotonActivo(elemento);
-  if (elemento) indiceRadioActual = emisorasRadio.indexOf(elemento);
-  if (radioAudioElement) {
+  if (elemento && emisorasRadio.length > 0) {
+    const idx = emisorasRadio.indexOf(elemento);
+    if (idx !== -1 && elemento.innerText !== 'VACÍO') {
+      indiceRadioActual = idx;
+    }
+  }
+  
+  if (radioAudioElement && url) {
     radioAudioElement.src = url;
     radioAudioElement.play();
     const btnRadioPlay = document.getElementById('btn-radio-play');
@@ -320,14 +432,30 @@ function togglePlayRadio() {
 
 function prevRadio() {
   if (emisorasRadio.length === 0) return;
-  indiceRadioActual = (indiceRadioActual - 1 + emisorasRadio.length) % emisorasRadio.length;
-  if (emisorasRadio[indiceRadioActual]) emisorasRadio[indiceRadioActual].click();
+  // Bucle seguro para saltar los botones de "VACÍO" en la radio
+  let intentos = emisorasRadio.length;
+  do {
+    indiceRadioActual = (indiceRadioActual - 1 + emisorasRadio.length) % emisorasRadio.length;
+    intentos--;
+  } while (emisorasRadio[indiceRadioActual] && emisorasRadio[indiceRadioActual].innerText === 'VACÍO' && intentos > 0);
+
+  if (emisorasRadio[indiceRadioActual] && emisorasRadio[indiceRadioActual].innerText !== 'VACÍO') {
+    emisorasRadio[indiceRadioActual].click();
+  }
 }
 
 function nextRadio() {
   if (emisorasRadio.length === 0) return;
-  indiceRadioActual = (indiceRadioActual + 1) % emisorasRadio.length;
-  if (emisorasRadio[indiceRadioActual]) emisorasRadio[indiceRadioActual].click();
+  // Bucle seguro para saltar los botones de "VACÍO" en la radio
+  let intentos = emisorasRadio.length;
+  do {
+    indiceRadioActual = (indiceRadioActual + 1) % emisorasRadio.length;
+    intentos--;
+  } while (emisorasRadio[indiceRadioActual] && emisorasRadio[indiceRadioActual].innerText === 'VACÍO' && intentos > 0);
+
+  if (emisorasRadio[indiceRadioActual] && emisorasRadio[indiceRadioActual].innerText !== 'VACÍO') {
+    emisorasRadio[indiceRadioActual].click();
+  }
 }
 
 if (radioAudioElement) {
@@ -356,61 +484,3 @@ function formatTime(seconds) {
   let sec = Math.floor(seconds % 60);
   return `${min}:${sec < 10 ? '0' : ''}${sec}`;
 }
-
-/* CONTROLES DE REPRODUCCIÓN INTEGRADOS PARA LA TV - BLINDADOS */
-let emisorasTV = [];
-let indiceTVActual = 0;
-
-// Capturamos los botones de TV de forma segura para no bloquear la Radio ni la Música
-function inicializarBotonesTV() {
-  const contenedorGrid = document.querySelector('#screen-tv .grid-buttons');
-  if (contenedorGrid) {
-    emisorasTV = Array.from(contenedorGrid.querySelectorAll('.boton-canal'));
-  }
-}
-
-// Escuchamos el arranque de la app asegurando que no rompa la navegación general
-window.addEventListener('DOMContentLoaded', () => {
-  inicializarBotonesTV();
-});
-
-// Función para el botón central de Play/Pausa de la TV
-function togglePlayTV() {
-  if (!videoElement) return;
-  const btnTVPlay = document.getElementById('btn-tv-play');
-  if (videoElement.paused) {
-    videoElement.play().then(() => {
-      if (btnTVPlay) btnTVPlay.innerText = '⏸';
-    }).catch(e => console.log("Error al reanudar TV:", e));
-  } else {
-    videoElement.pause();
-    if (btnTVPlay) btnTVPlay.innerText = '▶';
-  }
-}
-
-// Función para saltar al canal Anterior
-function prevChannel() {
-  if (emisorasTV.length === 0) inicializarBotonesTV();
-  if (emisorasTV.length === 0) return;
-  
-  indiceTVActual = (indiceTVActual - 1 + emisorasTV.length) % emisorasTV.length;
-  if (emisorasTV[indiceTVActual]) {
-    emisorasTV[indiceTVActual].click();
-    const btnTVPlay = document.getElementById('btn-tv-play');
-    if (btnTVPlay) btnTVPlay.innerText = '⏸';
-  }
-}
-
-// Función para saltar al canal Siguiente
-function nextChannel() {
-  if (emisorasTV.length === 0) inicializarBotonesTV();
-  if (emisorasTV.length === 0) return;
-  
-  indiceTVActual = (indiceTVActual + 1) % emisorasTV.length;
-  if (emisorasTV[indiceTVActual]) {
-    emisorasTV[indiceTVActual].click();
-    const btnTVPlay = document.getElementById('btn-tv-play');
-    if (btnTVPlay) btnTVPlay.innerText = '⏸';
-  }
-}
-
