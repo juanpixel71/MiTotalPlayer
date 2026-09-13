@@ -10,6 +10,7 @@
   -webkit-user-select: none;
   border: none !important;
   outline: none !important;
+   -webkit-tap-highlight-color: transparent !important;
 }
 
 html, body {
