@@ -5,6 +5,10 @@ let listaCancionesActual = [];
 let indiceCancionActual = 0;
 let emisorasRadio = [];
 let indiceRadioActual = 0;
+let listaCanalesTV = [];
+let indiceCanalTVActual = 0;
+let emisorasCargadasTV = [];
+
 
 const audioElement = document.getElementById('audio-element');
 const radioAudioElement = document.getElementById('radio-audio-element');
@@ -53,8 +57,19 @@ function marcarBotonActivo(elemento) {
 }
 
 /* TV HLS ORIGINAL RESTAURADO Y CORREGIDO */
+/* TV HLS Y CONTROLES UNIFICADOS */
+window.addEventListener('DOMContentLoaded', () => {
+  // Guarda automáticamente tus 8 botones de TV en una lista interna al arrancar la app
+  emisorasCargadasTV = Array.from(document.querySelectorAll('#screen-tv .grid-buttons .boton-canal'));
+});
+
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
+  
+  // Recuerda qué canal estamos reproduciendo actualmente
+  if (btn && emisorasCargadasTV.length > 0) {
+    indiceCanalTVActual = emisorasCargadasTV.indexOf(btn);
+  }
 
   if (Hls.isSupported()) {
     if (hlsInstance) {
@@ -65,7 +80,12 @@ function loadChannel(url, btn) {
     hlsInstance.attachMedia(videoElement);
     
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-      videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
+      videoElement.play()
+        .then(() => {
+          const btnPlay = document.getElementById('btn-tv-play-pause');
+          if (btnPlay) btnPlay.innerText = '⏸';
+        })
+        .catch(e => console.log("Error al reproducir HLS:", e));
     });
 
     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
@@ -86,10 +106,50 @@ function loadChannel(url, btn) {
   } else if (videoElement && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
     videoElement.src = url;
     videoElement.addEventListener('loadedmetadata', () => {
-      videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
+      videoElement.play()
+        .then(() => {
+          const btnPlay = document.getElementById('btn-tv-play-pause');
+          if (btnPlay) btnPlay.innerText = '⏸';
+        })
+        .catch(e => console.log("Error al reproducir nativo:", e));
     });
   }
 }
+
+// Función para el botón central de PLAY / PAUSA de la TV
+function togglePlayVideo() {
+  if (!videoElement) return;
+  const btnPlay = document.getElementById('btn-tv-play-pause');
+  if (videoElement.paused) {
+    videoElement.play()
+      .then(() => {
+        if (btnPlay) btnPlay.innerText = '⏸';
+      })
+      .catch(e => console.log("Error al reanudar TV:", e));
+  } else {
+    videoElement.pause();
+    if (btnPlay) btnPlay.innerText = '▶';
+  }
+}
+
+// Función para el botón ⏮ (Canal Anterior)
+function prevChannel() {
+  if (emisorasCargadasTV.length === 0) return;
+  indiceCanalTVActual = (indiceCanalTVActual - 1 + emisorasCargadasTV.length) % emisorasCargadasTV.length;
+  if (emisorasCargadasTV[indiceCanalTVActual]) {
+    emisorasCargadasTV[indiceCanalTVActual].click();
+  }
+}
+
+// Función para el botón ⏭ (Canal Siguiente)
+function nextChannel() {
+  if (emisorasCargadasTV.length === 0) return;
+  indiceCanalTVActual = (indiceCanalTVActual + 1) % emisorasCargadasTV.length;
+  if (emisorasCargadasTV[indiceCanalTVActual]) {
+    emisorasCargadasTV[indiceCanalTVActual].click();
+  }
+}
+
 
 /* MÚSICA */
 function ejecutarAccionMusica() {
