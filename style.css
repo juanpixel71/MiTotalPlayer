@@ -119,10 +119,11 @@ html, body {
 /* ==========================================
    4. PANTALLA DE TV Y REPRODUCTOR HLS
    ========================================== */
-/* Caja contenedora del vídeo (Fondo negro para ocultar cualquier rastro visual) */
+/* Caja contenedora del vídeo (Fondo negro adaptado a 16:9 sin franjas) */
 .tv-video-box {
   width: 100% !important;
-  height: 240px !important;
+  height: auto !important; /* Quitamos los 240px fijos */
+  aspect-ratio: 16 / 9 !important; /* Mide exactamente lo mismo que la señal de TV */
   background-color: #000000 !important;
   border-radius: 8px !important;
   flex-shrink: 0 !important;
@@ -130,9 +131,10 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 25px !important; /* Separa drásticamente los botones de abajo */
+  margin-bottom: 25px !important;
   position: relative !important;
 }
+
 
 /* Elemento de vídeo estándar */
 #tv-video {
