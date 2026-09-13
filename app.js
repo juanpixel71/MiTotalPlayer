@@ -56,10 +56,10 @@ function marcarBotonActivo(elemento) {
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
-  // Guardamos el índice del canal que se acaba de pulsar para que los botones ⏮ y ⏭ sepan dónde están
+  // Sincroniza el índice ignorando los clics en los botones vacíos estéticos
   if (typeof emisorasTV !== 'undefined' && emisorasTV.length > 0) {
     const idx = emisorasTV.indexOf(btn);
-    if (idx !== -1) indiceTVActual = idx;
+    if (idx !== -1 && btn.innerText !== 'VACÍO') indiceTVActual = idx;
   }
 
   if (Hls.isSupported()) {
