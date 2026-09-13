@@ -357,13 +357,21 @@ function formatTime(seconds) {
   return `${min}:${sec < 10 ? '0' : ''}${sec}`;
 }
 
-/* CONTROLES DE REPRODUCCIÓN INTEGRADOS PARA LA TV */
+/* CONTROLES DE REPRODUCCIÓN INTEGRADOS PARA LA TV - BLINDADOS */
 let emisorasTV = [];
 let indiceTVActual = 0;
 
+// Capturamos los botones de TV de forma segura para no bloquear la Radio ni la Música
+function inicializarBotonesTV() {
+  const contenedorGrid = document.querySelector('#screen-tv .grid-buttons');
+  if (contenedorGrid) {
+    emisorasTV = Array.from(contenedorGrid.querySelectorAll('.boton-canal'));
+  }
+}
+
+// Escuchamos el arranque de la app asegurando que no rompa la navegación general
 window.addEventListener('DOMContentLoaded', () => {
-  // Capturamos los botones de los canales de TV para poder saltar entre ellos
-  emisorasTV = Array.from(document.querySelectorAll('#screen-tv .grid-buttons .boton-canal'));
+  inicializarBotonesTV();
 });
 
 // Función para el botón central de Play/Pausa de la TV
@@ -382,7 +390,9 @@ function togglePlayTV() {
 
 // Función para saltar al canal Anterior
 function prevChannel() {
+  if (emisorasTV.length === 0) inicializarBotonesTV();
   if (emisorasTV.length === 0) return;
+  
   indiceTVActual = (indiceTVActual - 1 + emisorasTV.length) % emisorasTV.length;
   if (emisorasTV[indiceTVActual]) {
     emisorasTV[indiceTVActual].click();
@@ -393,7 +403,9 @@ function prevChannel() {
 
 // Función para saltar al canal Siguiente
 function nextChannel() {
+  if (emisorasTV.length === 0) inicializarBotonesTV();
   if (emisorasTV.length === 0) return;
+  
   indiceTVActual = (indiceTVActual + 1) % emisorasTV.length;
   if (emisorasTV[indiceTVActual]) {
     emisorasTV[indiceTVActual].click();
