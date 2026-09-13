@@ -401,21 +401,26 @@ html, body {
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
 @media (orientation: landscape) {
-  /* Forzamos a que el contenedor de los botones de la Home se pongan en fila */
+  /* Forzamos el contenedor para mantener la simetría exacta entre Header y Salir */
   #screen-home .view-content {
     display: flex !important;
     flex-direction: row !important;
-    flex-wrap: wrap !important;
+    flex-wrap: nowrap !important;
     gap: 15px !important;
     justify-content: space-between !important;
     align-items: stretch !important;
+    height: calc(100dvh - 160px) !important; /* Margen armónico proporcional */
+    padding-bottom: 5px !important;
   }
 
-  /* Los 3 botones principales ocupan un tercio cada uno y se alinean horizontalmente */
+  /* Los 3 botones se estiran verticalmente ocupando todo el alto libre */
   #screen-home .btn-main-home {
-    flex: 1 1 calc(33.33% - 10px) !important;
+    flex: 1 !important;
+    flex-direction: column !important; /* ICONO ARRIBA, TEXTO ABAJO */
+    justify-content: center !important;
+    gap: 12px !important;
     height: auto !important;
-    min-height: 140px !important;
+    padding: 20px !important;
   }
 
   /* El botón de salir recupera su diseño original: a lo largo de toda la pantalla abajo */
@@ -425,15 +430,15 @@ html, body {
     margin-top: auto !important;
   }
 
-  /* Ocultamos los botones de reproducción (⏮ ▶ ⏭) en la TV horizontal porque ahí no hacen falta */
+  /* Ocultamos los botones de reproducción (⏮ ▶ ⏭) en la TV horizontal */
   #screen-tv .media-controls-square {
     display: none !important;
   }
 
-  /* --- ESTRUCTURA DE LA TV EN HORIZONTAL RECUPERADA --- */
+  /* --- ESTRUCTURA DE LA TV EN HORIZONTAL --- */
   #screen-tv .view-content {
     display: flex !important;
-    flex-direction: row !important; /* Vídeo a un lado, canales al otro */
+    flex-direction: row !important;
     align-items: stretch !important;
     gap: 0 !important;
     padding: 0 !important;
@@ -534,3 +539,4 @@ html, body {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
