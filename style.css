@@ -122,7 +122,8 @@ html, body {
 /* Caja contenedora del vídeo (Fondo negro para ocultar cualquier rastro visual) */
 .tv-video-box {
   width: 100% !important;
-  height: 240px !important;
+  height: auto !important;
+   aspect-ratio: 16 / 9 !important;
   background-color: #000000 !important;
   border-radius: 8px !important;
   flex-shrink: 0 !important;
@@ -130,7 +131,7 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 25px !important; /* Separa drásticamente los botones de abajo */
+  margin-bottom: 20px !important; /* Separa drásticamente los botones de abajo */
   position: relative !important;
 }
 
@@ -359,9 +360,8 @@ html, body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
-  max-height: 170px;
   overflow-y: auto;
-  flex-shrink: 0;
+  flex: 1; /* Esto hace que crezca libremente hacia abajo */
   padding-right: 4px;
 }
 
