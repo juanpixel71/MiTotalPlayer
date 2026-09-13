@@ -401,34 +401,37 @@ html, body {
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
 @media (orientation: landscape) {
-  /* Forzamos el contenedor para mantener la simetría exacta entre Header y Salir */
+  /* Forzamos el contenedor para mantener la simetría exacta entre el Header y la base */
   #screen-home .view-content {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    gap: 15px !important;
-    justify-content: space-between !important;
-    align-items: stretch !important;
-    height: calc(100dvh - 160px) !important; /* Margen armónico proporcional */
-    padding-bottom: 5px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important; /* 3 columnas perfectas e iguales */
+    grid-template-rows: 1fr auto !important;          /* Fila superior elástica, fila inferior ajustada */
+    gap: 15px !important;                             /* Separación uniforme por todos los lados */
+    height: calc(100dvh - 90px) !important;           /* Ajuste armónico para que no desborde la pantalla */
+    box-sizing: border-box !important;
+    padding-bottom: 10px !important;
   }
 
-  /* Los 3 botones se estiran verticalmente ocupando todo el alto libre */
+  /* Los 3 botones se estiran verticalmente ocupando todo el alto libre en su columna */
   #screen-home .btn-main-home {
-    flex: 1 !important;
+    grid-row: 1 !important;            /* Se posicionan obligatoriamente en la fila superior */
     flex-direction: column !important; /* ICONO ARRIBA, TEXTO ABAJO */
     justify-content: center !important;
+    align-items: center !important;
     gap: 12px !important;
-    height: auto !important;
-    padding: 20px !important;
+    height: 100% !important;           /* Estiramiento vertical simétrico absoluto */
+    width: 100% !important;
+    padding: 15px !important;
   }
 
-  /* El botón de salir recupera su diseño original: a lo largo de toda la pantalla abajo */
+  /* El botón de salir recupera su diseño original: abajo del todo de lado a lado */
   #screen-home .btn-nav-back {
+    grid-column: span 3 !important;    /* Se extiende a lo largo de las 3 columnas en la base */
+    grid-row: 2 !important;            /* Se posiciona obligatoriamente en la fila inferior */
     width: 100% !important;
-    flex-shrink: 0 !important;
-    margin-top: auto !important;
+    margin-top: 10px !important;
   }
+
 
   /* Ocultamos los botones de reproducción (⏮ ▶ ⏭) en la TV horizontal */
   #screen-tv .media-controls-square {
