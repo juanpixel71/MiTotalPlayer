@@ -26,14 +26,22 @@
       </div>
     </div>
 
-    <!-- TV -->
-    <div id="screen-tv" class="screen">
+    <!-- TV-NEWS -->
+        <div id="screen-tv" class="screen">
       <div class="header">TV-NEWS</div>
       <div class="view-content">
         <div class="tv-container">
-        <div class="tv-video-box">
-          <video id="tv-video" controls autoplay playsinline webkit-playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
-            </div>
+          <div class="tv-video-box">
+            <video id="tv-video" controls autoplay playsinline webkit-playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
+          </div>
+          
+          <!-- Nuevos controles simétricos de TV añadidos aquí -->
+          <div class="tv-controls-container">
+            <button class="boton-canal" onclick="prevChannel()">⏮</button>
+            <button class="boton-canal active-item" id="btn-tv-play-pause" onclick="togglePlayVideo()">⏸</button>
+            <button class="boton-canal" onclick="nextChannel()">⏭</button>
+          </div>
+
           <div class="tv-controls-box">
             <div class="grid-buttons">
               <button class="boton-canal" onclick="loadChannel('https://live.france24.com/hls/live/2037179-b/F24_FR_HI_HLS/master_5000.m3u8', this)">FRANCE 24</button>
@@ -51,6 +59,7 @@
         <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
       </div>
     </div>
+
 
     <!-- ÁLBUMES -->
     <div id="screen-albums" class="screen">
