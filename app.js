@@ -343,3 +343,49 @@ function formatTime(seconds) {
   let sec = Math.floor(seconds % 60);
   return `${min}:${sec < 10 ? '0' : ''}${sec}`;
 }
+
+/* CONTROLES DE REPRODUCCIÓN INTEGRADOS PARA LA TV */
+let emisorasTV = [];
+let indiceTVActual = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Capturamos los botones de los canales de TV para poder saltar entre ellos
+  emisorasTV = Array.from(document.querySelectorAll('#screen-tv .grid-buttons .boton-canal'));
+});
+
+// Función para el botón central de Play/Pausa de la TV
+function togglePlayTV() {
+  if (!videoElement) return;
+  const btnTVPlay = document.getElementById('btn-tv-play');
+  if (videoElement.paused) {
+    videoElement.play().then(() => {
+      if (btnTVPlay) btnTVPlay.innerText = '⏸';
+    }).catch(e => console.log("Error al reanudar TV:", e));
+  } else {
+    videoElement.pause();
+    if (btnTVPlay) btnTVPlay.innerText = '▶';
+  }
+}
+
+// Función para saltar al canal Anterior
+function prevChannel() {
+  if (emisorasTV.length === 0) return;
+  indiceTVActual = (indiceTVActual - 1 + emisorasTV.length) % emisorasTV.length;
+  if (emisorasTV[indiceTVActual]) {
+    emisorasTV[indiceTVActual].click();
+    const btnTVPlay = document.getElementById('btn-tv-play');
+    if (btnTVPlay) btnTVPlay.innerText = '⏸';
+  }
+}
+
+// Función para saltar al canal Siguiente
+function nextChannel() {
+  if (emisorasTV.length === 0) return;
+  indiceTVActual = (indiceTVActual + 1) % emisorasTV.length;
+  if (emisorasTV[indiceTVActual]) {
+    emisorasTV[indiceTVActual].click();
+    const btnTVPlay = document.getElementById('btn-tv-play');
+    if (btnTVPlay) btnTVPlay.innerText = '⏸';
+  }
+}
+
