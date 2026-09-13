@@ -270,6 +270,7 @@ html, body {
   align-items: center; 
   gap: 12px; 
   margin-bottom: 10px;
+   margin-top: 20px;
 }
 
 .time-stamp { 
