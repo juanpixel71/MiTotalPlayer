@@ -26,26 +26,34 @@
       </div>
     </div>
 
-<!--1. ENCABEZADO TV-NEWS -->
-<div id="screen-tv" class="screen">
-  <div class="header">TV-NEWS</div>
-  <div class="view-content">
-    <div class="tv-container">
-      
-      <!-- 2. Caja contenedora del Vídeo -->
-      <div class="tv-video-box">
-        <video id="tv-video" controls autoplay playsinline webkit-playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
-      </div>
-      
-      <!-- 3. Rejilla con los botones de tus canales de TV -->
-      <div class="tv-controls-box">
-        <div class="grid-buttons">
-          <!-- Vacío: Aquí el Gist meterá los botones automáticamente al arrancar -->
+    <!-- PANTALLA TV-NEWS -->
+    <div id="screen-tv" class="screen">
+      <div class="header">TV-NEWS</div>
+      <div class="view-content">
+        <div class="tv-container">
+          <!-- Caja contenedora del Vídeo -->
+          <div class="tv-video-box">
+            <video id="tv-video" controls autoplay playsinline webkit-playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
+          </div>
+          <!-- Rejilla con los botones de tus canales de TV -->
+          <div class="tv-controls-box">
+            <div class="grid-buttons">
+              <!-- Vacío: El Gist inyectará los canales aquí -->
+            </div>
+            <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
+          </div>
         </div>
         
-        <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
+        <!-- Controles de reproducción de la TV fuera del contenedor de canales -->
+        <div id="tv-media-controls" class="media-controls-square" style="margin-bottom: 10px;">
+          <button class="btn-square" onclick="prevChannel()">⏮</button>
+          <button id="btn-tv-play" class="btn-square btn-square-main" onclick="togglePlayTV()">▶</button>
+          <button class="btn-square" onclick="nextChannel()">⏭</button>
+        </div>
+        <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
       </div>
     </div>
+
 
 
 
@@ -107,33 +115,30 @@
       </div>
     </div>
 
-    <!-- RADIO -->
+    <!-- PANTALLA RADIO -->
     <div id="screen-radio" class="screen">
       <div class="header">RADIO</div>
       <div class="view-content">
         <div class="radio-display"><span style="font-size: 4.5rem;">📻</span></div>
         <div class="grid-buttons" id="radio-buttons-container">
-          <!-- Vacío: El Gist inyectará las emisoras aquí automáticamente -->
-  </div>
-      </div>
-    </div>   
-        
-        <div class="progress-bar-container">
+          <!-- Vacío: El Gist inyectará las emisoras aquí -->
+        </div>
+        <!-- Barra de progreso exclusiva de la radio -->
+        <div class="radio-progress-container">
           <span id="radio-current-time" class="time-stamp">0:00</span>
           <input type="range" id="radio-seek-bar" class="progress-bar" value="0" min="0" step="1">
           <span id="radio-total-time" class="time-stamp" style="text-align: right;">LIVE</span>
         </div>
-        <div class="media-controls-square">
+        <!-- Controles exclusivos de la radio cerrados en su sitio -->
+        <div class="radio-controls-container media-controls-square">
           <button class="btn-square" onclick="prevRadio()">⏮</button>
-         <button id="btn-radio-play" class="btn-square btn-square-main" onclick="togglePlayRadio()">▶</button>
+          <button id="btn-radio-play" class="btn-square btn-square-main" onclick="togglePlayRadio()">▶</button>
           <button class="btn-square" onclick="nextRadio()">⏭</button>
         </div>
-        <audio id="radio-audio-element"></audio>
         <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
       </div>
     </div>
 
-  </div>
 
   <script src="bridge-music.js"></script>
   <script src="app.js"></script>
