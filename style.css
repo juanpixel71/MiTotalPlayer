@@ -131,7 +131,7 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 25px !important;
+  margin-bottom: 20px !important;
   position: relative !important;
 }
 
@@ -144,11 +144,12 @@ html, body {
   background-color: #000000 !important;
 }
 
-/* Rejilla de botones de canales de TV */
+/* Rejilla de botones de canales de TV (Ajustada para levantar los controles) */
 .grid-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 10px;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+  gap: 10px !important;
+  margin-bottom: 5px !important; /* Reduce drásticamente el espacio inferior */
 }
 
 .boton-canal {
