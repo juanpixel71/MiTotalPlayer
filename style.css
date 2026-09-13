@@ -392,6 +392,31 @@ html, body {
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
 @media (orientation: landscape) {
+  /* Forzamos a que el contenedor de los botones de la Home se pongan en fila */
+  #screen-home .view-content {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+  }
+
+  /* Los 3 botones principales ocupan un tercio cada uno y se alinean horizontalmente */
+  #screen-home .btn-main-home {
+    flex: 1 1 calc(33.33% - 10px) !important;
+    height: auto !important;
+    min-height: 140px !important;
+  }
+
+  /* El botón de salir recupera su diseño original: a lo largo de toda la pantalla abajo */
+  #screen-home .btn-nav-back {
+    width: 100% !important;
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
+  }
+
+  /* --- MANTENEMOS TU ESTRUCTURA DE LA TV INTACTA --- */
   #screen-tv .view-content {
     display: flex;
     flex-direction: column;
@@ -491,4 +516,11 @@ html, body {
 
 .btn-nav-back-landscape { 
   display: none; 
+}
+
+/* Conservamos el parche del póster transparente que te solucionó el círculo de la TV */
+#tv-video::-webkit-media-controls-start-playback-button {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
