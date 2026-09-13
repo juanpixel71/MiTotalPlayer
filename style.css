@@ -318,7 +318,11 @@ html, body {
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  cursor: pointer; 
+  cursor: pointer;
+  /* Forzamos a que no dibuje ningún contorno, sombra interna ni recuadro visual */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .btn-square.btn-square-main { 
@@ -326,6 +330,9 @@ html, body {
   height: 110px; 
   background-color: #FF8C00; 
   font-size: 3.6rem; 
+  /* Evitamos que selectores internos hereden cajas visuales */
+  border: none !important;
+  outline: none !important;
 }
 
 /* ==========================================
