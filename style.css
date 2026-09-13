@@ -389,6 +389,46 @@ html, body {
   flex-shrink: 0;
 }
 
+/* Unificación de los contenedores de control (Música, Radio y TV) */
+.radio-controls-container,
+.tv-controls-container,
+.music-controls-container {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  flex-shrink: 0 !important;
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+/* Unificación de los botones ⏮ ▶ ⏭ para que midan e imiten exactamente a los de la Radio */
+.radio-controls-container .boton-canal,
+.tv-controls-container .boton-canal,
+.music-controls-container .boton-canal {
+  width: 70px !important;
+  height: 50px !important;
+  font-size: 1.5rem !important;
+  border-radius: 8px !important;
+  background-color: #9D9D9C !important;
+  color: #FFFFFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+/* El botón central de PLAY se vuelve naranja al estar activo, igual que en la Radio */
+.radio-controls-container .boton-canal.active-item,
+.tv-controls-container .boton-canal.active-item,
+.music-controls-container .boton-canal.active-item {
+  background-color: #FF8C00 !important;
+}
+
+
+
+
 /* ==========================================
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
