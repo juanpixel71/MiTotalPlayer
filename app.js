@@ -6,8 +6,8 @@ let indiceCancionActual = 0;
 let emisorasRadio = [];
 let indiceRadioActual = 0;
 
-// URL de tu Gist de GitHub para la carga dinámica de canales y emisoras
-const GIST_CANALES_URL = "https://gist.githubusercontent.com/juanpixel71/4dea433e849fcfda4869b1463f55e1f9/raw/canales.json";
+// URL de tu Gist de GitHub (Estructura canales.json)
+const GIST_CANALES_URL = "https://githubusercontent.com";
 
 const audioElement = document.getElementById('audio-element');
 const radioAudioElement = document.getElementById('radio-audio-element');
@@ -19,6 +19,9 @@ let hlsInstance = null;
 /* CONTROLES DE REPRODUCCIÓN PARA LA TV */
 let emisorasTV = [];
 let indiceTVActual = 0;
+
+// Variable global para guardar los datos del Gist en memoria una vez descargados
+let datosGistCargados = null;
 
 function salirDeAplicacion() {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
@@ -36,17 +39,20 @@ function navigateTo(screenId) {
   const target = document.getElementById(screenId);
   if (target) target.classList.add('active');
 
+  // Si volvemos a la Home, pausamos reproductores
   if (screenId === 'screen-home') {
-    if (videoElement) {
-      videoElement.pause();
-    }
-    if (hlsInstance) {
-      hlsInstance.stop();
-    }
+    if (videoElement) videoElement.pause();
+    if (hlsInstance) hlsInstance.stop();
     detenerMusica();
-    if (radioAudioElement) {
-      radioAudioElement.pause();
-    }
+    if (radioAudioElement) radioAudioElement.pause();
+  }
+  
+  // Al entrar a TV o Radio, renderizamos sus botones si ya tenemos los datos
+  if (screenId === 'screen-tv' && datosGistCargados) {
+    pintarBotonesTV(datosGistCargados.tv);
+  }
+  if (screenId === 'screen-radio' && datosGistCargados) {
+    pintarBotonesRadio(datosGistCargados.radio);
   }
 }
 
@@ -58,76 +64,80 @@ function marcarBotonActivo(elemento) {
   }
   elemento.classList.add('active-item');
 }
-/* ARRANCAR LA CARGA DINÁMICA DESDE EL GIST */
+/* DESCARGA INICIAL DEL GIST (EN LA SOMBRA) */
 window.addEventListener('DOMContentLoaded', () => {
-  cargarCanalesDesdeGist();
+  descargarDatosGist();
 });
 
-function cargarCanalesDesdeGist() {
+function descargarDatosGist() {
   fetch(GIST_CANALES_URL + "?t=" + new Date().getTime())
     .then(res => res.json())
     .then(data => {
-      
-      // 1. CARGAR Y PINTAR BOTONES DE LA TELEVISIÓN
-      const tvContainer = document.querySelector('#screen-tv .grid-buttons');
-      if (tvContainer && data.tv) {
-        tvContainer.innerHTML = "";
-        data.tv.forEach(canal => {
-          const btn = document.createElement('button');
-          btn.className = 'boton-canal';
-          btn.innerText = canal.nombre;
-          btn.onclick = () => loadChannel(canal.url, btn);
-          tvContainer.appendChild(btn);
-        });
-        
-        // Rellena la rejilla de la TV hasta tener 10 botones simétricos
-        while (tvContainer.children.length < 10) {
-          const btnVacio = document.createElement('button');
-          btnVacio.className = 'boton-canal';
-          btnVacio.style.opacity = "0.4";
-          btnVacio.style.cursor = "default";
-          btnVacio.innerText = "VACÍO";
-          tvContainer.appendChild(btnVacio);
-        }
-        
-        // Mapea internamente los botones creados para que funcionen ⏮ y ⏭
-        emisorasTV = Array.from(tvContainer.querySelectorAll('.boton-canal'));
-      }
-
-      // 2. CARGAR Y PINTAR BOTONES DE LA RADIO
-      const radioContainer = document.getElementById('radio-buttons-container');
-      if (radioContainer && data.radio) {
-        radioContainer.innerHTML = "";
-        data.radio.forEach(emisora => {
-          const btn = document.createElement('button');
-          btn.className = 'boton-canal';
-          btn.innerText = emisora.nombre;
-          btn.onclick = () => playRadio(btn, emisora.url);
-          radioContainer.appendChild(btn);
-        });
-        
-        // Rellena la rejilla de la Radio hasta tener 10 botones simétricos
-        while (radioContainer.children.length < 10) {
-          const btnVacio = document.createElement('button');
-          btnVacio.className = 'boton-canal';
-          btnVacio.style.opacity = "0.4";
-          btnVacio.style.cursor = "default";
-          btnVacio.innerText = "VACÍO";
-          radioContainer.appendChild(btnVacio);
-        }
-        
-        // Mapea internamente los botones creados para la radio
-        emisorasRadio = Array.from(radioContainer.querySelectorAll('.boton-canal'));
-      }
+      // Guardamos los datos en memoria para usarlos al navegar por las pantallas
+      datosGistCargados = data;
     })
     .catch(err => console.error("Error al descargar los canales del Gist:", err));
 }
 
-/* TV HLS */
+/* FUNCIONES DE RENDERIZADO SIMÉTRICO */
+function pintarBotonesTV(canales) {
+  const tvContainer = document.querySelector('#screen-tv .grid-buttons');
+  if (!tvContainer || !canales) return;
+  
+  tvContainer.innerHTML = "";
+  canales.forEach(canal => {
+    const btn = document.createElement('button');
+    btn.className = 'boton-canal';
+    btn.innerText = canal.nombre;
+    btn.onclick = () => loadChannel(canal.url, btn);
+    tvContainer.appendChild(btn);
+  });
+  
+  // Rellena la rejilla de la TV hasta tener exactamente 10 botones simétricos
+  while (tvContainer.children.length < 10) {
+    const btnVacio = document.createElement('button');
+    btnVacio.className = 'boton-canal';
+    btnVacio.style.opacity = "0.4";
+    btnVacio.style.cursor = "default";
+    btnVacio.innerText = "VACÍO";
+    tvContainer.appendChild(btnVacio);
+  }
+  
+  // Guardamos la lista de botones reales para los comandos ⏮ y ⏭
+  emisorasTV = Array.from(tvContainer.querySelectorAll('.boton-canal'));
+}
+
+function pintarBotonesRadio(radios) {
+  const radioContainer = document.getElementById('radio-buttons-container');
+  if (!radioContainer || !radios) return;
+  
+  radioContainer.innerHTML = "";
+  radios.forEach(emisora => {
+    const btn = document.createElement('button');
+    btn.className = 'boton-canal';
+    btn.innerText = emisora.nombre;
+    btn.onclick = () => playRadio(btn, emisora.url);
+    radioContainer.appendChild(btn);
+  });
+  
+  // Rellena la rejilla de la Radio hasta tener exactamente 10 botones simétricos
+  while (radioContainer.children.length < 10) {
+    const btnVacio = document.createElement('button');
+    btnVacio.className = 'boton-canal';
+    btnVacio.style.opacity = "0.4";
+    btnVacio.style.cursor = "default";
+    btnVacio.innerText = "VACÍO";
+    radioContainer.appendChild(btnVacio);
+  }
+  
+  // Guardamos la lista de botones reales para la radio
+  emisorasRadio = Array.from(radioContainer.querySelectorAll('.boton-canal'));
+}
+
+/* LOGICA REPRODUCTOR TV HLS */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
-  // Sincroniza el índice ignorando los clics en los botones vacíos estéticos
   if (emisorasTV && emisorasTV.length > 0) {
     const idx = emisorasTV.indexOf(btn);
     if (idx !== -1 && btn.innerText !== 'VACÍO') indiceTVActual = idx;
@@ -143,7 +153,6 @@ function loadChannel(url, btn) {
     
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
       videoElement.play().catch(e => console.log("Error al reproducir HLS:", e));
-      // Cambia el botón inferior a Pausa inmediatamente al cargar con éxito
       const btnTVPlay = document.getElementById('btn-tv-play');
       if (btnTVPlay) btnTVPlay.innerText = '⏸';
     });
@@ -163,7 +172,7 @@ function loadChannel(url, btn) {
         }
       }
     });
-  } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+  } else if (videoElement && videoElement.canPlayType('application/vnd.apple.mpegurl')) {
     videoElement.src = url;
     videoElement.addEventListener('loadedmetadata', () => {
       videoElement.play().catch(e => console.log("Error al reproducir nativo:", e));
@@ -173,7 +182,7 @@ function loadChannel(url, btn) {
   }
 }
 
-/* CONTROLES DE REPRODUCCIÓN ADICIONALES PARA LA TV */
+/* COMANDOS DE REPRODUCCIÓN PARA LA TV */
 function togglePlayTV() {
   if (!videoElement) return;
   const btnTVPlay = document.getElementById('btn-tv-play');
@@ -188,8 +197,7 @@ function togglePlayTV() {
 }
 
 function prevChannel() {
-  if (emisorasTV.length === 0) return;
-  // Bucle seguro para saltar los botones de "VACÍO"
+  if (!emisorasTV || emisorasTV.length === 0) return;
   let intentos = emisorasTV.length;
   do {
     indiceTVActual = (indiceTVActual - 1 + emisorasTV.length) % emisorasTV.length;
@@ -202,8 +210,7 @@ function prevChannel() {
 }
 
 function nextChannel() {
-  if (emisorasTV.length === 0) return;
-  // Bucle seguro para saltar los botones de "VACÍO"
+  if (!emisorasTV || emisorasTV.length === 0) return;
   let intentos = emisorasTV.length;
   do {
     indiceTVActual = (indiceTVActual + 1) % emisorasTV.length;
@@ -431,8 +438,7 @@ function togglePlayRadio() {
 }
 
 function prevRadio() {
-  if (emisorasRadio.length === 0) return;
-  // Bucle seguro para saltar los botones de "VACÍO" en la radio
+  if (!emisorasRadio || emisorasRadio.length === 0) return;
   let intentos = emisorasRadio.length;
   do {
     indiceRadioActual = (indiceRadioActual - 1 + emisorasRadio.length) % emisorasRadio.length;
@@ -445,8 +451,7 @@ function prevRadio() {
 }
 
 function nextRadio() {
-  if (emisorasRadio.length === 0) return;
-  // Bucle seguro para saltar los botones de "VACÍO" en la radio
+  if (!emisorasRadio || emisorasRadio.length === 0) return;
   let intentos = emisorasRadio.length;
   do {
     indiceRadioActual = (indiceRadioActual + 1) % emisorasRadio.length;
