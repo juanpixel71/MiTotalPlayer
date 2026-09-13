@@ -392,6 +392,29 @@ html, body {
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
 @media (orientation: landscape) {
+  /* Ajustes para la pantalla HOME en horizontal */
+  #screen-home .view-content {
+    flex-direction: row !important; /* Coloca los 3 botones uno al lado del otro */
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    gap: 15px !important;
+    height: calc(100% - 20px) !important;
+  }
+  #screen-home .btn-main-home {
+    flex: 1 !important; /* Hace que los 3 botones midan exactamente lo mismo de ancho */
+    flex-direction: column !important; /* Hace el "intro": Icono arriba, texto abajo */
+    justify-content: center !important;
+    gap: 10px !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+    font-size: 1.3rem !important;
+    padding: 20px 10px !important;
+  }
+  #screen-home .btn-main-home span {
+    font-size: 2.8rem !important; /* Modera el tamaño del icono para que encaje perfecto en vertical */
+    display: block !important;
+  }
+   
   #screen-tv .view-content {
     display: flex;
     flex-direction: column;
