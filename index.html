@@ -40,23 +40,14 @@
       <!-- 3. Rejilla con los botones de tus canales de TV -->
       <div class="tv-controls-box">
         <div class="grid-buttons">
-          <button class="boton-canal" onclick="loadChannel('https://live.france24.com/hls/live/2037179-b/F24_FR_HI_HLS/master_5000.m3u8', this)">FRANCE 24</button>
-          <button class="boton-canal" onclick="loadChannel('https://ncdn-live-bfm.pfd.sfr.net/shls/LIVE$BFM_TV/index.m3u8', this)">BFM</button>
-          <button class="boton-canal" onclick="loadChannel('https://dash2.antik.sk/live/test_bbc_world/playlist.m3u8', this)">BBC NEWS</button>
-          <button class="boton-canal" onclick="loadChannel('https://ds2c506obo7m8.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-7zjq3tdqasbg8/index.m3u8', this)">CNN</button>
-          <button class="boton-canal" onclick="loadChannel('https://euronews-live-spa-es.fast.rakuten.tv/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6571/bitok/eyJzdGlkIjoiMDA4YjY0NTMtYjY2MC00ZTZkLTlkNzEtMTk3YTM3ZDZhZWIxIiwibWt0IjoiZXMiLCJjaCI6NjU3MSwicHRmIjoxfQ==/26034/euronews-es.m3u8', this)">EURONEWS</button>
-          <button class="boton-canal" onclick="loadChannel('https://ztnr.rtve.es/ztnr/1694255.m3u8', this)">24 HORAS</button>
-          <button class="boton-canal" onclick="loadChannel('https://rtvelivestream.rtve.es/rtvesec/la1/la1_main_dvr.m3u8', this)">TVE LA 1</button>
-          <button class="boton-canal" onclick="loadChannel('https://directes-tv-int.3catdirectes.cat/live-origin/canal324-hls/master.m3u8', this)">3CAT INFO</button>
-        <button class="boton-canal" style="opacity: 0.4; cursor: default;">VACÍO</button>
-          <button class="boton-canal" style="opacity: 0.4; cursor: default;">VACÍO</button>
-        </div>
-        
+          <!-- Vacío: Aquí el Gist meterá los botones automáticamente al arrancar -->
         </div>
         
         <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
       </div>
     </div>
+
+
 
     <!-- 4. CONTROLES DE REPRODUCCIÓN (Mismo estilo, orden y emojis que Música/Radio) -->
     <div class="media-controls-square" style="margin-bottom: 10px;">
@@ -122,15 +113,6 @@
       <div class="view-content">
         <div class="radio-display"><span style="font-size: 4.5rem;">📻</span></div>
         <div class="grid-buttons" id="radio-buttons-container">
- <button onclick="playRadio(this, 'https://stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8')" class="boton-canal">FRANCE INFO</button>
-<button onclick="playRadio(this, 'https://stream.radiofrance.fr/franceinter/franceinter.m3u8')" class="boton-canal">FRANCE INTER</button>
-<button onclick="playRadio(this, 'https://icecast.radiofrance.fr/fipjazz-midfi.mp3')" class="boton-canal">JAZZ MUSIC</button>
-<button onclick="playRadio(this, 'https://icecast.radiofrance.fr/fiprock-midfi.mp3')" class="boton-canal">ROCK MUSIC</button>
-<button onclick="playRadio(this, 'https://icecast.radiofrance.fr/fippop-midfi.mp3')" class="boton-canal">POP MUSIC</button>
-<button onclick="playRadio(this, 'https://icecast.radiofrance.fr/fipmetal-midfi.mp3')" class="boton-canal">METAL MUSIC</button>
-<button onclick="playRadio(this, 'https://stream.rfm.fr/rfm-wr8.mp3')" class="boton-canal">HITS MUSIC</button>
-<button onclick="playRadio(this, 'https://rfm.lmn.fm/rfm-wr10.mp3')" class="boton-canal">POP-ROCK</button>
-<button onclick="playRadio(this, 'https://scdn.nrjaudio.fm/audio1/fr/30001/mp3_128.mp3')" class="boton-canal">NRJ MUSIC</button>
 </div>   
         
         <div class="progress-bar-container">
