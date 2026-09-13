@@ -359,11 +359,12 @@ html, body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
-  max-height: 170px;
+  /* Eliminamos el max-height para expandir la botonera y que quepan los 10 botones */
+  flex: 1; 
   overflow-y: auto;
-  flex-shrink: 0;
   padding-right: 4px;
 }
+
 
 .radio-progress-container {
   width: 100%;
