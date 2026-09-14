@@ -131,7 +131,7 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 15px !important;
+  margin-bottom: 10px !important;
   position: relative !important;
 }
 
@@ -150,7 +150,6 @@ html, body {
   flex: 1;
   min-height: 0;
 }
-
 
 .boton-canal {
   display: flex;
@@ -239,19 +238,18 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  gap: 0;
+  justify-content: space-between;
   flex: 1;
   width: 100%;
   min-height: 0;
-  padding: 15px;
+  padding: 5px 15px;
   box-sizing: border-box;
   overflow-y: auto;
 }
 
 .album-cover-drive {
-  width: 260px;
-  height: 260px;
+  width: 240px;
+  height: 240px;
   background-color: #9D9D9C;
   border-radius: 16px;
   display: flex;
@@ -260,25 +258,25 @@ html, body {
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .track-details-drive { 
   text-align: center; 
   width: 100%; 
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 
 .track-details-drive h3 { 
-  font-size: 1.3rem; 
+  font-size: 1.2rem; 
   font-weight: bold; 
   color: #FFFFFF; 
-  margin-bottom: 4px; 
+  margin-bottom: 2px; 
 }
 
 .track-details-drive p { 
-  font-size: 1rem; 
+  font-size: 0.95rem; 
   color: #9D9D9C; 
 }
 
@@ -287,7 +285,7 @@ html, body {
   display: flex; 
   align-items: center; 
   gap: 12px; 
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 
 .time-stamp { 
@@ -326,8 +324,8 @@ html, body {
 }
 
 .btn-square {  
-  width: 95px;  
-  height: 95px;  
+  width: 90px;  
+  height: 90px;  
   border-radius: 16px;  
   background-color: #9D9D9C;  
   color: #FFFFFF;  
@@ -344,8 +342,8 @@ html, body {
 }
 
 .btn-square.btn-square-main {  
-  width: 110px;  
-  height: 110px;  
+  width: 105px;  
+  height: 105px;  
   background-color: #FF8C00;  
   font-size: 3.6rem;  
 }
@@ -376,7 +374,7 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 15px !important;
+  margin-bottom: 10px !important;
 }
 
 #radio-buttons-container {
@@ -392,23 +390,6 @@ html, body {
 #radio-buttons-container .boton-canal {
   height: 100% !important;
   font-size: 1.1rem !important;
-}
-
-.radio-progress-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.radio-controls-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  flex-shrink: 0;
 }
 
 #screen-radio .btn-nav-back {
