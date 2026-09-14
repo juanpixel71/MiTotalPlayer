@@ -278,64 +278,14 @@ if (seekBar) {
 }
 
 /* RADIO */
-window.addEventListener('DOMContentLoaded', () => {
-  emisorasRadio = Array.from(document.querySelectorAll('#radio-buttons-container .boton-canal'));
-});
-
 function playRadio(elemento, url) {
   marcarBotonActivo(elemento);
-  if (elemento) indiceRadioActual = emisorasRadio.indexOf(elemento);
-  if (radioAudioElement) {
+  if (radioAudioElement && url) {
     radioAudioElement.src = url;
-    radioAudioElement.play();
-    const btnRadioPlay = document.getElementById('btn-radio-play');
-    if (btnRadioPlay) btnRadioPlay.innerText = '⏸';
+    radioAudioElement.play().catch(e => console.log("Error al reproducir radio:", e));
   }
 }
 
-function togglePlayRadio() {
-  if (!radioAudioElement) return;
-  const btnRadioPlay = document.getElementById('btn-radio-play');
-  if (radioAudioElement.paused) {
-    radioAudioElement.play();
-    if (btnRadioPlay) btnRadioPlay.innerText = '⏸';
-  } else {
-    radioAudioElement.pause();
-    if (btnRadioPlay) btnRadioPlay.innerText = '▶';
-  }
-}
-
-function prevRadio() {
-  if (emisorasRadio.length === 0) return;
-  indiceRadioActual = (indiceRadioActual - 1 + emisorasRadio.length) % emisorasRadio.length;
-  if (emisorasRadio[indiceRadioActual]) emisorasRadio[indiceRadioActual].click();
-}
-
-function nextRadio() {
-  if (emisorasRadio.length === 0) return;
-  indiceRadioActual = (indiceRadioActual + 1) % emisorasRadio.length;
-  if (emisorasRadio[indiceRadioActual]) emisorasRadio[indiceRadioActual].click();
-}
-
-if (radioAudioElement) {
-  radioAudioElement.addEventListener('timeupdate', () => {
-    if (!isNaN(radioAudioElement.duration) && isFinite(radioAudioElement.duration)) {
-      if (radioSeekBar) radioSeekBar.max = Math.floor(radioAudioElement.duration);
-      if (radioSeekBar) radioSeekBar.value = Math.floor(radioAudioElement.currentTime);
-      const totTime = document.getElementById('radio-total-time');
-      if (totTime) totTime.innerText = formatTime(radioAudioElement.duration);
-    } else {
-      if (radioSeekBar) {
-        radioSeekBar.max = 100;
-        radioSeekBar.value = 100;
-      }
-      const totTime = document.getElementById('radio-total-time');
-      if (totTime) totTime.innerText = 'LIVE';
-    }
-    const currTime = document.getElementById('radio-current-time');
-    if (currTime) currTime.innerText = formatTime(radioAudioElement.currentTime);
-  });
-}
 
 function formatTime(seconds) {
   if (isNaN(seconds)) return "0:00";
