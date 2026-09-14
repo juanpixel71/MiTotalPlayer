@@ -102,6 +102,7 @@ function loadChannel(url, btn) {
    ========================================== */
 function playRadio(elemento, url) {
   marcarBotonActivo(elemento);
+  iniciarContadorRadio(); // <--- ¡AQUÍ ES DONDE SE ACTIVA!
   if (radioAudioElement && url) {
     radioAudioElement.src = url;
     radioAudioElement.play().catch(e => console.log("Error al reproducir radio:", e));
