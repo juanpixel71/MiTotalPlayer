@@ -131,7 +131,7 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 0 !important;
+  margin-bottom: 15px !important;
   position: relative !important;
 }
 
@@ -145,10 +145,12 @@ html, body {
 .grid-buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   gap: 10px;
   flex: 1;
   min-height: 0;
 }
+
 
 .boton-canal {
   display: flex;
@@ -374,12 +376,14 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  margin-bottom: 15px !important;
 }
 
 #radio-buttons-container {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   gap: 10px;
   flex: 1;
   min-height: 0;
