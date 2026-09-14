@@ -120,6 +120,23 @@ html, body {
 /* ==========================================
    4. PANTALLA DE TV Y REPRODUCTOR HLS
    ========================================== */
+.tv-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.tv-controls-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
 .tv-video-box {
   width: 100% !important;
   height: auto !important;
@@ -142,39 +159,43 @@ html, body {
   background-color: #000000 !important;
 }
 
-.grid-buttons {
+#screen-tv .grid-buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(4, 1fr);
   gap: 10px;
   flex: 1;
   min-height: 0;
+  width: 100%;
 }
 
-.boton-canal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #9D9D9C;
-  color: #FFFFFF;
-  padding: 8px 8px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
+#screen-tv .boton-canal {
   height: 100% !important;
+  font-size: 1.1rem !important;
 }
 
 #screen-tv .view-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
-.boton-canal.active-item { 
-  background-color: #FF8C00 !important; 
+#screen-tv .btn-nav-back {
+  width: 100% !important;
+  margin-top: 0;
+  flex-shrink: 0;
 }
+
+
+
+
 
 /* ==========================================
    5. MÚSICA (ÁLBUMES Y CANCIONES)
