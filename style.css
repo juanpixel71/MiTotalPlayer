@@ -494,3 +494,39 @@ html, body {
 .btn-nav-back-landscape { 
   display: none; 
 }
+
+/* ==========================================
+   ESTILOS ESPECÍFICOS PANTALLA RADIO
+   ========================================== */
+.radio-display-box {
+  width: 100% !important;
+  background-color: #000000 !important;
+  border-radius: 8px !important;
+  padding: 12px 15px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-bottom: 5px !important;
+}
+
+.radio-status-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.radio-progress-line {
+  width: 100% !important;
+  height: 4px !important;
+  background-color: #FF8C00 !important;
+  border-radius: 2px !important;
+}
+
+#screen-radio .view-content {
+  justify-content: flex-start !important;
+  gap: 8px !important;
+}
