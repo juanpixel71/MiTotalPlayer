@@ -302,3 +302,25 @@ function formatTime(seconds) {
   let sec = Math.floor(seconds % 60);
   return `${min}:${sec < 10 ? '0' : ''}${sec}`;
 }
+
+/* ==========================================
+   AVANCE DEL TIEMPO EN LA RADIO
+   ========================================== */
+
+let radioInterval = null;
+let radioSeconds = 0;
+
+function iniciarContadorRadio() {
+  clearInterval(radioInterval);
+  radioSeconds = 0;
+  const timeElement = document.getElementById('radio-current-time');
+  
+  radioInterval = setInterval(() => {
+    radioSeconds++;
+    const mins = Math.floor(radioSeconds / 60);
+    const secs = radioSeconds % 60;
+    if (timeElement) {
+      timeElement.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+  }, 1000);
+}
