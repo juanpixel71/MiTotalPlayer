@@ -1,3 +1,6 @@
+/* ==========================================
+   VARIABLES GLOBALES Y ELEMENTOS DOM
+   ========================================== */
 let biblioteca = {};
 let covers = {};
 let albumActual = '';
@@ -9,10 +12,12 @@ let indiceRadioActual = 0;
 const audioElement = document.getElementById('audio-element');
 const radioAudioElement = document.getElementById('radio-audio-element');
 const seekBar = document.getElementById('seek-bar');
-const radioSeekBar = document.getElementById('radio-seek-bar');
 const videoElement = document.getElementById('tv-video');
 let hlsInstance = null;
 
+/* ==========================================
+   CONTROL GENERAL Y NAVEGACIÓN
+   ========================================== */
 function salirDeAplicacion() {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
     Capacitor.Plugins.App.exitApp();
@@ -23,7 +28,6 @@ function salirDeAplicacion() {
   }
 }
 
-/* NAVEGACIÓN Y CONTROL GENERAL */
 function navigateTo(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(screenId);
@@ -52,7 +56,9 @@ function marcarBotonActivo(elemento) {
   elemento.classList.add('active-item');
 }
 
-/* TV HLS */
+/* ==========================================
+   REPRODUCTOR TV (HLS)
+   ========================================== */
 function loadChannel(url, btn) {
   marcarBotonActivo(btn);
 
@@ -91,7 +97,20 @@ function loadChannel(url, btn) {
   }
 }
 
-/* MÚSICA */
+/* ==========================================
+   REPRODUCTOR DE RADIO
+   ========================================== */
+function playRadio(elemento, url) {
+  marcarBotonActivo(elemento);
+  if (radioAudioElement && url) {
+    radioAudioElement.src = url;
+    radioAudioElement.play().catch(e => console.log("Error al reproducir radio:", e));
+  }
+}
+
+/* ==========================================
+   MÚSICA Y BIBLIOTECA LOCAL
+   ========================================== */
 function ejecutarAccionMusica() {
   if (typeof window.cargarBibliotecaBridge === 'function' && Object.keys(biblioteca).length === 0) {
     window.cargarBibliotecaBridge();
@@ -276,16 +295,6 @@ if (seekBar) {
     if (audioElement) audioElement.currentTime = seekBar.value; 
   });
 }
-
-/* RADIO */
-function playRadio(elemento, url) {
-  marcarBotonActivo(elemento);
-  if (radioAudioElement && url) {
-    radioAudioElement.src = url;
-    radioAudioElement.play().catch(e => console.log("Error al reproducir radio:", e));
-  }
-}
-
 
 function formatTime(seconds) {
   if (isNaN(seconds)) return "0:00";
