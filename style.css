@@ -334,8 +334,10 @@ html, body {
   align-items: center;  
   justify-content: center;  
   cursor: pointer;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
 }
 
