@@ -66,7 +66,8 @@ html, body {
   padding: 15px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 10px;
   overflow-y: auto;
   min-height: 0;
 }
@@ -80,7 +81,7 @@ html, body {
   font-size: 1.1rem;
   cursor: pointer;
   border-radius: 10px;
-  margin-top: auto;
+  margin-top: 0;
   text-decoration: none;
   text-transform: uppercase;
   flex-shrink: 0;
@@ -119,11 +120,10 @@ html, body {
 /* ==========================================
    4. PANTALLA DE TV Y REPRODUCTOR HLS
    ========================================== */
-/* Caja contenedora del vídeo (Fondo negro para ocultar cualquier rastro visual) */
 .tv-video-box {
   width: 100% !important;
   height: auto !important;
-   aspect-ratio: 16 / 9 !important;
+  aspect-ratio: 16 / 9 !important;
   background-color: #000000 !important;
   border-radius: 8px !important;
   flex-shrink: 0 !important;
@@ -131,11 +131,10 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 20px !important; /* Separa drásticamente los botones de abajo */
+  margin-bottom: 0 !important;
   position: relative !important;
 }
 
-/* Elemento de vídeo estándar */
 #tv-video {
   width: 100% !important;
   height: 100% !important;
@@ -143,11 +142,12 @@ html, body {
   background-color: #000000 !important;
 }
 
-/* Rejilla de botones de canales de TV */
 .grid-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+  flex: 1;
+  min-height: 0;
 }
 
 .boton-canal {
@@ -156,38 +156,20 @@ html, body {
   justify-content: center;
   background-color: #9D9D9C;
   color: #FFFFFF;
-  padding: 14px 8px;
+  padding: 8px 8px;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: bold;
   text-align: center;
   cursor: pointer;
-}
-
-/* Modificación exclusiva para los botones de TV en vertical (Paso 1) */
-#screen-tv .grid-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 10px;
-  flex: 1;
-  min-height: 0;
-}
-
-#screen-tv .view-content > .grid-buttons {
-  flex: 1;
+  height: 100% !important;
 }
 
 #screen-tv .view-content {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
-
-#screen-tv .grid-buttons .boton-canal {
-  height: 100% !important;
-  font-size: 1.1rem !important;
-}
-
 
 .boton-canal.active-item { 
   background-color: #FF8C00 !important; 
@@ -265,7 +247,6 @@ html, body {
   overflow-y: auto;
 }
 
-
 .album-cover-drive {
   width: 260px;
   height: 260px;
@@ -284,7 +265,7 @@ html, body {
 .track-details-drive { 
   text-align: center; 
   width: 100%; 
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .track-details-drive h3 { 
@@ -304,7 +285,7 @@ html, body {
   display: flex; 
   align-items: center; 
   gap: 12px; 
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .time-stamp { 
@@ -338,8 +319,8 @@ html, body {
   justify-content: center; 
   gap: 20px; 
   width: 100%; 
-  margin-top: auto;
-  margin-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .btn-square {  
@@ -371,9 +352,9 @@ html, body {
 #screen-radio .view-content {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   padding: 15px;
   box-sizing: border-box;
   flex: 1;
@@ -383,7 +364,7 @@ html, body {
 
 .radio-display {
   width: 100%;
-  height: 140px;
+  height: 120px;
   background-color: #000000;
   border-radius: 10px;
   display: flex;
@@ -395,11 +376,15 @@ html, body {
 #radio-buttons-container {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  overflow-y: auto;
-  flex: 1; /* Esto hace que crezca libremente hacia abajo */
-  padding-right: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+#radio-buttons-container .boton-canal {
+  height: 100% !important;
+  font-size: 1.1rem !important;
 }
 
 .radio-progress-container {
@@ -421,7 +406,7 @@ html, body {
 
 #screen-radio .btn-nav-back {
   width: 100% !important;
-  margin-top: 10px;
+  margin-top: 0;
   flex-shrink: 0;
 }
 
