@@ -164,6 +164,31 @@ html, body {
   cursor: pointer;
 }
 
+/* Modificación exclusiva para los botones de TV en vertical (Paso 1) */
+#screen-tv .grid-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
+#screen-tv .view-content > .grid-buttons {
+  flex: 1;
+}
+
+#screen-tv .view-content {
+  display: flex;
+  flex-direction: column;
+}
+
+#screen-tv .grid-buttons .boton-canal {
+  height: 100% !important;
+  font-size: 1.1rem !important;
+}
+
+
 .boton-canal.active-item { 
   background-color: #FF8C00 !important; 
 }
