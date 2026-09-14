@@ -228,6 +228,14 @@ html, body {
   flex-direction: column; 
   gap: 10px; 
   overflow-y: auto; 
+  flex: 1;
+  min-height: 0;
+}
+
+.song-list .song-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .song-item { 
