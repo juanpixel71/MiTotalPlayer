@@ -98,27 +98,27 @@
       </div>
     </div>
 
-    <!-- RADIO -->
+<!-- RADIO -->
     <div id="screen-radio" class="screen">
       <div class="header">RADIO</div>
       <div class="view-content">
-        <div class="radio-display"><span style="font-size: 4.5rem;">📻</span></div>
-        <div class="grid-buttons" id="radio-buttons-container">
+        <div class="tv-container">
+          <div class="tv-video-box" style="display:none;">
+            <!-- Contenedor por si se requiere mantener la estructura visual del reproductor -->
+          </div>
+          <div class="tv-controls-box">
+            <div class="grid-buttons" id="radio-buttons-container">
           <button onclick="playRadio(this, 'https://stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8')" class="boton-canal">FRANCE INFO</button>
           <button onclick="playRadio(this, 'http://live02.rfi.fr/rfimonde-64.mp3')" class="boton-canal">RFI MONDE</button>
           <button onclick="playRadio(this, 'https://rtvelivestream.rtve.es/rtvesec/rne/rne_r1_main.m3u8')" class="boton-canal">RNE 1</button>
           <button onclick="playRadio(this, 'https://rtvelivestream.rtve.es/rtvesec/rne/rne_r5_madrid_main.m3u8')" class="boton-canal">RNE 5</button>
           <button onclick="playRadio(this, 'https://flucast33-h-cloud.flumotion.com/cope/net2.mp3')" class="boton-canal">COPE BCN</button>
-        </div>
-        <div class="progress-bar-container">
-          <span id="radio-current-time" class="time-stamp">0:00</span>
-          <input type="range" id="radio-seek-bar" class="progress-bar" value="0" min="0" step="1">
-          <span id="radio-total-time" class="time-stamp" style="text-align: right;">LIVE</span>
-        </div>
-        <div class="media-controls-square">
-          <button class="btn-square" onclick="prevRadio()">⏮</button>
-          <button class="btn-square btn-square-main" id="btn-radio-play" onclick="togglePlayRadio()">▶</button>
-          <button class="btn-square" onclick="nextRadio()">⏭</button>
+          <button class="boton-canal" onclick="playRadio(this, '')">EMISORA 6</button>
+          <button class="boton-canal" onclick="playRadio(this, '')">EMISORA 7</button>
+         <button class="boton-canal" onclick="playRadio(this, '')">EMISORA 8</button>
+      </div>
+   <button class="btn-nav-back btn-nav-back-landscape" onclick="navigateTo('screen-home')">&lt; VOLVER</button>
+          </div>
         </div>
         <audio id="radio-audio-element"></audio>
         <button class="btn-nav-back" onclick="navigateTo('screen-home')">&lt; VOLVER HOME</button>
