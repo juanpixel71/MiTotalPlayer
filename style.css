@@ -259,7 +259,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 15px; 
   flex: 1;
   width: 100%;
   min-height: 0;
@@ -269,8 +270,8 @@ html, body {
 }
 
 .album-cover-drive {
-  width: 240px;
-  height: 240px;
+  width: 300px;
+  height: 300px;
   background-color: #9D9D9C;
   border-radius: 16px;
   display: flex;
@@ -279,21 +280,21 @@ html, body {
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .track-details-drive { 
   text-align: center; 
   width: 100%; 
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 }
 
 .track-details-drive h3 { 
   font-size: 1.2rem; 
   font-weight: bold; 
   color: #FFFFFF; 
-  margin-bottom: 2px; 
+  margin-bottom: 5px; 
 }
 
 .track-details-drive p { 
@@ -306,7 +307,7 @@ html, body {
   display: flex; 
   align-items: center; 
   gap: 12px; 
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 }
 
 .time-stamp { 
