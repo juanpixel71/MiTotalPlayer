@@ -451,15 +451,14 @@ html, body {
 /* ==========================================
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
-.btn-nav-back-landscape { 
-  display: none !important; 
-}
-
 @media (orientation: landscape) {
-  #screen-tv .header { 
+  /* Ocultamos elementos innecesarios en landscape */
+  #screen-tv .header,
+  #screen-tv .btn-nav-back { 
     display: none !important; 
   }
 
+  /* Forzamos pantalla completa y sin desbordamientos */
   #screen-tv, 
   #screen-tv .view-content, 
   .tv-container {
@@ -472,6 +471,7 @@ html, body {
     overflow: hidden !important;
   }
 
+  /* Contenedor principal en fila: Video a la izquierda, Botones a la derecha */
   #screen-tv .view-content {
     display: flex !important;
     flex-direction: row !important;
@@ -493,30 +493,34 @@ html, body {
     padding: 0 !important;
   }
 
+  /* 1. El reproductor ocupa todo el ancho flexible desde la izquierda */
   .tv-video-box {
     flex: 1 !important; 
+    width: auto !important;
     height: 100dvh !important; 
     max-height: 100dvh !important;
+    aspect-ratio: auto !important;
     padding: 0 !important; 
     margin: 0 !important;
     box-sizing: border-box !important; 
-    background-color: #3C3C3B !important;
+    background-color: #000000 !important;
     border-radius: 0 !important;
   }
 
   #tv-video {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
+    object-fit: fill !important; /* Se ajusta de esquina a esquina en diagonal */
     border-radius: 0 !important;
   }
 
+  /* 2. Panel derecho adaptado y más estrecho para los botones */
   .tv-controls-box {
-    width: 190px !important; 
+    width: 140px !important; /* Más estrecho para ajustarse perfectamente al lateral */
     height: 100dvh !important; 
     max-height: 100dvh !important;
     background-color: #3C3C3B !important;
-    padding: 6px !important; 
+    padding: 4px !important; 
     margin: 0 !important;
     overflow-y: auto !important; 
     flex-shrink: 0 !important;
@@ -524,48 +528,52 @@ html, body {
     flex-direction: column !important;
     justify-content: flex-start !important;
     align-items: stretch !important;
-    gap: 8px !important;
+    gap: 6px !important;
   }
 
   .tv-controls-box .grid-buttons { 
     display: flex !important; 
     flex-direction: column !important; 
-    gap: 8px !important; 
+    gap: 6px !important; 
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
   .tv-controls-box .boton-canal { 
-    height: 44px !important; 
-    font-size: 0.85rem !important; 
-    border-radius: 8px !important; 
+    height: 36px !important; /* Altura compacta y proporcionada */
+    font-size: 0.75rem !important; 
+    border-radius: 6px !important; 
     width: 100% !important; 
     margin: 0 !important;
   }
   
+  /* 3. Reaparece y se alinea el botón VOLVER con el mismo interlineado */
   .tv-controls-box .btn-nav-back-landscape { 
     display: flex !important; 
     align-items: center !important;
     justify-content: center !important;
     background-color: #FF8C00 !important; 
     color: #FFFFFF !important;
-    height: 44px !important; 
-    font-size: 0.85rem !important; 
+    height: 36px !important; 
+    font-size: 0.75rem !important; 
     font-weight: bold !important;
-    border-radius: 8px !important; 
+    border-radius: 6px !important; 
     width: 100% !important; 
     margin: 0 !important; 
+    margin-top: 2px !important; /* Interlineado idéntico al gap de los botones */
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
     flex-shrink: 0;
   }
-
-  #screen-tv .btn-nav-back {
-    display: none !important;
-  }
 }
+
+/* En modo vertical normal, este botón específico de landscape se oculta para evitar duplicidades */
+.btn-nav-back-landscape { 
+  display: none !important; 
+}
+
 
 /* ==========================================
    ESTILOS ESPECÍFICOS PANTALLA RADIO
