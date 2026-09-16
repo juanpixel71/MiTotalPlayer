@@ -488,35 +488,40 @@ html, body {
     align-items: stretch !important; 
   }
 
-  .tv-video-box {
-    flex: 1 !important; 
-    height: 100dvh !important; 
-    max-height: 100dvh !important;
-    padding: 6px !important; 
-    box-sizing: border-box !important; 
-    background-color: #3C3C3B !important;
-    margin-bottom: 0 !important;
-  }
-
   #tv-video {
     width: 100% !important;
     height: 100% !important;
     border-radius: 8px !important;
   }
 
+ .tv-video-box {
+    flex: 1 !important; 
+    height: 100dvh !important; 
+    max-height: 100dvh !important;
+    padding: 0 !important; 
+    box-sizing: border-box !important; 
+    background-color: #3C3C3B !important;
+    margin-bottom: 0 !important;
+  }
+
   .tv-controls-box {
-    width: 180px !important; 
+    width: 190px !important; 
     height: 100dvh !important; 
     background-color: #3C3C3B !important;
-    padding: 6px 6px 6px 0 !important; 
+    padding: 0 !important; 
     overflow-y: auto !important; 
     flex-shrink: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
   }
 
   .tv-controls-box .grid-buttons { 
     display: flex !important; 
     flex-direction: column !important; 
     gap: 8px !important; 
+    flex: unset !important;
   }
 
   .tv-controls-box .boton-canal { 
@@ -537,13 +542,12 @@ html, body {
     font-weight: bold !important;
     border-radius: 8px !important; 
     width: 100% !important; 
-    margin-top: 5px !important; 
+    margin-top: 0 !important; 
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
     flex-shrink: 0;
   }
-}
 
 .btn-nav-back-landscape { 
   display: none; 
