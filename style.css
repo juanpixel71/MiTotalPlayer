@@ -451,26 +451,12 @@ html, body {
 /* ==========================================
    8. MEDIA QUERIES (MODO HORIZONTAL / LANDSCAPE)
    ========================================== */
-@media (orientation: landscape) {
-  #screen-tv .view-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    box-sizing: border-box;
-    flex: 1;
-    width: 100%;
-    overflow-y: auto;
-  }
+.btn-nav-back-landscape { 
+  display: none !important; 
+}
 
-  #screen-tv .view-content .grid-buttons,
-  #screen-tv .view-content .tv-controls-section {
-    margin-top: 20px !important;
-  }
- 
-  #screen-tv .header, 
-  #screen-tv > .view-content > .btn-nav-back { 
+@media (orientation: landscape) {
+  #screen-tv .header { 
     display: none !important; 
   }
 
@@ -486,38 +472,58 @@ html, body {
     overflow: hidden !important;
   }
 
+  #screen-tv .view-content {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+
   .tv-container { 
     display: flex !important; 
     flex-direction: row !important; 
-    align-items: stretch !important; 
+    align-items: stretch !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .tv-video-box {
+    flex: 1 !important; 
+    height: 100dvh !important; 
+    max-height: 100dvh !important;
+    padding: 0 !important; 
+    margin: 0 !important;
+    box-sizing: border-box !important; 
+    background-color: #3C3C3B !important;
+    border-radius: 0 !important;
   }
 
   #tv-video {
     width: 100% !important;
     height: 100% !important;
-    border-radius: 8px !important;
-  }
-
- .tv-video-box {
-    flex: 1 !important; 
-    height: 100dvh !important; 
-    max-height: 100dvh !important;
-    padding: 0 !important; 
-    box-sizing: border-box !important; 
-    background-color: #3C3C3B !important;
-    margin-bottom: 0 !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
   }
 
   .tv-controls-box {
     width: 190px !important; 
     height: 100dvh !important; 
+    max-height: 100dvh !important;
     background-color: #3C3C3B !important;
-    padding: 0 !important; 
+    padding: 6px !important; 
+    margin: 0 !important;
     overflow-y: auto !important; 
     flex-shrink: 0 !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
+    align-items: stretch !important;
     gap: 8px !important;
   }
 
@@ -525,7 +531,9 @@ html, body {
     display: flex !important; 
     flex-direction: column !important; 
     gap: 8px !important; 
-    flex: unset !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .tv-controls-box .boton-canal { 
@@ -533,6 +541,7 @@ html, body {
     font-size: 0.85rem !important; 
     border-radius: 8px !important; 
     width: 100% !important; 
+    margin: 0 !important;
   }
   
   .tv-controls-box .btn-nav-back-landscape { 
@@ -546,15 +555,52 @@ html, body {
     font-weight: bold !important;
     border-radius: 8px !important; 
     width: 100% !important; 
-    margin-top: 0 !important; 
+    margin: 0 !important; 
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
     flex-shrink: 0;
   }
 
-.btn-nav-back-landscape { 
-  display: none; 
+  #screen-tv .btn-nav-back {
+    display: none !important;
+  }
+}
+
+/* ==========================================
+   ESTILOS ESPECÍFICOS PANTALLA RADIO
+   ========================================== */
+.radio-display-box {
+  width: 100% !important;
+  background-color: #000000 !important;
+  border-radius: 8px !important;
+  padding: 12px 15px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-bottom: 5px !important;
+}
+
+.radio-status-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.radio-progress-line {
+  width: 100% !important;
+  height: 4px !important;
+  background-color: #FF8C00 !important;
+  border-radius: 2px !important;
+}
+
+#screen-radio .view-content {
+  justify-content: flex-start !important;
+  gap: 8px !important;
 }
 
 /* ==========================================
