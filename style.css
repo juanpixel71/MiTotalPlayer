@@ -284,34 +284,6 @@ html, body {
 /* ==========================================
    6. REPRODUCTOR DE MÚSICA (SCREEN-PLAYER)
    ========================================== */
-.player-view-drive {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex: 1;
-  width: 100%;
-  min-height: 0;
-  padding: 10px 15px;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.album-cover-drive {
-  width: 290px;
-  height: 290px;
-  background-color: #9D9D9C;
-  border-radius: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-size: cover;
-  background-position: center;
-  flex-shrink: 0;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
 
 .track-details-drive { 
   text-align: center; 
@@ -364,14 +336,43 @@ html, body {
   cursor: pointer; 
 }
 
+.player-view-drive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 4px;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 5px 15px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.album-cover-drive {
+  width: 240px;
+  height: 240px;
+  background-color: #9D9D9C;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .media-controls-square { 
   display: flex; 
   align-items: center; 
   justify-content: center; 
   gap: 20px; 
   width: 100%; 
-  margin-top: auto;
-  margin-bottom: 10px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .btn-square { 
