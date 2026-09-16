@@ -351,8 +351,8 @@ html, body {
 }
 
 .album-cover-drive {
-  width: 240px;
-  height: 240px;
+  width: 260px;
+  height: 260px;
   background-color: #9D9D9C;
   border-radius: 16px;
   display: flex;
