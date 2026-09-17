@@ -43,9 +43,11 @@ function navigateTo(screenId) {
     detenerMusica();
     if (radioAudioElement) {
       radioAudioElement.pause();
+      radioAudioElement.src = ""; // Resetea el buffer de red del stream de radio
     }
+    clearInterval(radioInterval); // <-- Limpia el contador para que no siga corriendo en segundo plano
   }
-}
+
 
 function marcarBotonActivo(elemento) {
   if (!elemento) return;
@@ -325,3 +327,51 @@ function iniciarContadorRadio() {
     }
   }, 1000);
 }
+
+/* ==========================================
+   LISTENERS Y FUNCIONES DE CONTROL DE RADIO
+   ========================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const btnRadioPause = document.getElementById('btn-radio-pause');
+  const btnRadioStop = document.getElementById('btn-radio-stop');
+  const btnRadioLive = document.getElementById('btn-radio-live');
+
+  if (btnRadioPause) {
+    btnRadioPause.addEventListener('click', () => {
+      if (radioAudioElement) {
+        radioAudioElement.pause();
+        clearInterval(radioInterval); // Pausa el cronómetro visual
+      }
+    });
+  }
+
+  if (btnRadioStop) {
+    btnRadioStop.addEventListener('click', () => {
+      if (radioAudioElement) {
+        radioAudioElement.pause();
+        radioAudioElement.src = ""; // Corta la descarga de datos del streaming
+        clearInterval(radioInterval);
+        radioSeconds = 0;
+        const timeElement = document.getElementById('radio-current-time');
+        if (timeElement) timeElement.innerText = "0:00";
+        
+        // Quita la marca naranja de activa a la emisora del grid
+        document.querySelectorAll('#radio-buttons-container .boton-canal').forEach(b => b.classList.remove('active-item'));
+      }
+    });
+  }
+
+  if (btnRadioLive) {
+    btnRadioLive.addEventListener('click', () => {
+      if (radioAudioElement && radioAudioElement.src && radioAudioElement.src !== window.location.href) {
+        // Recarga el stream para reengancharse al directo en tiempo real (Live)
+        const currentSrc = radioAudioElement.src;
+        radioAudioElement.src = currentSrc; 
+        radioAudioElement.play()
+          .then(() => iniciarContadorRadio())
+          .catch(e => console.log("Error al reenganchar directo de radio:", e));
+      }
+    });
+  }
+});
+   
