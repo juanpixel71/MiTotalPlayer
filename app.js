@@ -333,6 +333,33 @@ function iniciarContadorRadio() {
 /* ==========================================
    LISTENERS Y FUNCIONES DE CONTROL DE RADIO
    ========================================== */
+
+// Función auxiliar para mover la luz naranja entre los controles de la radio
+function marcarControlRadioActivo(botonActivo) {
+  const contenedor = document.querySelector('.radio-player-controls');
+  if (contenedor) {
+    contenedor.querySelectorAll('button').forEach(btn => btn.classList.remove('active-radio-control'));
+  }
+  if (botonActivo) {
+    botonActivo.classList.add('active-radio-control');
+  }
+}
+
+// Modificamos ligeramente tu función playRadio para que active el botón LIVE al poner música
+function playRadio(elemento, url) {
+  marcarBotonActivo(elemento);
+  iniciarContadorRadio(); 
+  
+  // Al poner una emisora, encendemos automáticamente el botón LIVE en naranja
+  const btnRadioLive = document.getElementById('btn-radio-live');
+  marcarControlRadioActivo(btnRadioLive);
+
+  if (radioAudioElement && url) {
+    radioAudioElement.src = url;
+    radioAudioElement.play().catch(e => console.log("Error al reproducir radio:", e));
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const btnRadioPause = document.getElementById('btn-radio-pause');
   const btnRadioStop = document.getElementById('btn-radio-stop');
@@ -343,6 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (radioAudioElement) {
         radioAudioElement.pause();
         clearInterval(radioInterval); // Pausa el cronómetro visual
+        marcarControlRadioActivo(btnRadioPause); // Se pinta PAUSA de naranja
       }
     });
   }
@@ -351,14 +379,16 @@ document.addEventListener("DOMContentLoaded", () => {
     btnRadioStop.addEventListener('click', () => {
       if (radioAudioElement) {
         radioAudioElement.pause();
-        radioAudioElement.src = ""; // Corta la descarga de datos del streaming
+        radioAudioElement.src = ""; // Corta la descarga del streaming
         clearInterval(radioInterval);
         radioSeconds = 0;
         const timeElement = document.getElementById('radio-current-time');
         if (timeElement) timeElement.innerText = "0:00";
         
-        // Quita la marca naranja de activa a la emisora del grid
+        // Apaga la emisora del menú inferior
         document.querySelectorAll('#radio-buttons-container .boton-canal').forEach(b => b.classList.remove('active-item'));
+        
+        marcarControlRadioActivo(btnRadioStop); // Se pinta STOP de naranja
       }
     });
   }
@@ -366,14 +396,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnRadioLive) {
     btnRadioLive.addEventListener('click', () => {
       if (radioAudioElement && radioAudioElement.src && radioAudioElement.src !== window.location.href) {
-        // Recarga el stream para reengancharse al directo en tiempo real (Live)
         const currentSrc = radioAudioElement.src;
-        radioAudioElement.src = currentSrc; 
+        radioAudioElement.src = currentSrc; // Recarga para enganchar el tiempo real
         radioAudioElement.play()
-          .then(() => iniciarContadorRadio())
+          .then(() => {
+            iniciarContadorRadio();
+            marcarControlRadioActivo(btnRadioLive); // Se pinta LIVE de naranja
+          })
           .catch(e => console.log("Error al reenganchar directo de radio:", e));
       }
     });
   }
 });
+
    
