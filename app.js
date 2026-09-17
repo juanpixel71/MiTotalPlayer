@@ -16,7 +16,7 @@ const videoElement = document.getElementById('tv-video');
 let hlsInstance = null;
 
 /* ==========================================
-   CONTROL GENERAL Y NAVEGACIÓN
+   CONTROL GENERAL Y NAVEGACIÓN (CORREGIDO)
    ========================================== */
 function salirDeAplicacion() {
   if (typeof Capacitor !== 'undefined' && Capacitor.Plugins && Capacitor.Plugins.App) {
@@ -45,18 +45,20 @@ function navigateTo(screenId) {
       radioAudioElement.pause();
       radioAudioElement.src = ""; // Resetea el buffer de red del stream de radio
     }
-    clearInterval(radioInterval); // <-- Limpia el contador para que no siga corriendo en segundo plano
+    clearInterval(radioInterval); // Limpia el contador al volver a Home
   }
-
+} // <-- ¡LLAVE CORREGIDA AQUÍ!
 
 function marcarBotonActivo(elemento) {
   if (!elemento) return;
-  const contenedor = elemento.closest('.grid-buttons, .albums-grid, .song-list');
+  const contenedor = elemento.closest('.grid-buttons, .albums-grid, .song-list, #radio-buttons-container');
   if (contenedor) {
     contenedor.querySelectorAll('.boton-canal, .album-card-clean, .song-item').forEach(b => b.classList.remove('active-item'));
   }
   elemento.classList.add('active-item');
 }
+
+
 
 /* ==========================================
    REPRODUCTOR TV (HLS)
