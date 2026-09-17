@@ -91,24 +91,26 @@
       </div>
     </div>
 
-<!-- Busca en tu HTML la sección de la pantalla de radio y reemplaza la caja del reproductor por esta: -->
-<div class="radio-display-box">
-  <!-- Fila de Estado y Línea -->
-  <div class="radio-status-row">
-    <span id="radio-current-time" class="time-stamp">0:00</span>
-    <div class="radio-progress-line"></div>
-    <span style="color: #FF8C00; font-weight: bold; margin-left: 10px;">LIVE</span>
-  </div>
-  
-  <!-- NUEVA: Fila de Botones del Reproductor de Radio -->
-  <div class="radio-player-controls" style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
-    <button id="btn-radio-pause" style="background-color: #9D9D9C; color: white; padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">PAUSA</button>
-    <button id="btn-radio-stop" style="background-color: #9D9D9C; color: white; padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">STOP</button>
-    <button id="btn-radio-live" style="background-color: #FF8C00; color: white; padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem;">LIVE</button>
-  </div>
-</div>
-        
-        <div class="grid-buttons" id="radio-buttons-container">
+<!-- PANTALLA DE RADIO -->
+<div id="screen-radio" class="screen">
+  <div class="header">RADIO</div>
+    <div class="view-content">
+        <!-- Caja Ampliada del Reproductor Negro -->
+    <div class="radio-display-box">
+      <!-- Fila de barra de progreso y tiempos -->
+      <div class="radio-status-row">
+        <span id="radio-current-time" class="time-stamp">0:00</span>
+        <div class="radio-progress-line"></div>
+        <span style="color: #FF8C00; font-weight: bold; margin-left: 10px;">LIVE</span>
+      </div>
+            <!-- Fila de Botones de Control Integrados -->
+      <div class="radio-player-controls">
+        <button id="btn-radio-pause">PAUSA</button>
+        <button id="btn-radio-stop">STOP</button>
+        <button id="btn-radio-live" class="active-live">LIVE</button>
+      </div>
+    </div>
+          <div class="grid-buttons" id="radio-buttons-container">
           <button onclick="playRadio(this, 'https://stream.radiofrance.fr/franceinfo/franceinfo_hifi.m3u8')" class="boton-canal">FRANCE INFO</button>
           <button onclick="playRadio(this, 'https://stream.radiofrance.fr/franceinter/franceinter.m3u8')" class="boton-canal">FRANCE INTER</button>
           <button onclick="playRadio(this, 'https://icecast.radiofrance.fr/fipjazz-midfi.mp3')" class="boton-canal">JAZZ MUSIC</button>
