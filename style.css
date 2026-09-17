@@ -463,17 +463,24 @@ html, body {
    ========================================== */
 .radio-display-box {
   width: 100% !important;
+  min-height: 110px !important; /* Le otorgamos una altura mínima fija más alta */
   background-color: #000000 !important;
   border-radius: 8px !important;
-  padding: 12px 15px !important;
+  padding: 15px !important;
   box-sizing: border-box !important;
   flex-shrink: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
-  gap: 8px !important;
-  margin-bottom: 5px !important;
+  gap: 12px !important;
+  margin-bottom: 8px !important;
 }
+
+/* Efectos visuales de click activo para los nuevos botones de radio */
+.radio-player-controls button:active {
+  opacity: 0.8;
+}
+
 
 .radio-status-row {
   display: flex !important;
