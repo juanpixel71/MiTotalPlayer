@@ -502,19 +502,18 @@ html, body {
 }
 
 /* ==========================================
-   ESTILOS ESPECÍFICOS PANTALLA RADIO
+   ESTILOS ESPECÍFICOS PANTALLA RADIO (CORREGIDO)
    ========================================== */
 .radio-display-box {
   width: 100% !important;
   background-color: #000000 !important;
   border-radius: 8px !important;
-  padding: 12px 15px !important;
+  padding: 15px !important;
   box-sizing: border-box !important;
   flex-shrink: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
-  gap: 8px !important;
+  gap: 12px !important;
   margin-bottom: 5px !important;
 }
 
@@ -526,13 +525,38 @@ html, body {
 }
 
 .radio-progress-line {
-  width: 100% !important;
+  flex: 1 !important;
   height: 4px !important;
   background-color: #FF8C00 !important;
   border-radius: 2px !important;
+  margin: 0 10px !important;
 }
 
-#screen-radio .view-content {
-  justify-content: flex-start !important;
-  gap: 8px !important;
+/* Controles de botones dentro del cuadro negro */
+.radio-player-controls {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  width: 100% !important;
 }
+
+.radio-player-controls button {
+  background-color: #9D9D9C;
+  color: #FFFFFF;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.radio-player-controls button:active {
+  opacity: 0.8;
+}
+
+.radio-player-controls button.active-live {
+  background-color: #FF8C00 !important;
+}
+
+
